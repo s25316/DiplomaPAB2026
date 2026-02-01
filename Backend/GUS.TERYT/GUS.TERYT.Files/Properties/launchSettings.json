@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "GUS.TERYT.Files": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\01Mine\\git\\DiplomaPAB2026\\Backend\\GUS.TERYT\\GUS.TERYT.API\\GUS.TERYT.API.csproj"
+    }
+  }
+}

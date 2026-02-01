@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper", "Mapper\Mapper.csproj", "{53D05E4E-7479-478E-A7D1-151C66A23658}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapper.Tests", "Mapper.Tests\Mapper.Tests.csproj", "{AF61CD40-7114-4A41-AB7F-30395488A22B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{53D05E4E-7479-478E-A7D1-151C66A23658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D05E4E-7479-478E-A7D1-151C66A23658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D05E4E-7479-478E-A7D1-151C66A23658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D05E4E-7479-478E-A7D1-151C66A23658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF61CD40-7114-4A41-AB7F-30395488A22B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF61CD40-7114-4A41-AB7F-30395488A22B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF61CD40-7114-4A41-AB7F-30395488A22B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF61CD40-7114-4A41-AB7F-30395488A22B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {520CA104-15E0-4D8B-B64B-E50F77C51DAD}
+	EndGlobalSection
+EndGlobal

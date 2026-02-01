@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <WarningsAsErrors>Nullable</WarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GUS.TERYT.Application\GUS.TERYT.Application.csproj" />
+    <ProjectReference Include="..\GUS.TERYT.Database.MsSql\GUS.TERYT.Database.MsSql.csproj" />
+    <ProjectReference Include="..\GUS.TERYT.Files\GUS.TERYT.Files.csproj" />
+  </ItemGroup>
+
+</Project>
