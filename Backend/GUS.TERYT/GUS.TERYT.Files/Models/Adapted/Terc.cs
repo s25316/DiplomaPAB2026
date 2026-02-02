@@ -2,7 +2,7 @@
 // Ignore Spelling: Teryt, Plugin, Jednostka,  obszar, 
 // Ignore Spelling: województwo, Wojewodztwo, Gmina, gminie, powiat, powiatu,
 // Ignore Spelling: miejska, miejsko, miasto, wiejska, miasta, wiejskiej, wiejski
-// Ignore Spelling: dzielnica, delegatura, Warszawa, na, prawach
+// Ignore Spelling: dzielnica, delegatura, Warszawa, na, prawach, 
 using System.Diagnostics.CodeAnalysis;
 using SourceTerc = GUS.TERYT.Files.Models.Source.Teryt.Terc;
 
@@ -17,13 +17,13 @@ public abstract partial record Teryt
             where TId : ITercId;
 
 
-        public sealed record Wojewodstwo(
-            Wojewodstwo.Id WojewodstwoId,
+        public sealed record Wojewodztwo(
+            Wojewodztwo.Id WojewodztwoId,
             string Nazwa,
             string NazwaDod,
-            DateOnly Date) : TercItem<Wojewodstwo.Id>(WojewodstwoId, Nazwa, NazwaDod, Date)
+            DateOnly Date) : TercItem<Wojewodztwo.Id>(WojewodztwoId, Nazwa, NazwaDod, Date)
         {
-            public sealed record Id(string WojewodstwoCode) : ITercId;
+            public sealed record Id(string WojewodztwoCode) : ITercId;
         }
 
         public sealed record Powiat(
@@ -32,8 +32,7 @@ public abstract partial record Teryt
             string NazwaDod,
             DateOnly Date) : TercItem<Powiat.Id>(PowiatId, Nazwa, NazwaDod, Date)
         {
-
-            public sealed record Id(string WojewodstwoCode, string PowiatCode) : ITercId;
+            public sealed record Id(string WojewodztwoCode, string PowiatCode) : ITercId;
         }
 ;
 
@@ -44,8 +43,7 @@ public abstract partial record Teryt
             string NazwaDod,
             DateOnly Date) : TercItem<Gmina.Id>(GminaId, Nazwa, NazwaDod, Date)
         {
-
-            public sealed record Id(string WojewodstwoCode, string PowiatCode, string GminaCode, Gmina.Type GminaRodzCode) : ITercId;
+            public sealed record Id(string WojewodztwoCode, string PowiatCode, string GminaCode, Gmina.Type GminaRodzCode) : ITercId;
 
             /// <summary>
             /// Based on: https://eteryt.stat.gov.pl/eTeryt/rejestr_teryt/ogolna_charakterystyka_systemow_rejestru/ogolna_charakterystyka_systemow_rejestru.aspx
@@ -109,7 +107,7 @@ public abstract partial record Teryt
                 !string.IsNullOrWhiteSpace(item.GminaRodzCode))
             {
                 return new Gmina(
-                    new Gmina.Id(item.WojewodstwoCode, item.PowiatCode, item.GminaCode, item.GminaRodzCode),
+                    new Gmina.Id(item.WojewodztwoCode, item.PowiatCode, item.GminaCode, item.GminaRodzCode),
                     item.GminaRodzCode,
                     item.Nazwa,
                     item.NazwaDod,
@@ -119,14 +117,14 @@ public abstract partial record Teryt
             if (!string.IsNullOrWhiteSpace(item.PowiatCode))
             {
                 return new Powiat(
-                    new Powiat.Id(item.WojewodstwoCode, item.PowiatCode),
+                    new Powiat.Id(item.WojewodztwoCode, item.PowiatCode),
                     item.Nazwa,
                     item.NazwaDod,
                     item.Date);
             }
 
-            return new Wojewodstwo(
-                new Wojewodstwo.Id(item.WojewodstwoCode),
+            return new Wojewodztwo(
+                new Wojewodztwo.Id(item.WojewodztwoCode),
                     item.Nazwa,
                     item.NazwaDod,
                     item.Date);

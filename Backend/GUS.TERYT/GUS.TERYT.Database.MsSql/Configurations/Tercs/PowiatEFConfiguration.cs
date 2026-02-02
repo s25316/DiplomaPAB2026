@@ -14,7 +14,7 @@ public class PowiatEFConfiguration : IEntityTypeConfiguration<Powiat>
             .HasKey(k => k.PowiatId)
             .HasName($"{nameof(Powiat)}_PK");
         builder
-            .HasAlternateKey(k => new { k.WojewodstwoId, k.PowiatCode })
+            .HasAlternateKey(k => new { k.WojewodztwoCode, k.PowiatCode })
             .HasName($"{nameof(Powiat)}_AK");
         builder
             .Property(p => p.PowiatId)

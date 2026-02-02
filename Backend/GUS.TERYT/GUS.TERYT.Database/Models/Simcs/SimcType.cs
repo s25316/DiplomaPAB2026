@@ -2,9 +2,9 @@
 
 namespace GUS.TERYT.Database.Models.Simcs;
 
-public class SimcRodzaj
+public class SimcType
 {
-    public string RodzajCode { get; set; } = null!;
+    public string TypeCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
 

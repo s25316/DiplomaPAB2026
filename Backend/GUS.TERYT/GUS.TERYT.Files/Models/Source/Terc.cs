@@ -7,7 +7,7 @@ namespace GUS.TERYT.Files.Models.Source;
 public abstract partial record Teryt
 {
     public sealed record Terc(
-        string WojewodstwoCode,
+        string WojewodztwoCode,
         string? PowiatCode,
         string? GminaCode,
         string? GminaRodzCode,

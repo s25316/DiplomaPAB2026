@@ -3,24 +3,24 @@
 using GUS.TERYT.Database.Models;
 using GUS.TERYT.Database.Models.Simcs;
 using GUS.TERYT.Database.Models.Tercs;
-using GUS.TERYT.Database.Models.Ulics;
+using GUS.TERYT.Database.Models.Ulicy;
 using Microsoft.EntityFrameworkCore;
 
 namespace GUS.TERYT.Database;
 
-public class TerytDbContext : DbContext
+public class TerytDbContext(DbContextOptions options) : DbContext(options)
 {
-    public virtual DbSet<Wojewodstwo> Wojewodstwa { get; set; }
+    public virtual DbSet<Wojewodztwo> Wojewodztwa { get; set; }
     public virtual DbSet<Powiat> Powiaty { get; set; }
     public virtual DbSet<PowiatType> PowiatTypes { get; set; }
     public virtual DbSet<Gmina> Gminy { get; set; }
     public virtual DbSet<GminaRodz> GminaRodzaje { get; set; }
 
     public virtual DbSet<Simc> Miejscowosci { get; set; }
-    public virtual DbSet<SimcRodzaj> MiejscowoscRodzaje { get; set; }
+    public virtual DbSet<SimcType> MiejscowoscRodzaje { get; set; }
 
-    public virtual DbSet<Ulic> Ulicy { get; set; }
-    public virtual DbSet<UlicType> UlicTypes { get; set; }
+    public virtual DbSet<Ulica> Ulicy { get; set; }
+    public virtual DbSet<UlicaType> UlicTypes { get; set; }
 
-    public virtual DbSet<SimcUlic> SimcUlics { get; set; }
+    public virtual DbSet<SimcUlica> SimcUlics { get; set; }
 }

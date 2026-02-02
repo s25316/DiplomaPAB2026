@@ -4,7 +4,7 @@ namespace GUS.TERYT.Database.Models.Tercs;
 
 public class PowiatType
 {
-    public int TypeId { get; set; }
+    public int TypeCode { get; set; }
     public string Name { get; set; } = null!;
 
 

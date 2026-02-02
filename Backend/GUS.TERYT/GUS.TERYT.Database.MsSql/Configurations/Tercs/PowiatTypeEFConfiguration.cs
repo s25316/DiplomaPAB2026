@@ -11,10 +11,10 @@ public class PowiatTypeEFConfiguration : IEntityTypeConfiguration<PowiatType>
     {
         builder.ToTable(nameof(PowiatType));
         builder
-            .HasKey(k => k.TypeId)
+            .HasKey(k => k.TypeCode)
             .HasName($"{nameof(PowiatType)}_PK");
         builder
-            .Property(p => p.TypeId)
+            .Property(p => p.TypeCode)
             .ValueGeneratedNever();
         builder
             .Property(p => p.Name)
@@ -23,8 +23,8 @@ public class PowiatTypeEFConfiguration : IEntityTypeConfiguration<PowiatType>
 
         builder
             .HasMany(k => k.Powiaty)
-            .WithOne(k => k.PowiatType)
-            .HasForeignKey(k => k.TypeId)
+            .WithOne(k => k.Type)
+            .HasForeignKey(k => k.TypeCode)
             .HasConstraintName($"{nameof(Powiat)}_{nameof(PowiatType)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

@@ -11,10 +11,10 @@ public class SimcEFConfiguration : IEntityTypeConfiguration<Simc>
     {
         builder.ToTable(nameof(Simc));
         builder
-            .HasKey(k => k.MiejscowoscId)
+            .HasKey(k => k.MiejscowoscCode)
             .HasName($"{nameof(Simc)}_PK");
         builder
-            .Property(p => p.MiejscowoscId)
+            .Property(p => p.MiejscowoscCode)
             .HasMaxLength(DefaultValue.LENGTH_10);
         builder
             .Property(p => p.Name)

@@ -17,7 +17,7 @@ public static class MappingSourceModels
         var array = SplitAndTrim(row);
         ColumnsChecker(TERC_COLUMN_COUNT, array.Length);
         return new Teryt.Terc(
-            array[0] ?? throw new ArgumentException(nameof(Teryt.Terc.WojewodstwoCode)),
+            array[0] ?? throw new ArgumentException(nameof(Teryt.Terc.WojewodztwoCode)),
             array[1],
             array[2],
             array[3],

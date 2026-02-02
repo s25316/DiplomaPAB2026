@@ -3,7 +3,7 @@ using GUS.TERYT.Database;
 using GUS.TERYT.Database.Models;
 using GUS.TERYT.Database.Models.Simcs;
 using GUS.TERYT.Database.Models.Tercs;
-using GUS.TERYT.Database.Models.Ulics;
+using GUS.TERYT.Database.Models.Ulicy;
 using GUS.TERYT.Files;
 using GUS.TERYT.Files.Models.Adapted;
 using GUS.TERYT.Infrastructure.Configurations;
@@ -55,7 +55,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
         TerytFilesConfiguration configuration,
         CancellationToken cancellationToken)
     {
-        var wojewodstwaCount = await context.Wojewodstwa.CountAsync(cancellationToken);
+        var wojewodstwaCount = await context.Wojewodztwa.CountAsync(cancellationToken);
         var powiatyCount = await context.Powiaty.CountAsync(cancellationToken);
         var gminyCount = await context.Gminy.CountAsync(cancellationToken);
         var powiatTypesCount = await context.PowiatTypes.CountAsync(cancellationToken);
@@ -72,7 +72,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
 
         await context.Gminy.ExecuteDeleteAsync(cancellationToken);
         await context.Powiaty.ExecuteDeleteAsync(cancellationToken);
-        await context.Wojewodstwa.ExecuteDeleteAsync(cancellationToken);
+        await context.Wojewodztwa.ExecuteDeleteAsync(cancellationToken);
         await context.PowiatTypes.ExecuteDeleteAsync(cancellationToken);
         await context.GminaRodzaje.ExecuteDeleteAsync(cancellationToken);
 
@@ -100,14 +100,14 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
 
         await foreach (var item in reader.ReadAsync())
         {
-            if (item is Teryt.Terc.Wojewodstwo w)
+            if (item is Teryt.Terc.Wojewodztwo w)
             {
-                var dbItem = new Wojewodstwo
+                var dbItem = new Wojewodztwo
                 {
-                    WojewodstwoId = w.WojewodstwoId.WojewodstwoCode,
+                    WojewodztwoCode = w.WojewodztwoId.WojewodztwoCode,
                     Name = w.Nazwa,
                 };
-                await context.Wojewodstwa.AddAsync(dbItem, cancellationToken);
+                await context.Wojewodztwa.AddAsync(dbItem, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
             }
 
@@ -117,12 +117,12 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
                 {
                     var maxId = !powiatTypes.Any()
                         ? 0
-                        : powiatTypes.Values.Max(t => t.TypeId);
+                        : powiatTypes.Values.Max(t => t.TypeCode);
 
                     maxId++;
                     powiatType = new PowiatType
                     {
-                        TypeId = maxId,
+                        TypeCode = maxId,
                         Name = p.NazwaDod,
                     };
                     powiatTypes[powiatType.Name] = powiatType;
@@ -131,10 +131,10 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
 
                 var dbItem = new Powiat
                 {
-                    WojewodstwoId = p.PowiatId.WojewodstwoCode,
+                    WojewodztwoCode = p.PowiatId.WojewodztwoCode,
                     PowiatCode = p.PowiatId.PowiatCode,
                     Name = p.Nazwa,
-                    PowiatType = powiatType
+                    Type = powiatType
                 };
                 await context.Powiaty.AddAsync(dbItem, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
@@ -143,7 +143,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
             if (item is Teryt.Terc.Gmina g)
             {
                 var dbPowiat = await context.Powiaty.FirstOrDefaultAsync(i =>
-                    i.WojewodstwoId == g.GminaId.WojewodstwoCode &&
+                    i.WojewodztwoCode == g.GminaId.WojewodztwoCode &&
                     i.PowiatCode == g.GminaId.PowiatCode,
                     cancellationToken)
                     ?? throw new KeyNotFoundException("Not Found Powiat");
@@ -157,7 +157,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
                 };
                 await context.Gminy.AddAsync(dbItem, cancellationToken);
                 await context.SaveChangesAsync(cancellationToken);
-                gminyIds[(g.GminaId.WojewodstwoCode, g.GminaId.PowiatCode, g.GminaId.GminaCode, g.GminaId.GminaRodzCode.Id)] = dbItem.GminaId;
+                gminyIds[(g.GminaId.WojewodztwoCode, g.GminaId.PowiatCode, g.GminaId.GminaCode, g.GminaId.GminaRodzCode.Id)] = dbItem.GminaId;
             }
         }
     }
@@ -181,12 +181,12 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
         await context.SaveChangesAsync(cancellationToken);
 
 
-        var rodzaje = new Dictionary<string, SimcRodzaj>();
-        foreach (var (key, value) in Teryt.Simc.Type.All)
+        var rodzaje = new Dictionary<string, SimcType>();
+        foreach (var (_, value) in Teryt.Simc.Type.All)
         {
-            rodzaje[value.Id] = new SimcRodzaj
+            rodzaje[value.Id] = new SimcType
             {
-                RodzajCode = value.Id,
+                TypeCode = value.Id,
                 Name = value.Name,
             };
         }
@@ -203,12 +203,12 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
         var list = new List<Simc>();
         await foreach (var item in reader.ReadAsync())
         {
-            var gminaId = gminyIds[(item.GminaId.WojewodstwoCode, item.GminaId.PowiatCode, item.GminaId.GminaCode, item.GminaId.GminaRodzCode.Id)];
+            var gminaId = gminyIds[(item.GminaId.WojewodztwoCode, item.GminaId.PowiatCode, item.GminaId.GminaCode, item.GminaId.GminaRodzCode.Id)];
             var dbItem = new Simc
             {
-                MiejscowoscId = item.MiejscowoscId.Value,
+                MiejscowoscCode = item.MiejscowoscId.Value,
                 Name = item.Nazwa,
-                Rodzaj = rodzaje[item.MiejscowoscRodzaj.Id],
+                Type = rodzaje[item.MiejscowoscRodzaj.Id],
                 GminaId = gminaId,
             };
             list.Add(dbItem);
@@ -251,8 +251,8 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
         using var reader = new TerytAdaptedReader<Teryt.Ulic>(streamReader);
 
         var ids = new HashSet<string>();
-        var ulicTypes = new Dictionary<string, UlicType>();
-        var list = new List<Ulic>();
+        var ulicTypes = new Dictionary<string, UlicaType>();
+        var list = new List<Ulica>();
 
         await foreach (var item in reader.ReadAsync())
         {
@@ -261,7 +261,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
                 continue;
             }
 
-            UlicType? dbUlicType = null;
+            UlicaType? dbUlicType = null;
             var baseUlicType = item.UlicType;
 
             if (baseUlicType is not null &&
@@ -269,12 +269,12 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
             {
                 var maxId = !ulicTypes.Any()
                     ? 0
-                    : ulicTypes.Values.Max(i => i.TypeId);
+                    : ulicTypes.Values.Max(i => i.TypeCode);
 
                 maxId++;
-                dbUlicType = new UlicType
+                dbUlicType = new UlicaType
                 {
-                    TypeId = maxId,
+                    TypeCode = maxId,
                     Name = baseUlicType.Value,
                 };
                 ulicTypes[dbUlicType.Name] = dbUlicType;
@@ -282,13 +282,13 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
                 await context.SaveChangesAsync(cancellationToken);
             }
 
-            var dbUlic = new Ulic
+            var dbUlic = new Ulica
             {
-                UlicId = item.UlicId.Value,
+                UlicaCode = item.UlicId.Value,
                 Name = $"{item.Nazwa1} {item.Nazwa2}".Trim(),
                 Type = dbUlicType,
             };
-            ids.Add(dbUlic.UlicId);
+            ids.Add(dbUlic.UlicaCode);
             list.Add(dbUlic);
 
             if (list.Count > 1000)
@@ -317,26 +317,20 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
             return;
         }
 
-
-
-        var count1 = await context.Miejscowosci.CountAsync(cancellationToken);
-        var count2 = await context.Ulicy.CountAsync(cancellationToken);
-
-
         using var streamReader = await blobService.GetStreamReaderAsync(
             configuration.BlobContainer,
             configuration.Ulic,
             cancellationToken);
         using var reader = new TerytAdaptedReader<Teryt.SimcUlicIds>(streamReader);
 
-        var list = new List<SimcUlic>();
+        var list = new List<SimcUlica>();
 
         await foreach (var item in reader.ReadAsync())
         {
-            var dbItem = new SimcUlic
+            var dbItem = new SimcUlica
             {
-                MiejscowoscId = item.SimcId.Value,
-                UlicId = item.UlicId.Value,
+                MiejscowoscCode = item.SimcId.Value,
+                UlicaCode = item.UlicId.Value,
             };
             list.Add(dbItem);
 

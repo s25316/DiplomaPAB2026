@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GUS.TERYT.Database.MsSql.Configurations.Simcs;
 
-public class SimcRodzajEFConfiguration : IEntityTypeConfiguration<SimcRodzaj>
+public class SimcTypeEFConfiguration : IEntityTypeConfiguration<SimcType>
 {
-    public void Configure(EntityTypeBuilder<SimcRodzaj> builder)
+    public void Configure(EntityTypeBuilder<SimcType> builder)
     {
-        builder.ToTable(nameof(SimcRodzaj));
+        builder.ToTable(nameof(SimcType));
         builder
-            .HasKey(k => k.RodzajCode)
-            .HasName($"{nameof(SimcRodzaj)}_PK");
+            .HasKey(k => k.TypeCode)
+            .HasName($"{nameof(SimcType)}_PK");
         builder
-            .Property(p => p.RodzajCode)
+            .Property(p => p.TypeCode)
             .HasMaxLength(DefaultValue.LENGTH_10);
         builder
             .Property(p => p.Name)
@@ -23,9 +23,9 @@ public class SimcRodzajEFConfiguration : IEntityTypeConfiguration<SimcRodzaj>
 
         builder
             .HasMany(k => k.Miejscowosci)
-            .WithOne(k => k.Rodzaj)
-            .HasForeignKey(k => k.RodzajCode)
-            .HasConstraintName($"{nameof(Simc)}_{nameof(SimcRodzaj)}_FK")
+            .WithOne(k => k.Type)
+            .HasForeignKey(k => k.TypeCode)
+            .HasConstraintName($"{nameof(Simc)}_{nameof(SimcType)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

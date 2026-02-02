@@ -1,10 +1,10 @@
-﻿// Ignore Spelling: Wojewodstwo, Powiaty
+﻿// Ignore Spelling: Wojewodztwo, Powiat, Powiaty
 
 namespace GUS.TERYT.Database.Models.Tercs;
 
-public class Wojewodstwo
+public class Wojewodztwo
 {
-    public string WojewodstwoId { get; set; } = null!;
+    public string WojewodztwoCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
 
