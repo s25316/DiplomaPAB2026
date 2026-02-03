@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: Teryt, Wojewodstwa, Powiat, Powiaty, Gminy, Gmina, Rodzaje, Miejscowosci, Miejscowosc
+﻿// Ignore Spelling: Teryt, Wojewodztwa, Powiat, Powiaty, Gminy, Gmina, Rodzaje, Miejscowosci, Miejscowosc
 // Ignore Spelling: Ulicy, Ulic, Simc Ulics
 using GUS.TERYT.Database.Models;
 using GUS.TERYT.Database.Models.Simcs;

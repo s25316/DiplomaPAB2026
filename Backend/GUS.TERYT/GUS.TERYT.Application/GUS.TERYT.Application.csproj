@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Queries\" />
+    <ProjectReference Include="..\GUS.TERYT.Models\GUS.TERYT.Models.csproj" />
   </ItemGroup>
 
 </Project>
