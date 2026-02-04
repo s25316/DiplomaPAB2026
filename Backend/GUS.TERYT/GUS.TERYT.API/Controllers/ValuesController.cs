@@ -1,6 +1,5 @@
 ﻿using GUS.TERYT.Files;
 using Microsoft.AspNetCore.Mvc;
-using AdaptedSimc = GUS.TERYT.Files.Models.Adapted.Teryt.Simc;
 using AdaptedTerc = GUS.TERYT.Files.Models.Adapted.Teryt.Terc;
 using AdaptedUlicInfo = GUS.TERYT.Files.Models.Adapted.Teryt.UlicInfo;
 using SourceSimc = GUS.TERYT.Files.Models.Source.Teryt.Simc;
@@ -32,22 +31,22 @@ public class ValuesController : ControllerBase
         return Ok(value: items);
     }
 
+    /*
+        [HttpGet("simc/a")]
+        public async Task<IActionResult> GetSimcJsonFileAsync()
+        {
+            var path = @"C:\Users\User\Downloads\teryt\SIMC_Adresowy_2026-01-29.csv";
+            var reader = new TerytAdaptedReader<AdaptedSimc>(path);
+            var items = await reader.ReadAllAsync();
 
-    [HttpGet("simc/a")]
-    public async Task<IActionResult> GetSimcJsonFileAsync()
-    {
-        var path = @"C:\Users\User\Downloads\teryt\SIMC_Adresowy_2026-01-29.csv";
-        var reader = new TerytAdaptedReader<AdaptedSimc>(path);
-        var items = await reader.ReadAllAsync();
+            // Serializacja do stringa (uwaga na pamięć RAM przy ogromnych plikach!)
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(items, Newtonsoft.Json.Formatting.Indented);
+            var bytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
+            var stream = new System.IO.MemoryStream(bytes);
 
-        // Serializacja do stringa (uwaga na pamięć RAM przy ogromnych plikach!)
-        var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(items, Newtonsoft.Json.Formatting.Indented);
-        var bytes = System.Text.Encoding.UTF8.GetBytes(jsonString);
-        var stream = new System.IO.MemoryStream(bytes);
-
-        return File(stream, "application/json", "simc_data.json");
-    }
-
+            return File(stream, "application/json", "simc_data.json");
+        }
+    */
     /*[HttpGet("simc/a")]
     public async Task<IActionResult> GetSimcAsync(CancellationToken cancellationToken)
     {

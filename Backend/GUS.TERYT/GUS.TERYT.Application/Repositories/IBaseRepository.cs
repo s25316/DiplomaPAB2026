@@ -1,4 +1,4 @@
-﻿using GUS.TERYT.Models;
+﻿using Base.Models;
 
 namespace GUS.TERYT.Application.Repositories;
 

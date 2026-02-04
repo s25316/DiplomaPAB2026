@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	  <PropertyGroup>
-		  <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-		  <ImplicitUsings>enable</ImplicitUsings>
-		  <Nullable>enable</Nullable>
-		  <WarningsAsErrors>Nullable</WarningsAsErrors>
-	  </PropertyGroup>
+	<Import Project="..\..\Directory.Packages.props" />
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
 
 	<ItemGroup Label="EntityFrameworkCore">
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
 	</ItemGroup>
 	
 </Project>

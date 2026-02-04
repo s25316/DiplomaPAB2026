@@ -1,18 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	  <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-	  <ImplicitUsings>enable</ImplicitUsings>
-	  <Nullable>enable</Nullable>
-	  <WarningsAsErrors>Nullable</WarningsAsErrors>
-  </PropertyGroup>
+	<Import Project="..\..\Directory.Packages.props" />
+	
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.12" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GUS.TERYT.Database\GUS.TERYT.Database.csproj" />
-  </ItemGroup>
+	<ItemGroup Label="EntityFrameworkCore">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<ProjectReference Include="..\GUS.TERYT.Database\GUS.TERYT.Database.csproj" />
+	</ItemGroup>
 
 </Project>

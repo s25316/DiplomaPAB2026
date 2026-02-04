@@ -18,16 +18,16 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         // For Tests
-        builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-    {
-        // To ustawienie sprawia, ¿e serializator ignoruje fakt, 
-        // ¿e pola s¹ prywatne i wyci¹ga z nich dane
-        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+        builder.Services.AddControllers();
+        /*.AddNewtonsoftJson(options =>
         {
-            IgnoreSerializableAttribute = true
-        };
-    });
+            // To ustawienie sprawia, ¿e serializator ignoruje fakt, 
+            // ¿e pola s¹ prywatne i wyci¹ga z nich dane
+            options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+            {
+                IgnoreSerializableAttribute = true
+            };
+        });*/
 
         var app = builder.Build();
 
