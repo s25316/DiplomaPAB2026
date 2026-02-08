@@ -117,10 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorMessageItemsPerPage" xml:space="preserve">
-    <value>Liczba objektów na stronie musi być większa od 0.</value>
+  <data name="ErrorMessageAttributeGminaId" xml:space="preserve">
+    <value>Gmina ma format 00.00.000</value>
   </data>
-  <data name="ErrorMessagePage" xml:space="preserve">
-    <value>Numer strony musi być większy od 0.</value>
+  <data name="ErrorMessageAttributeGminaTypeId" xml:space="preserve">
+    <value>GminaType ma format 0</value>
+  </data>
+  <data name="ErrorMessageAttributeMiejscowoscId" xml:space="preserve">
+    <value>Miejscowosc ma format 0000000</value>
+  </data>
+  <data name="ErrorMessageAttributeMiejscowoscTypeId" xml:space="preserve">
+    <value>MiejscowoscTypeId ma format 00</value>
+  </data>
+  <data name="ErrorMessageAttributePowiatId" xml:space="preserve">
+    <value>Powiat ma format 00.00</value>
+  </data>
+  <data name="ErrorMessageAttributeUlicaId" xml:space="preserve">
+    <value>Ulica ma format 00000</value>
+  </data>
+  <data name="ErrorMessageAttributeUnknownFormat" xml:space="preserve">
+    <value>Nieznany format</value>
+  </data>
+  <data name="ErrorMessageAttributeWojewodztwoId" xml:space="preserve">
+    <value>Wojewodztwo ma format 00</value>
   </data>
 </root>

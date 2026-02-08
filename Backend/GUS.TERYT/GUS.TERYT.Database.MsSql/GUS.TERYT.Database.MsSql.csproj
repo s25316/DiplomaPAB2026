@@ -3,12 +3,13 @@
 	<Import Project="..\..\Directory.Packages.props" />
 	
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
+	
 	<ItemGroup Label="EntityFrameworkCore">
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
 	</ItemGroup>

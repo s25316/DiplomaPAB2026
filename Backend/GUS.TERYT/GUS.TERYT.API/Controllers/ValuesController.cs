@@ -1,4 +1,5 @@
 ﻿using GUS.TERYT.Files;
+using GUS.TERYT.Models.Requests.Parameters;
 using Microsoft.AspNetCore.Mvc;
 using AdaptedTerc = GUS.TERYT.Files.Models.Adapted.Teryt.Terc;
 using AdaptedUlicInfo = GUS.TERYT.Files.Models.Adapted.Teryt.UlicInfo;
@@ -12,6 +13,14 @@ namespace GUS.TERYT.API.Controllers;
 [ApiController]
 public class ValuesController : ControllerBase
 {
+    [HttpGet("test")]
+    public async Task<IActionResult> GetTercAsync(
+        [FromQuery] PowiatParameters powiatParameters,
+        CancellationToken cancellationToken)
+    {
+        return Ok(powiatParameters);
+    }
+
     [HttpGet("terc/a")]
     public async Task<IActionResult> GetTercAsync(CancellationToken cancellationToken)
     {

@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Miejscowosc
 
-namespace GUS.TERYT.Models;
+namespace GUS.TERYT.Models.Responses;
 
 public sealed class Miejscowosc
 {

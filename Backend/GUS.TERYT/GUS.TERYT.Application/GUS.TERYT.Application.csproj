@@ -3,21 +3,21 @@
 	<Import Project="..\..\Directory.Packages.props" />
 	
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<TargetFrameworks>net9.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
-
+	
 	<ItemGroup Label="DependencyInjection">
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
-		<ProjectReference Include="..\GUS.TERYT.Models\GUS.TERYT.Models.csproj" />
+	  <ProjectReference Include="..\GUS.TERYT.Models.Requests\GUS.TERYT.Models.Requests.csproj" />
+	  <ProjectReference Include="..\GUS.TERYT.Models.Responses\GUS.TERYT.Models.Responses.csproj" />
 	</ItemGroup>
 
 </Project>

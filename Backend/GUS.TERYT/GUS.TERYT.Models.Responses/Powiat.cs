@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Wojewodztwo, Powiat
 
-namespace GUS.TERYT.Models;
+namespace GUS.TERYT.Models.Responses;
 
 public sealed class Powiat
 {

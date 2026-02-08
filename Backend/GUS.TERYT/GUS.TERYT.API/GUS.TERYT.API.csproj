@@ -2,14 +2,15 @@
 
 	<Import Project="..\..\Directory.Packages.props" />
 	
-  <PropertyGroup>
-	<TargetFrameworks>net9.0</TargetFrameworks>
-	<ImplicitUsings>enable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-	<WarningsAsErrors>Nullable</WarningsAsErrors>
-    <UserSecretsId>4f87f58d-0013-4ccc-a433-79e608ab08fe</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+		<UserSecretsId>4f87f58d-0013-4ccc-a433-79e608ab08fe</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+	
 	
 	<ItemGroup Label="EntityFrameworkCore">
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
@@ -22,15 +23,18 @@
 		</PackageReference>
 	</ItemGroup>
 
-	
-  <ItemGroup>    
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
-    <PackageReference Include="Swashbuckle.AspNetCore" />
-  </ItemGroup>
+	<ItemGroup Label="Docker">    
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />    
+	</ItemGroup>
 
+	<ItemGroup Label="Scalar">
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Scalar.AspNetCore" />
+		<PackageReference Include="Microsoft.OpenApi" />
+	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\GUS.TERYT.Infrastructure\GUS.TERYT.Infrastructure.csproj" />
+		<ProjectReference Include="..\GUS.TERYT.Infrastructure\GUS.TERYT.Infrastructure.csproj" />
 	</ItemGroup>
 	
 </Project>

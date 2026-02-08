@@ -7,7 +7,10 @@
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
-	
+	<ItemGroup>
+		<ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+	</ItemGroup>
+
 	<ItemGroup>
 	  <Compile Update="Messages.Designer.cs">
 	    <DesignTime>True</DesignTime>

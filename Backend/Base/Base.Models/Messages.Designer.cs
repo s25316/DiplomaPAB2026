@@ -59,5 +59,23 @@ namespace Base.Models {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Liczba objektów na stronie musi być większa od 0..
+        /// </summary>
+        internal static string ErrorMessageItemsPerPage {
+            get {
+                return ResourceManager.GetString("ErrorMessageItemsPerPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Numer strony musi być większy od 0..
+        /// </summary>
+        internal static string ErrorMessagePage {
+            get {
+                return ResourceManager.GetString("ErrorMessagePage", resourceCulture);
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Ulica
 
-namespace GUS.TERYT.Models;
+namespace GUS.TERYT.Models.Responses;
 
 public sealed class Ulica
 {

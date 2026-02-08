@@ -1,6 +1,7 @@
 using GUS.TERYT.API.BackgroundServices;
 using GUS.TERYT.Application;
 using GUS.TERYT.Infrastructure;
+using Scalar.AspNetCore;
 
 namespace GUS.TERYT.API;
 
@@ -15,31 +16,28 @@ public class Program
         builder.Services.AddHostedService<TerytSeedBackgroundService>();
 
         builder.Services.AddControllers();
-        builder.Services.AddSwaggerGen();
-
-        // For Tests
-        builder.Services.AddControllers();
-        /*.AddNewtonsoftJson(options =>
-        {
-            // To ustawienie sprawia, ¿e serializator ignoruje fakt, 
-            // ¿e pola s¹ prywatne i wyci¹ga z nich dane
-            options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
-            {
-                IgnoreSerializableAttribute = true
-            };
-        });*/
+        builder.Services.AddOpenApi();
 
         var app = builder.Build();
 
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.MapOpenApi();
+        app.MapScalarApiReference();
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
-
-        app.MapControllers();
+        try
+        {
+            app.MapControllers();
+        }
+        catch (System.Reflection.ReflectionTypeLoadException ex)
+        {
+            // To wypisze w oknie "Output" (Dêbu) dok³adn¹ nazwê brakuj¹cej biblioteki
+            foreach (var loaderException in ex.LoaderExceptions)
+            {
+                System.Diagnostics.Debug.WriteLine(loaderException?.Message);
+            }
+            throw;
+        }
 
         app.Run();
     }

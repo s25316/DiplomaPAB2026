@@ -1,4 +1,4 @@
-﻿namespace Base.Models;
+﻿namespace Base.Models.Interfaces.Repositories;
 
 public enum Order
 {

@@ -1,6 +1,6 @@
 ﻿// Ignore Spelling: Wojewodztwo, Powiat, Gmina, Rodz
 
-namespace GUS.TERYT.Models;
+namespace GUS.TERYT.Models.Responses;
 
 public sealed class Gmina
 {

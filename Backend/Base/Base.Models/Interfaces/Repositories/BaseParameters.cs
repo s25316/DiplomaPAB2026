@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace Base.Models;
+namespace Base.Models.Interfaces.Repositories;
 
-public abstract class Request<TItemId>
+public abstract class BaseParameters<TItemId>
 {
-    public IEnumerable<TItemId> Ids { get; init; } = [];
+    public IList<TItemId> Ids { get; init; } = [];
 
     public Pagination Pagination { get; init; } = new();
 

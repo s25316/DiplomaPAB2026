@@ -7,6 +7,6 @@ public class ItemsPerPageAttribute : RangeAttribute
 {
     public ItemsPerPageAttribute() : base(1, int.MaxValue)
     {
-        ErrorMessage = "Liczba objektów na stronie musi być większa od 0.";
+        ErrorMessage = Messages.ErrorMessageItemsPerPage;
     }
 }
