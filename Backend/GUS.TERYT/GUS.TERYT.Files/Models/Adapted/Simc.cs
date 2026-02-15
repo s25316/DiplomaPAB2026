@@ -28,7 +28,6 @@ public abstract partial record Teryt
         /// </summary>
         public sealed record Type
         {
-
             public static Type Czesc { get; } = new("00", "część miejscowości");
             public static Type Wies { get; } = new("01", "wieś");
             public static Type Kolonia { get; } = new("02", "kolonia");

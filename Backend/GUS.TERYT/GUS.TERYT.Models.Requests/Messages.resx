@@ -117,28 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorMessageAttributeGminaId" xml:space="preserve">
+  <data name="GminaIdErrorMessage" xml:space="preserve">
     <value>Gmina ma format 00.00.000</value>
   </data>
-  <data name="ErrorMessageAttributeGminaTypeId" xml:space="preserve">
+  <data name="GminaTypeIdErrorMessage" xml:space="preserve">
     <value>GminaType ma format 0</value>
   </data>
-  <data name="ErrorMessageAttributeMiejscowoscId" xml:space="preserve">
+  <data name="MiejscowoscIdErrorMessage" xml:space="preserve">
     <value>Miejscowosc ma format 0000000</value>
   </data>
-  <data name="ErrorMessageAttributeMiejscowoscTypeId" xml:space="preserve">
+  <data name="MiejscowoscTypeIdErrorMessage" xml:space="preserve">
     <value>MiejscowoscTypeId ma format 00</value>
   </data>
-  <data name="ErrorMessageAttributePowiatId" xml:space="preserve">
+  <data name="PowiatIdErrorMessage" xml:space="preserve">
     <value>Powiat ma format 00.00</value>
   </data>
-  <data name="ErrorMessageAttributeUlicaId" xml:space="preserve">
+  <data name="UlicaIdErrorMessage" xml:space="preserve">
     <value>Ulica ma format 00000</value>
   </data>
-  <data name="ErrorMessageAttributeUnknownFormat" xml:space="preserve">
-    <value>Nieznany format</value>
-  </data>
-  <data name="ErrorMessageAttributeWojewodztwoId" xml:space="preserve">
+  <data name="WojewodztwoIdErrorMessage" xml:space="preserve">
     <value>Wojewodztwo ma format 00</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Nieznany typ</value>
+  </data>
+  <data name="WojewodztwoIdDecription" xml:space="preserve">
+    <value>Wojewodztwo ma format 00</value>
+  </data>
+  <data name="UlicaIdDescription" xml:space="preserve">
+    <value>Ulica ma format 00000</value>
+  </data>
+  <data name="PowiatIdDescription" xml:space="preserve">
+    <value>Powiat ma format 00.00</value>
+  </data>
+  <data name="MiejscowoscIdDescription" xml:space="preserve">
+    <value>Miejscowosc ma format 0000000</value>
+  </data>
+  <data name="MiejscowoscTypeIdDescription" xml:space="preserve">
+    <value>MiejscowoscTypeId ma format 00</value>
+  </data>
+  <data name="GminaIdDescription" xml:space="preserve">
+    <value>Gmina ma format 00.00.000</value>
+  </data>
+  <data name="GminaTypeIdDescription" xml:space="preserve">
+    <value>GminaType ma format 0</value>
   </data>
 </root>

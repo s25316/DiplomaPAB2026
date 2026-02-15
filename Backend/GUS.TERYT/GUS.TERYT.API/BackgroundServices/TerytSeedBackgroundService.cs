@@ -146,7 +146,7 @@ public class TerytSeedBackgroundService(IServiceScopeFactory scopeFactory) : Bac
                     i.WojewodztwoCode == g.GminaId.WojewodztwoCode &&
                     i.PowiatCode == g.GminaId.PowiatCode,
                     cancellationToken)
-                    ?? throw new KeyNotFoundException("Not Found Powiat");
+                    ?? throw new Exception("Not Found Powiat");
 
                 var dbItem = new Gmina
                 {

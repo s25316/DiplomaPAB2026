@@ -1,12 +1,31 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<Import Project="..\..\Directory.Packages.props" />
+	
 	<PropertyGroup>
-		<TargetFrameworks>net9.0</TargetFrameworks>
+		<TargetFrameworks>net10.0</TargetFrameworks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup Label="FluentValidation">
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+		<PackageReference Include="AppAny.HotChocolate.FluentValidation" />
+		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" />
+	</ItemGroup>
+
+	<ItemGroup Label="GraphQL">
+		<PackageReference Include="HotChocolate.AspNetCore" />
+		<PackageReference Include="HotChocolate.Validation" />
+		<PackageReference Include="HotChocolate.Data" />
+	</ItemGroup>
 	
 	<ItemGroup>
 	  <Compile Update="Messages.Designer.cs">

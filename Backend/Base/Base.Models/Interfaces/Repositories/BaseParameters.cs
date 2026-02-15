@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using DefaultValueAttribute = System.ComponentModel.DefaultValueAttribute;
 
 namespace Base.Models.Interfaces.Repositories;
 

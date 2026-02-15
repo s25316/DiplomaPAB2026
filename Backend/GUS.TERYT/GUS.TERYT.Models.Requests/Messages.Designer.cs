@@ -63,72 +63,135 @@ namespace GUS.TERYT.Models.Requests {
         /// <summary>
         ///   Looks up a localized string similar to Gmina ma format 00.00.000.
         /// </summary>
-        internal static string ErrorMessageAttributeGminaId {
+        internal static string GminaIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeGminaId", resourceCulture);
+                return ResourceManager.GetString("GminaIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gmina ma format 00.00.000.
+        /// </summary>
+        internal static string GminaIdErrorMessage {
+            get {
+                return ResourceManager.GetString("GminaIdErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to GminaType ma format 0.
         /// </summary>
-        internal static string ErrorMessageAttributeGminaTypeId {
+        internal static string GminaTypeIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeGminaTypeId", resourceCulture);
+                return ResourceManager.GetString("GminaTypeIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GminaType ma format 0.
+        /// </summary>
+        internal static string GminaTypeIdErrorMessage {
+            get {
+                return ResourceManager.GetString("GminaTypeIdErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Miejscowosc ma format 0000000.
         /// </summary>
-        internal static string ErrorMessageAttributeMiejscowoscId {
+        internal static string MiejscowoscIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeMiejscowoscId", resourceCulture);
+                return ResourceManager.GetString("MiejscowoscIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Miejscowosc ma format 0000000.
+        /// </summary>
+        internal static string MiejscowoscIdErrorMessage {
+            get {
+                return ResourceManager.GetString("MiejscowoscIdErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to MiejscowoscTypeId ma format 00.
         /// </summary>
-        internal static string ErrorMessageAttributeMiejscowoscTypeId {
+        internal static string MiejscowoscTypeIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeMiejscowoscTypeId", resourceCulture);
+                return ResourceManager.GetString("MiejscowoscTypeIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MiejscowoscTypeId ma format 00.
+        /// </summary>
+        internal static string MiejscowoscTypeIdErrorMessage {
+            get {
+                return ResourceManager.GetString("MiejscowoscTypeIdErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Powiat ma format 00.00.
         /// </summary>
-        internal static string ErrorMessageAttributePowiatId {
+        internal static string PowiatIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributePowiatId", resourceCulture);
+                return ResourceManager.GetString("PowiatIdDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Powiat ma format 00.00.
+        /// </summary>
+        internal static string PowiatIdErrorMessage {
+            get {
+                return ResourceManager.GetString("PowiatIdErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Ulica ma format 00000.
         /// </summary>
-        internal static string ErrorMessageAttributeUlicaId {
+        internal static string UlicaIdDescription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeUlicaId", resourceCulture);
+                return ResourceManager.GetString("UlicaIdDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nieznany format.
+        ///   Looks up a localized string similar to Ulica ma format 00000.
         /// </summary>
-        internal static string ErrorMessageAttributeUnknownFormat {
+        internal static string UlicaIdErrorMessage {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeUnknownFormat", resourceCulture);
+                return ResourceManager.GetString("UlicaIdErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nieznany typ.
+        /// </summary>
+        internal static string UnknownType {
+            get {
+                return ResourceManager.GetString("UnknownType", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Wojewodztwo ma format 00.
         /// </summary>
-        internal static string ErrorMessageAttributeWojewodztwoId {
+        internal static string WojewodztwoIdDecription {
             get {
-                return ResourceManager.GetString("ErrorMessageAttributeWojewodztwoId", resourceCulture);
+                return ResourceManager.GetString("WojewodztwoIdDecription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wojewodztwo ma format 00.
+        /// </summary>
+        internal static string WojewodztwoIdErrorMessage {
+            get {
+                return ResourceManager.GetString("WojewodztwoIdErrorMessage", resourceCulture);
             }
         }
     }

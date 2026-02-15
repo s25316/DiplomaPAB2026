@@ -10,17 +10,17 @@ namespace GUS.TERYT.Database;
 
 public class TerytDbContext(DbContextOptions options) : DbContext(options)
 {
-    public virtual DbSet<Wojewodztwo> Wojewodztwa { get; set; }
-    public virtual DbSet<Powiat> Powiaty { get; set; }
-    public virtual DbSet<PowiatType> PowiatTypes { get; set; }
-    public virtual DbSet<Gmina> Gminy { get; set; }
-    public virtual DbSet<GminaRodz> GminaRodzaje { get; set; }
+    public virtual DbSet<Wojewodztwo> Wojewodztwa { get; set; } = null!;
+    public virtual DbSet<Powiat> Powiaty { get; set; } = null!;
+    public virtual DbSet<PowiatType> PowiatTypes { get; set; } = null!;
+    public virtual DbSet<Gmina> Gminy { get; set; } = null!;
+    public virtual DbSet<GminaRodz> GminaRodzaje { get; set; } = null!;
 
-    public virtual DbSet<Simc> Miejscowosci { get; set; }
-    public virtual DbSet<SimcType> MiejscowoscRodzaje { get; set; }
+    public virtual DbSet<Simc> Miejscowosci { get; set; } = null!;
+    public virtual DbSet<SimcType> MiejscowoscRodzaje { get; set; } = null!;
 
-    public virtual DbSet<Ulica> Ulicy { get; set; }
-    public virtual DbSet<UlicaType> UlicTypes { get; set; }
+    public virtual DbSet<Ulica> Ulicy { get; set; } = null!;
+    public virtual DbSet<UlicaType> UlicTypes { get; set; } = null!;
 
-    public virtual DbSet<SimcUlica> SimcUlics { get; set; }
+    public virtual DbSet<SimcUlica> SimcUlics { get; set; } = null!;
 }
