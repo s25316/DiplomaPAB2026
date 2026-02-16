@@ -5,23 +5,23 @@ namespace Mapper.Extensions;
 
 public static class MapperExtensions
 {
-    public static IMapper GetMapper(
-        this IServiceProvider provider
-    ) => provider.GetRequiredService<IMapper>();
+    /*
+        public static IMapper GetMapper(
+            this IServiceProvider provider
+        ) => provider.GetRequiredService<IMapper>();
+
+        public static IServiceCollection AddMapper(
+            this IServiceCollection services,
+            IEnumerable<MappingConfiguration> configurations
+        ) => services.AddSingleton<IMapper>(p => new Mapper(configurations));
 
 
-    public static IServiceCollection AddMapper(
-        this IServiceCollection services,
-        IEnumerable<MappingConfiguration> configurations
-    ) => services.AddSingleton<IMapper>(new Mapper(configurations));
+        public static IServiceCollection AddMapper(
+            this IServiceCollection services,
+            Assembly assembly
+        ) => services.AddMapper([assembly]);
 
-
-    public static IServiceCollection AddMapper(
-        this IServiceCollection services,
-        Assembly assembly
-    ) => services.AddMapper([assembly]);
-
-
+    */
     public static IServiceCollection AddMapper(
         this IServiceCollection services
     ) => services.AddMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -31,22 +31,25 @@ public static class MapperExtensions
         this IServiceCollection services,
         IEnumerable<Assembly> assemblies)
     {
-        var classes = assemblies
+        var types = assemblies
             .SelectMany(assembly => assembly.GetTypes())
             .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic)
             .Where(t => t.IsSubclassOf(typeof(MappingConfiguration)))
             .ToList();
 
-        var configurations = new List<MappingConfiguration>();
-        foreach (var type in classes)
+        foreach (var type in types)
         {
-            var instance = (MappingConfiguration?)Activator.CreateInstance(type);
-            if (instance is not null)
-            {
-                configurations.Add(instance);
-            }
+            services.AddSingleton(type);
         }
 
-        return services.AddMapper(configurations);
+        services.AddSingleton<IMapper>(p =>
+        {
+            var configurations = types
+            .Select(t => (MappingConfiguration)p.GetRequiredService(t))
+            .ToList();
+
+            return new Mapper(configurations);
+        });
+        return services;
     }
 }

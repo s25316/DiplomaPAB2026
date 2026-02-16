@@ -9,4 +9,5 @@ public sealed class Miejscowosc
 
     public string MiejscowoscId { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public Type MiejscowoscType { get; set; } = null!;
 }

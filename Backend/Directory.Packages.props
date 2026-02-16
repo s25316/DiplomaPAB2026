@@ -33,6 +33,7 @@
   <ItemGroup Label="FluentValidation">
 	<PackageVersion Include="FluentValidation" Version="12.1.1" />
 	<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+	<!--For GraphQL-->
 	<PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.12.0" />
 	<!--For Controllers-->
 	<PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />

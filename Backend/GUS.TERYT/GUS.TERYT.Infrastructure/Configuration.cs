@@ -1,9 +1,11 @@
 ﻿using Azure.Storage.Blobs;
+using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Database;
 using GUS.TERYT.Database.MsSql;
 using GUS.TERYT.Infrastructure.Configurations;
 using GUS.TERYT.Infrastructure.Interfaces;
 using GUS.TERYT.Infrastructure.InterfacesImplementation;
+using Mapper.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +39,9 @@ public static class Configuration
             return new BlobServiceClient(configuration.BlobConnectionString);
         });
         services.AddTransient<IBlobService, BlobService>();
+
+        services.AddMapper();
+        services.AddTransient<IGminaTypeRepository, GminaTypeRepository>();
 
         return services;
     }

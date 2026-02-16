@@ -43,8 +43,6 @@ public class TerytAdaptedReader<T> : BaseFileReader
         this.mappingFunc = (value) => (T)mapFunc(value);
     }
 
-
-
     public async IAsyncEnumerable<T> ReadAsync()
     {
         await foreach (var line in ReadRawAsync())

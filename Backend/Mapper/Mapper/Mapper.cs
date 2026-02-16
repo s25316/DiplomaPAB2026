@@ -17,24 +17,20 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public TOut Map<TIn, TOut>(TIn item)
+    public TOut Map<TOut>(object? item)
     {
-        if (item is null) throw new ArgumentNullException(nameof(item));
-        var @delegate = GetMappingFunc<TIn, TOut>();
-        return @delegate(this, item);
-    }
+        ArgumentNullException.ThrowIfNull(item);
+        var inputType = item.GetType();
+        var outputType = typeof(TOut);
+        var @delegate = GetDelegate(inputType, outputType);
 
-    public IEnumerable<TOut> Map<TIn, TOut>(IEnumerable<TIn> items)
-    {
-        if (items == null || !items.Any()) return [];
-        return items.Select(Map<TIn, TOut>);
+        return (TOut)@delegate.DynamicInvoke(this, item)!;
     }
-
 
 
     private static FieldInfo GetFieldInfo(string fieldName)
     {
-        return typeof(MappingConfiguration).GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance)
+        return typeof(MappingConfiguration).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)
             ?? throw new ArgumentException($"Not found: {KEY_FIELD}");
     }
 
@@ -57,12 +53,12 @@ public sealed class Mapper : IMapper
         }
     }
 
-    private Func<IMapper, TIn, TOut> GetMappingFunc<TIn, TOut>()
+    public Delegate GetDelegate(Type input, Type output)
     {
-        if (!dictionary.TryGetValue(((typeof(TIn), typeof(TOut))), out var @delegate))
+        if (!dictionary.TryGetValue((input, output), out var @delegate))
         {
-            throw new ArgumentException($"Not Exist mapping for Types: From ({typeof(TIn).FullName}), To ({typeof(TOut).FullName})");
+            throw new InvalidOperationException($"Not Exist mapping for Types: From ({input.FullName}), To ({output.FullName})");
         }
-        return (Func<IMapper, TIn, TOut>)@delegate;
+        return @delegate;
     }
 }

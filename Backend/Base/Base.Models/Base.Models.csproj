@@ -17,8 +17,6 @@
 	<ItemGroup Label="FluentValidation">
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-		<PackageReference Include="AppAny.HotChocolate.FluentValidation" />
-		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" />
 	</ItemGroup>
 
 	<ItemGroup Label="GraphQL">

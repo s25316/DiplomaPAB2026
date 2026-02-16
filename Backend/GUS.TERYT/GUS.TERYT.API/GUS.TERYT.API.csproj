@@ -31,6 +31,10 @@
 		<PackageReference Include="Scalar.AspNetCore" />
 	</ItemGroup>
 
+	<ItemGroup Label="FluentValidation">
+		<PackageReference Include="AppAny.HotChocolate.FluentValidation" />
+		<PackageReference Include="SharpGrip.FluentValidation.AutoValidation.Mvc" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\GUS.TERYT.Infrastructure\GUS.TERYT.Infrastructure.csproj" />
