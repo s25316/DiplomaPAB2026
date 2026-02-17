@@ -2,6 +2,6 @@
 
 public enum Order
 {
+    Descending,
     Ascending,
-    Descending
 }

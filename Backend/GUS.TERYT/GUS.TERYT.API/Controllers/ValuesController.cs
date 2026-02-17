@@ -6,7 +6,7 @@ namespace GUS.TERYT.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ValuesController(IGminaTypeRepository gminaTypeRepository) : ControllerBase
+public class ValuesController(IGminaTypeRepository gminaTypeRepository, IWojewodztwoRepository wojewodztwoRepository) : ControllerBase
 {
     [HttpGet("test")]
     public async Task<IActionResult> GetTercAsync(
@@ -23,6 +23,15 @@ public class ValuesController(IGminaTypeRepository gminaTypeRepository) : Contro
     {
         var dic = await gminaTypeRepository.GetAsync(cancellationToken);
         return Ok(dic);
+    }
+
+    [HttpGet("test3")]
+    public async Task<IActionResult> GetTercAsync3(
+        [FromQuery] WojewodztwoParameters parameters,
+        CancellationToken cancellationToken)
+    {
+        var response = await wojewodztwoRepository.GetAsync(parameters, cancellationToken);
+        return Ok(response);
     }
 
 }

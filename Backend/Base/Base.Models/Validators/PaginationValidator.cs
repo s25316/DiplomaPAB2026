@@ -2,7 +2,7 @@
 using Base.Models.Interfaces.Repositories;
 using FluentValidation;
 
-namespace Base.Models.ValidationAttributes;
+namespace Base.Models.Validators;
 
 public class PaginationValidator : AbstractValidator<Pagination>
 {

@@ -1,6 +1,7 @@
 ﻿// Ignore Spelling: Powiat
+using Base.Models.Interfaces.Repositories;
 using GUS.TERYT.Models.Responses;
 
 namespace GUS.TERYT.Application.Repositories;
 
-public interface IPowiatTypeRepository : IDictionary<int, Powiat.Type>;
+public interface IPowiatTypeRepository : IDictionaryRepository<int, Powiat.Type>;

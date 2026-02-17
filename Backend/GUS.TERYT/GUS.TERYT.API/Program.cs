@@ -1,5 +1,5 @@
 using AppAny.HotChocolate.FluentValidation;
-using Base.Models.ValidationAttributes;
+using Base.Models.Validators;
 using FluentValidation;
 using GUS.TERYT.API.BackgroundServices;
 using GUS.TERYT.Application;

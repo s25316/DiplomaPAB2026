@@ -5,6 +5,7 @@ using GUS.TERYT.Database.MsSql;
 using GUS.TERYT.Infrastructure.Configurations;
 using GUS.TERYT.Infrastructure.Interfaces;
 using GUS.TERYT.Infrastructure.InterfacesImplementation;
+using GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 using Mapper.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,7 +42,11 @@ public static class Configuration
         services.AddTransient<IBlobService, BlobService>();
 
         services.AddMapper();
+
         services.AddTransient<IGminaTypeRepository, GminaTypeRepository>();
+        services.AddTransient<IPowiatTypeRepository, PowiatTypeRepository>();
+
+        services.AddTransient<IWojewodztwoRepository, WojewodztwoRepository>();
 
         return services;
     }
