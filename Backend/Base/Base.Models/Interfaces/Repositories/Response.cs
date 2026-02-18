@@ -6,16 +6,10 @@ public static class Response
         IEnumerable<TItem> items,
         int totalCount,
         Pagination pagination
-    ) => new(items, totalCount, pagination);
+    ) => new(items, totalCount, pagination.Page, pagination.ItemsPerPage);
 }
 
 public abstract record Response<TItem>
 {
-    public record ManyItems(IEnumerable<TItem> Items, int TotalCount, Pagination Pagination) : Response<TItem>
-    {
-        public IEnumerable<TItem> Items { get; } = Items;
-        public int TotalCount { get; } = TotalCount;
-        public int Page { get; } = Pagination.Page;
-        public int ItemsPerPage { get; } = Pagination.ItemsPerPage;
-    }
+    public record ManyItems(IEnumerable<TItem> Items, int TotalCount, int Page, int ItemsPerPage) : Response<TItem>;
 }

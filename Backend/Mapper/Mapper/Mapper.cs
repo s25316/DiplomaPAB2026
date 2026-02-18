@@ -29,7 +29,7 @@ public sealed class Mapper : IMapper
         return (TOut)@delegate.DynamicInvoke(this, item)!;
     }
 
-    public IEnumerable<TOut> Map<TOut>(IEnumerable<object> items)
+    public IEnumerable<TOut> MapEnumerable<TOut>(IEnumerable<object> items)
     {
         if (!items.Any())
         {
@@ -41,17 +41,6 @@ public sealed class Mapper : IMapper
 
         return items.Select(item => (TOut)@delegate.DynamicInvoke(this, item)!);
     }
-    public IReadOnlyCollection<TOut> Map<TOut>(IReadOnlyCollection<object> items) => [.. Map<TOut>(items.AsEnumerable())];
-
-
-    public List<TOut> Map<TOut>(List<object> items) => [.. Map<TOut>(items.AsEnumerable())];
-    public IList<TOut> Map<TOut>(IList<object> items) => [.. Map<TOut>(items.AsEnumerable())];
-    public IReadOnlyList<TOut> Map<TOut>(IReadOnlyList<object> items) => [.. Map<TOut>(items.AsEnumerable())];
-
-    public HashSet<TOut> Map<TOut>(HashSet<object> items) => Map<TOut>(items.AsEnumerable()).ToHashSet();
-    public ISet<TOut> Map<TOut>(ISet<object> items) => Map<TOut>(items.AsEnumerable()).ToHashSet();
-    public IReadOnlySet<TOut> Map<TOut>(IReadOnlySet<object> items) => Map<TOut>(items.AsEnumerable()).ToHashSet();
-
 
     private static FieldInfo GetFieldInfo(string fieldName)
     {
@@ -78,7 +67,7 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public Delegate GetDelegate(Type input, Type output)
+    private Delegate GetDelegate(Type input, Type output)
     {
         if (!dictionary.TryGetValue((input, output), out var @delegate))
         {
@@ -86,5 +75,4 @@ public sealed class Mapper : IMapper
         }
         return @delegate;
     }
-
 }

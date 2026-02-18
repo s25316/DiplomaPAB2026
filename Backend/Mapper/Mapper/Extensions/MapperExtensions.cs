@@ -5,23 +5,6 @@ namespace Mapper.Extensions;
 
 public static class MapperExtensions
 {
-    /*
-        public static IMapper GetMapper(
-            this IServiceProvider provider
-        ) => provider.GetRequiredService<IMapper>();
-
-        public static IServiceCollection AddMapper(
-            this IServiceCollection services,
-            IEnumerable<MappingConfiguration> configurations
-        ) => services.AddSingleton<IMapper>(p => new Mapper(configurations));
-
-
-        public static IServiceCollection AddMapper(
-            this IServiceCollection services,
-            Assembly assembly
-        ) => services.AddMapper([assembly]);
-
-    */
     public static IServiceCollection AddMapper(
         this IServiceCollection services
     ) => services.AddMapper(AppDomain.CurrentDomain.GetAssemblies());

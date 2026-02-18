@@ -131,4 +131,3 @@ public abstract partial record Teryt
         }
     }
 }
-

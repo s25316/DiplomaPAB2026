@@ -47,6 +47,8 @@ public static class Configuration
         services.AddTransient<IPowiatTypeRepository, PowiatTypeRepository>();
 
         services.AddTransient<IWojewodztwoRepository, WojewodztwoRepository>();
+        services.AddTransient<IPowiatRepository, PowiatRepository>();
+        services.AddTransient<IGminaRepository, GminaRepository>();
 
         return services;
     }
