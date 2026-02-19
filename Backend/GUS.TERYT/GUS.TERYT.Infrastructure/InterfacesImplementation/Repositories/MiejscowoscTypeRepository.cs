@@ -11,7 +11,9 @@ public class MiejscowoscTypeRepository(TerytDbContext context, IMapper mapper) :
 {
     public async Task<IDictionary<string, Miejscowosc.Type>> GetAsync(CancellationToken cancellationToken = default)
     {
-        var dbItems = await context.MiejscowoscRodzaje.ToListAsync(cancellationToken);
+        var dbItems = await context.MiejscowoscRodzaje
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
         return dbItems.ToDictionary(k => k.TypeCode, mapper.Map<Miejscowosc.Type>);
     }
 }

@@ -1,9 +1,12 @@
 ﻿// Ignore Spelling: Wojewodztwo, Powiat
 
+using HotChocolate;
+
 namespace GUS.TERYT.Models.Responses;
 
 public sealed class Powiat
 {
+    [GraphQLName("PowiatType")]
     public sealed record Type(int Code, string Name);
 
 

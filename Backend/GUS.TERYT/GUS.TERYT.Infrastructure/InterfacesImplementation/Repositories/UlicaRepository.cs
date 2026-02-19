@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: Gmina, Powiat, Wojewodztwo
+﻿// Ignore Spelling: Ulica
 using Base.Models.Interfaces.Repositories;
 using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Database;
@@ -10,14 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 
-public class GminaRepository(TerytDbContext context, IMapper mapper) : IGminaRepository
+public class UlicaRepository(TerytDbContext context, IMapper mapper) : IUlicaRepository
 {
-    public async Task<Response<Gmina>.ManyItems> GetAsync(GminaParameters parameters, CancellationToken cancellationToken = default)
+    public async Task<Response<Ulica>.ManyItems> GetAsync(UlicaParameters parameters, CancellationToken cancellationToken = default)
     {
-        var builder = new GminaQueryBuilder(context)
+        var builder = new UlicaQueryBuilder(context)
             .WithSearchText(parameters.SearchText)
-            .WithWojewodztwoIds(parameters.WojewodztwoIds)
-            .WithPowiatIds(parameters.PowiatIds)
+            .WithMiejscowoscIds(parameters.MiejscowoscIds)
             .WithIds(parameters.Ids)
             .WithTypeIds(parameters.TypeIds);
 
@@ -28,7 +27,7 @@ public class GminaRepository(TerytDbContext context, IMapper mapper) : IGminaRep
             .WithPagination(parameters.Pagination, parameters.Order, parameters.OrderBy)
             .Build();
         var dbItems = await query.ToListAsync(cancellationToken);
-        var items = mapper.MapEnumerable<Gmina>(dbItems);
+        var items = mapper.MapEnumerable<Ulica>(dbItems);
 
         return Response.Prepare(items, totalCount, parameters.Pagination);
     }

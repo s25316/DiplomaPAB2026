@@ -31,7 +31,7 @@ public class PowiatQueryBuilder(TerytDbContext context) : BaseQueryBuilder<Powia
         if (items.Any())
         {
             var ids = items.Select(i => i.ToString());
-            With(query => query.Where(i => ids.Any(id => id == i.WojewodztwoCode)));
+            With(query => query.Where(i => ids.Contains(i.WojewodztwoCode)));
         }
         return this;
     }

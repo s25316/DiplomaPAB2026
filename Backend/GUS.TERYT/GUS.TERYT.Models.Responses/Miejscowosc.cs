@@ -1,9 +1,12 @@
 ﻿// Ignore Spelling: Miejscowosc
 
+using HotChocolate;
+
 namespace GUS.TERYT.Models.Responses;
 
 public sealed class Miejscowosc
 {
+    [GraphQLName("MiejscowoscType")]
     public sealed record Type(string Code, string Name);
 
 

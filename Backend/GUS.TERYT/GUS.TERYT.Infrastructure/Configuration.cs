@@ -46,11 +46,13 @@ public static class Configuration
         services.AddTransient<IGminaTypeRepository, GminaTypeRepository>();
         services.AddTransient<IPowiatTypeRepository, PowiatTypeRepository>();
         services.AddTransient<IMiejscowoscTypeRepository, MiejscowoscTypeRepository>();
+        services.AddTransient<IUlicaTypeRepository, UlicaTypeRepository>();
 
         services.AddTransient<IWojewodztwoRepository, WojewodztwoRepository>();
         services.AddTransient<IPowiatRepository, PowiatRepository>();
         services.AddTransient<IGminaRepository, GminaRepository>();
         services.AddTransient<IMiejscowoscRepository, MiejscowoscRepository>();
+        services.AddTransient<IUlicaRepository, UlicaRepository>();
 
         return services;
     }

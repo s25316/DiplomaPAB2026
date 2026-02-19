@@ -2,9 +2,14 @@ using AppAny.HotChocolate.FluentValidation;
 using Base.Models.Validators;
 using FluentValidation;
 using GUS.TERYT.API.BackgroundServices;
+using GUS.TERYT.API.GraphQL;
 using GUS.TERYT.Application;
 using GUS.TERYT.Infrastructure;
-using GUS.TERYT.Models.Requests.Parameters;
+using GUS.TERYT.Models.Requests.Validators;
+using GUS.TERYT.Models.Requests.ValueObjects.Gminy;
+using GUS.TERYT.Models.Requests.ValueObjects.Miejscowosci;
+using GUS.TERYT.Models.Requests.ValueObjects.Powiaty;
+using GUS.TERYT.Models.Requests.ValueObjects.Ulicy;
 using GUS.TERYT.Models.Requests.ValueObjects.Wojewodztwa;
 using HotChocolate;
 using Scalar.AspNetCore;
@@ -20,6 +25,10 @@ public static class Program
 
         builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
         builder.Services.AddValidatorsFromAssemblyContaining<WojewodztwoParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<PowiatParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<GminaParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<MiejscowoscParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<UlicaParametersValidator>();
 
         builder.Services.AddFluentValidationAutoValidation();
         builder.Services.AddApplicationConfiguration();
@@ -34,8 +43,14 @@ public static class Program
             .AddGraphQLServer()
             .AddFluentValidation()
             .AddQueryType<Query>()
-            .BindRuntimeType<WojewodztwoId, WojewodztwoIdScalar>();
-
+            .AddTypeExtension<Dictionaries>()
+            .BindRuntimeType<WojewodztwoId, WojewodztwoIdScalar>()
+            .BindRuntimeType<PowiatId, PowiatIdScalar>()
+            .BindRuntimeType<GminaId, GminaIdScalar>()
+            .BindRuntimeType<GminaTypeId, GminaTypeIdScalar>()
+            .BindRuntimeType<MiejscowoscId, MiejscowoscIdScalar>()
+            .BindRuntimeType<MiejscowoscTypeId, MiejscowoscTypeIdScalar>()
+            .BindRuntimeType<UlicaId, UlicaIdScalar>();
 
         var app = builder.Build();
         app.UseExceptionHandler();
@@ -49,22 +64,5 @@ public static class Program
         app.MapControllers();
 
         app.Run();
-    }
-}
-
-public class Query
-{
-    [GraphQLName("getParameters")]
-    public WojewodztwoParameters GetParameters([UseFluentValidation] WojewodztwoParameters parameters) => parameters;
-}
-
-
-public class WojewodztwoParametersValidator : AbstractValidator<WojewodztwoParameters>
-{
-    public WojewodztwoParametersValidator(PaginationValidator p)
-    {
-        RuleFor(x => x.Pagination)
-            .NotNull()
-            .SetValidator(p);
     }
 }

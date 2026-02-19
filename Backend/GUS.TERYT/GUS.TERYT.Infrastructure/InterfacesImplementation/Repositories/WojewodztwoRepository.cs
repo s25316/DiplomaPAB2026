@@ -12,7 +12,7 @@ namespace GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 
 public class WojewodztwoRepository(TerytDbContext context, IMapper mapper) : IWojewodztwoRepository
 {
-    public async Task<Response<Wojewodztwo>> GetAsync(
+    public async Task<Response<Wojewodztwo>.ManyItems> GetAsync(
         WojewodztwoParameters parameters,
         CancellationToken cancellationToken = default)
     {

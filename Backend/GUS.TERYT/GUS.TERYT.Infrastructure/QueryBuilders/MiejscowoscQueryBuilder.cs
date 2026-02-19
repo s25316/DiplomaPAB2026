@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: Miejscowosc, Wojewodztwo, Gmina
+﻿// Ignore Spelling: Miejscowosc, Wojewodztwo, Gmina, Powiat, Ulica
 using Base.Models.Extensions;
 using Base.Models.Interfaces.QueryBuilders;
 using Base.Models.Interfaces.Repositories;
@@ -8,6 +8,7 @@ using GUS.TERYT.Models.Requests.Parameters;
 using GUS.TERYT.Models.Requests.ValueObjects.Gminy;
 using GUS.TERYT.Models.Requests.ValueObjects.Miejscowosci;
 using GUS.TERYT.Models.Requests.ValueObjects.Powiaty;
+using GUS.TERYT.Models.Requests.ValueObjects.Ulicy;
 using GUS.TERYT.Models.Requests.ValueObjects.Wojewodztwa;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,7 @@ public class MiejscowoscQueryBuilder(TerytDbContext context) : BaseQueryBuilder<
     .Miejscowosci
     .AsNoTracking()
     .Include(i => i.Type)
+    .Include(i => i.SimcUlicy)
     .Include(i => i.Gmina)
     .ThenInclude(i => i.Powiat))
 {
@@ -35,7 +37,7 @@ public class MiejscowoscQueryBuilder(TerytDbContext context) : BaseQueryBuilder<
         if (items.Any())
         {
             var ids = items.Select(i => i.ToString());
-            With(query => query.Where(i => ids.Any(id => id == i.Gmina.Powiat.WojewodztwoCode)));
+            With(query => query.Where(i => ids.Contains(i.Gmina.Powiat.WojewodztwoCode)));
         }
         return this;
     }
@@ -61,6 +63,16 @@ public class MiejscowoscQueryBuilder(TerytDbContext context) : BaseQueryBuilder<
         return this;
     }
 
+    public MiejscowoscQueryBuilder WithUlicaIds(IEnumerable<UlicaId> items)
+    {
+        if (items.Any())
+        {
+            var ids = items.Select(i => i.ToString());
+            With(query => query.Where(i => i.SimcUlicy.Any(si => ids.Contains(si.UlicaCode))));
+        }
+        return this;
+    }
+
     public MiejscowoscQueryBuilder WithIds(IEnumerable<MiejscowoscId> items)
     {
         if (items.Any())
@@ -80,7 +92,6 @@ public class MiejscowoscQueryBuilder(TerytDbContext context) : BaseQueryBuilder<
         }
         return this;
     }
-
 
     public MiejscowoscQueryBuilder WithPagination(Pagination pagination, Order order, MiejscowoscOrderBy orderBy)
     {

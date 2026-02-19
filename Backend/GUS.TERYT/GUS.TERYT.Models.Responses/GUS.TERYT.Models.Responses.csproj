@@ -7,4 +7,8 @@
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+	</ItemGroup>
+
 </Project>

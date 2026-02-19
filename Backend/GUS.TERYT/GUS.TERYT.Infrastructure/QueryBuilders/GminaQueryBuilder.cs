@@ -33,7 +33,7 @@ public class GminaQueryBuilder(TerytDbContext context) : BaseQueryBuilder<Gmina>
         if (items.Any())
         {
             var ids = items.Select(i => i.ToString());
-            With(query => query.Where(i => ids.Any(id => id == i.Powiat.WojewodztwoCode)));
+            With(query => query.Where(i => ids.Contains(i.Powiat.WojewodztwoCode)));
         }
         return this;
     }

@@ -1,9 +1,12 @@
 ﻿// Ignore Spelling: Wojewodztwo, Powiat, Gmina, Rodz
 
+using HotChocolate;
+
 namespace GUS.TERYT.Models.Responses;
 
 public sealed class Gmina
 {
+    [GraphQLName("GminaType")]
     public sealed record Type(string Code, string Name);
 
 

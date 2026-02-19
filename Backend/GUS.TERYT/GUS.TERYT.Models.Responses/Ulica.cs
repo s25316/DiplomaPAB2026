@@ -1,9 +1,12 @@
 ﻿// Ignore Spelling: Ulica
 
+using HotChocolate;
+
 namespace GUS.TERYT.Models.Responses;
 
 public sealed class Ulica
 {
+    [GraphQLName("UlicaType")]
     public sealed record Type(int Code, string Name);
 
 

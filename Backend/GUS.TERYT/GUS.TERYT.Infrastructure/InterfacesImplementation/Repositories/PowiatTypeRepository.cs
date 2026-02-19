@@ -11,7 +11,9 @@ public class PowiatTypeRepository(TerytDbContext context, IMapper mapper) : IPow
 {
     public async Task<IDictionary<int, Powiat.Type>> GetAsync(CancellationToken cancellationToken = default)
     {
-        var dbItems = await context.PowiatTypes.ToListAsync(cancellationToken);
+        var dbItems = await context.PowiatTypes
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
         return dbItems.ToDictionary(k => k.TypeCode, mapper.Map<Powiat.Type>);
     }
 }

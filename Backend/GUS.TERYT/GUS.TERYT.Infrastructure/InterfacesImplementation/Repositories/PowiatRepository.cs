@@ -12,7 +12,7 @@ namespace GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 
 public class PowiatRepository(TerytDbContext context, IMapper mapper) : IPowiatRepository
 {
-    public async Task<Response<Powiat>> GetAsync(PowiatParameters parameters, CancellationToken cancellationToken = default)
+    public async Task<Response<Powiat>.ManyItems> GetAsync(PowiatParameters parameters, CancellationToken cancellationToken = default)
     {
         var builder = new PowiatQueryBuilder(context)
             .WithSearchText(parameters.SearchText)

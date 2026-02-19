@@ -28,7 +28,7 @@ public sealed record UlicaId
         }
 
         var trimmedValue = value.Trim();
-        if (!Regexes.Wojewodztwo.IsMatch(trimmedValue))
+        if (!Regexes.Ulica.IsMatch(trimmedValue))
         {
             result = null;
             return false;

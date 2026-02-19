@@ -12,13 +12,14 @@ namespace GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 
 public class MiejscowoscRepository(TerytDbContext context, IMapper mapper) : IMiejscowoscRepository
 {
-    public async Task<Response<Miejscowosc>> GetAsync(MiejscowoscParameters parameters, CancellationToken cancellationToken = default)
+    public async Task<Response<Miejscowosc>.ManyItems> GetAsync(MiejscowoscParameters parameters, CancellationToken cancellationToken = default)
     {
         var builder = new MiejscowoscQueryBuilder(context)
             .WithSearchText(parameters.SearchText)
             .WithWojewodztwoIds(parameters.WojewodztwoIds)
             .WithPowiatIds(parameters.PowiatIds)
             .WithGminaIds(parameters.GminaIds)
+            .WithUlicaIds(parameters.UlicaIds)
             .WithIds(parameters.Ids)
             .WithTypeIds(parameters.TypeIds);
 
