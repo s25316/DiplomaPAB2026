@@ -1,5 +1,4 @@
 ﻿// Ignore Spelling: Wojewodztwo
-
 namespace GUS.TERYT.Models.Responses;
 
 public sealed class Wojewodztwo

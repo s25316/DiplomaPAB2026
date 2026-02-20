@@ -162,4 +162,7 @@
   <data name="GminaTypeIdDescription" xml:space="preserve">
     <value>GminaType ma format 0</value>
   </data>
+  <data name="MiejscowoscUlicaIdsDescription" xml:space="preserve">
+    <value>Połączeie ma format 0000000.00000 lub 0000000</value>
+  </data>
 </root>

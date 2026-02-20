@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUS.REGON", "GUS.REGON\GUS.REGON.csproj", "{16EB223C-1E40-40BC-BE1D-983C223D8548}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUS.REGON.API", "GUS.REGON.API\GUS.REGON.API.csproj", "{AEB341CE-0734-456F-97A3-9A61F3C389DA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16EB223C-1E40-40BC-BE1D-983C223D8548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16EB223C-1E40-40BC-BE1D-983C223D8548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16EB223C-1E40-40BC-BE1D-983C223D8548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16EB223C-1E40-40BC-BE1D-983C223D8548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEB341CE-0734-456F-97A3-9A61F3C389DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEB341CE-0734-456F-97A3-9A61F3C389DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEB341CE-0734-456F-97A3-9A61F3C389DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEB341CE-0734-456F-97A3-9A61F3C389DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83D45A36-F9F0-4555-A7D4-CD9321055D7E}
+	EndGlobalSection
+EndGlobal

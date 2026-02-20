@@ -1,5 +1,4 @@
 ﻿// Ignore Spelling: Wojewodztwo, Powiat
-
 using HotChocolate;
 
 namespace GUS.TERYT.Models.Responses;

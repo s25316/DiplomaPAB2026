@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: Miejscowosc
+﻿// Ignore Spelling: Wojewodztwo, Powiat, Rodz Gmina Miejscowosc
 
 using HotChocolate;
 
@@ -10,7 +10,11 @@ public sealed class Miejscowosc
     public sealed record Type(string Code, string Name);
 
 
-    public string MiejscowoscId { get; set; } = null!;
-    public string Name { get; set; } = null!;
-    public Type MiejscowoscType { get; set; } = null!;
+    public string WojewodztwoCode { get; init; } = null!;
+    public string PowiatCode { get; init; } = null!;
+    public string GminaCode { get; init; } = null!;
+    public string GminaRodzCode { get; init; } = null!;
+    public string MiejscowoscId { get; init; } = null!;
+    public string Name { get; init; } = null!;
+    public Type MiejscowoscType { get; init; } = null!;
 }

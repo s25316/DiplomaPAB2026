@@ -53,6 +53,10 @@ public class ResponseMappingConfiguration : MappingConfiguration
         AddConfiguration<DatabaseMiejscowoscType, ResponseMiejscowoscType>(db => new(db.TypeCode, db.Name));
         AddConfiguration<DatabaseMiejscowosc, ResponseMiejscowosc>((m, db) => new ResponseMiejscowosc
         {
+            WojewodztwoCode = db.Gmina.Powiat.WojewodztwoCode,
+            PowiatCode = db.Gmina.Powiat.PowiatCode,
+            GminaCode = db.Gmina.GminaCode,
+            GminaRodzCode = db.Gmina.GminaRodzCode,
             MiejscowoscId = db.MiejscowoscCode,
             Name = db.Name,
             MiejscowoscType = m.Map<ResponseMiejscowoscType>(db.Type),
@@ -61,7 +65,7 @@ public class ResponseMappingConfiguration : MappingConfiguration
         AddConfiguration<DatabaseUlicaType, ResponseUlicaType>(db => new(db.TypeCode, db.Name));
         AddConfiguration<DatabaseUlica, ResponseUlica>((m, db) => new ResponseUlica
         {
-            UlicaCode = db.UlicaCode,
+            UlicaId = db.UlicaCode,
             Name = db.Name,
             UlicaType = db.Type is null
                 ? null

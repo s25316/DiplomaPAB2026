@@ -1,8 +1,9 @@
-﻿// Ignore spelling: api, Teryt, wojewodztwa, Powiaty, Gminy, Miejscowosci, Ulicy
+﻿// Ignore spelling: wojewodztwa, Powiaty, Gminy, Miejscowosci, Ulicy
 using AppAny.HotChocolate.FluentValidation;
 using Base.Models.Interfaces.Repositories;
 using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Models.Requests.Parameters;
+using GUS.TERYT.Models.Requests.ValueObjects;
 using GUS.TERYT.Models.Responses;
 using HotChocolate;
 
@@ -48,4 +49,11 @@ public class Query
         [UseFluentValidation] UlicaParameters parameters,
         CancellationToken cancellationToken
     ) => await repository.GetAsync(parameters, cancellationToken);
+
+
+    [GraphQLName("getConnection")]
+    public async Task<Response<Ulica>.ManyItems> GetUlicyAsync(
+        [UseFluentValidation] IList<MiejscowoscUlicaKeys> keys,
+        CancellationToken cancellationToken
+    ) => /// TODO
 }

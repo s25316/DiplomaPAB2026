@@ -3,9 +3,12 @@ using Base.Models.Validators;
 using FluentValidation;
 using GUS.TERYT.API.BackgroundServices;
 using GUS.TERYT.API.GraphQL;
+using GUS.TERYT.API.GraphQL.BatchDataLoaders;
+using GUS.TERYT.API.GraphQL.ObjectTypes;
 using GUS.TERYT.Application;
 using GUS.TERYT.Infrastructure;
 using GUS.TERYT.Models.Requests.Validators;
+using GUS.TERYT.Models.Requests.ValueObjects.Connections;
 using GUS.TERYT.Models.Requests.ValueObjects.Gminy;
 using GUS.TERYT.Models.Requests.ValueObjects.Miejscowosci;
 using GUS.TERYT.Models.Requests.ValueObjects.Powiaty;
@@ -23,14 +26,6 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<WojewodztwoParametersValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<PowiatParametersValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<GminaParametersValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<MiejscowoscParametersValidator>();
-        builder.Services.AddValidatorsFromAssemblyContaining<UlicaParametersValidator>();
-
-        builder.Services.AddFluentValidationAutoValidation();
         builder.Services.AddApplicationConfiguration();
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);
         builder.Services.AddHostedService<TerytSeedBackgroundService>();
@@ -38,6 +33,15 @@ public static class Program
         builder.Services.AddControllers();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
+
+        builder.Services.AddFluentValidationAutoValidation();
+        builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<WojewodztwoParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<PowiatParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<GminaParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<MiejscowoscParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<UlicaParametersValidator>();
+        builder.Services.AddValidatorsFromAssemblyContaining<ConnectionParametersValidator>();
 
         builder.Services
             .AddGraphQLServer()
@@ -50,7 +54,15 @@ public static class Program
             .BindRuntimeType<GminaTypeId, GminaTypeIdScalar>()
             .BindRuntimeType<MiejscowoscId, MiejscowoscIdScalar>()
             .BindRuntimeType<MiejscowoscTypeId, MiejscowoscTypeIdScalar>()
-            .BindRuntimeType<UlicaId, UlicaIdScalar>();
+            .BindRuntimeType<UlicaId, UlicaIdScalar>()
+            .BindRuntimeType<UlicaId, UlicaIdScalar>()
+            .BindRuntimeType<Connection, ConnectionScalar>()
+            .AddType<PowiatObjectType>()
+            .AddType<GminaObjectType>()
+            .AddType<MiejscowoscObjectType>()
+            .AddDataLoader<WojewodztwoBatchDataLoader>()
+            .AddDataLoader<PowiatBatchDataLoader>()
+            .AddDataLoader<GminaBatchDataLoader>();
 
         var app = builder.Build();
         app.UseExceptionHandler();

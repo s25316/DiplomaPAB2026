@@ -1,4 +1,4 @@
-﻿// Ignore spelling: api, Teryt, wojewodztwa, Powiaty, Gminy, Miejscowosci, Ulicy
+﻿// Ignore spelling: wojewodztwa, Powiaty, Gminy, Miejscowosci, Ulicy
 using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Models.Responses;
 using HotChocolate;

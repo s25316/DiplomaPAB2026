@@ -23,6 +23,9 @@ public sealed record GminaId
     }
 
 
+    public static implicit operator string(GminaId value) => value.ToString();
+    public static implicit operator GminaId(string value) => Parse(value);
+
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out GminaId? result)
     {
         if (string.IsNullOrWhiteSpace(value))

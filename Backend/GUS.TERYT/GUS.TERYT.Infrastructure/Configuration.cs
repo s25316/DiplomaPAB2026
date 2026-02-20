@@ -53,6 +53,7 @@ public static class Configuration
         services.AddTransient<IGminaRepository, GminaRepository>();
         services.AddTransient<IMiejscowoscRepository, MiejscowoscRepository>();
         services.AddTransient<IUlicaRepository, UlicaRepository>();
+        services.AddTransient<IConnectionRepository, ConnectionRepository>();
 
         return services;
     }

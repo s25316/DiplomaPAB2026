@@ -7,6 +7,10 @@
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Include="ValueObjects\MiejscowoscUlicaKeys.cs" />
+	</ItemGroup>
+
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />

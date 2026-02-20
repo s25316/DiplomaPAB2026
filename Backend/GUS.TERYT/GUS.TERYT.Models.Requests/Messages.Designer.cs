@@ -133,6 +133,15 @@ namespace GUS.TERYT.Models.Requests {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Połączeie ma format 0000000.00000 lub 0000000.
+        /// </summary>
+        internal static string MiejscowoscUlicaIdsDescription {
+            get {
+                return ResourceManager.GetString("MiejscowoscUlicaIdsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Powiat ma format 00.00.
         /// </summary>
         internal static string PowiatIdDescription {

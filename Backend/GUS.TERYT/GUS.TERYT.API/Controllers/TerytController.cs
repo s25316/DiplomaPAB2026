@@ -113,4 +113,16 @@ public class TerytController : ControllerBase
         var response = await repository.GetAsync(cancellationToken);
         return Ok(response);
     }
+
+
+    [HttpGet("connections")]
+    [ProducesResponseType(typeof(IDictionary<int, Ulica.Type>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetConnectionsAsync(
+        [FromServices] IConnectionRepository repository,
+        [FromQuery] ConnectionParameters parameters,
+        CancellationToken cancellationToken)
+    {
+        var response = await repository.GetAsync(parameters, cancellationToken);
+        return Ok(response);
+    }
 }

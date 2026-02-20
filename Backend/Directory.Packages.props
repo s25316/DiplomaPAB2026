@@ -23,7 +23,7 @@
     <PackageVersion Include="Scalar.AspNetCore" Version="2.12.40" />
   </ItemGroup>
   <ItemGroup Label="Containerization">
-    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
   </ItemGroup>
   <ItemGroup Label="GraphQL">
     <PackageVersion Include="HotChocolate.AspNetCore" Version="15.1.12" />
@@ -31,13 +31,13 @@
     <PackageVersion Include="HotChocolate.Data" Version="15.1.12" />
   </ItemGroup>
   <ItemGroup Label="FluentValidation">
-	<PackageVersion Include="FluentValidation" Version="12.1.1" />
-	<PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-	<!--For GraphQL-->
-	<PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.12.0" />
-	<!--For Controllers-->
-	<PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />
-	<!--For MinimalApi-->
-	<PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" Version="2.0.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <!--For GraphQL-->
+    <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.12.0" />
+    <!--For Controllers-->
+    <PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />
+    <!--For MinimalApi-->
+    <PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" Version="2.0.0" />
   </ItemGroup>
 </Project>
