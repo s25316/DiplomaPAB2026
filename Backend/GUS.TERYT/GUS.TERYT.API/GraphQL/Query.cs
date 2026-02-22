@@ -3,7 +3,6 @@ using AppAny.HotChocolate.FluentValidation;
 using Base.Models.Interfaces.Repositories;
 using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Models.Requests.Parameters;
-using GUS.TERYT.Models.Requests.ValueObjects;
 using GUS.TERYT.Models.Responses;
 using HotChocolate;
 
@@ -52,8 +51,9 @@ public class Query
 
 
     [GraphQLName("getConnection")]
-    public async Task<Response<Ulica>.ManyItems> GetUlicyAsync(
-        [UseFluentValidation] IList<MiejscowoscUlicaKeys> keys,
+    public async Task<Response<Connection>.ManyItems> GetUlicyAsync(
+        [Service] IConnectionRepository repository,
+        [UseFluentValidation] ConnectionParameters parameters,
         CancellationToken cancellationToken
-    ) => /// TODO
+    ) => await repository.GetAsync(parameters, cancellationToken);
 }

@@ -5,7 +5,7 @@ using GUS.TERYT.Models.Requests.Parameters;
 
 namespace GUS.TERYT.Models.Requests.Validators;
 
-public class ConnectionParametersValidator : AbstractValidator<GminaParameters>
+public class ConnectionParametersValidator : AbstractValidator<ConnectionParameters>
 {
     public ConnectionParametersValidator(PaginationValidator p)
     {

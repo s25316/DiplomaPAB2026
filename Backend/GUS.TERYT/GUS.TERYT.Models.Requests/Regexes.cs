@@ -9,10 +9,10 @@ public static class Regexes
     private const string REGEX_POWIAT = @"^[0-9]{2}.[0-9]{2}$";
     private const string REGEX_GMINA = @"^[0-9]{2}.[0-9]{2}.[0-9]{3}$";
     private const string REGEX_GMINA_TYPE = @"^[0-9]{1}$";
-    private const string REGEX_MIEJSCOWOSC = @"[0-9]{7}";
-    private const string REGEX_MIEJSCOWOSC_TYPE = @"[0-9]{2}";
-    private const string REGEX_ULICA = @"[0-9]{5}";
-    private const string REGEX_MIEJSCOWOSC_ULICA = @"[0-9]{7}.[0-9]{5}";
+    private const string REGEX_MIEJSCOWOSC = @"[0-9]{7}$";
+    private const string REGEX_MIEJSCOWOSC_TYPE = @"[0-9]{2}$";
+    private const string REGEX_ULICA = @"[0-9]{5}$";
+    private const string REGEX_MIEJSCOWOSC_ULICA = @"[0-9]{7}.[0-9]{5}$";
 
 
     public static readonly Regex Wojewodztwo = new(REGEX_WOJEWODZTWO);

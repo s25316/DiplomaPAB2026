@@ -36,7 +36,7 @@ public sealed record Connection
             result = new Connection(trimmedValue, null);
             return true;
         }
-        if (Regexes.MiejscowoscType.IsMatch(trimmedValue))
+        if (Regexes.MiejscowoscUlica.IsMatch(trimmedValue))
         {
             var items = trimmedValue.Split('.');
             result = new Connection(items[0], items[1]);

@@ -1,0 +1,33 @@
+﻿// Ignore Spelling: Miejscowosc
+using Base.Models.Interfaces.Repositories;
+using GreenDonut;
+using GUS.TERYT.Application.Repositories;
+using GUS.TERYT.Models.Requests.Parameters;
+using GUS.TERYT.Models.Requests.ValueObjects.Miejscowosci;
+using GUS.TERYT.Models.Responses;
+
+namespace GUS.TERYT.API.GraphQL.BatchDataLoaders;
+
+public class MiejscowoscBatchDataLoader(
+        IMiejscowoscRepository repository,
+        IBatchScheduler batchScheduler,
+        DataLoaderOptions options
+    ) : BatchDataLoader<string, Miejscowosc>(batchScheduler, options)
+{
+    protected override async Task<IReadOnlyDictionary<string, Miejscowosc>> LoadBatchAsync(
+        IReadOnlyList<string> keys,
+        CancellationToken cancellationToken)
+    {
+        var ids = keys.ToHashSet().Select(i => (MiejscowoscId)i).ToList();
+        var result = await repository.GetAsync(new MiejscowoscParameters
+        {
+            Ids = ids,
+            Pagination = new Pagination
+            {
+                Page = 1,
+                ItemsPerPage = ids.Count,
+            }
+        }, cancellationToken);
+        return result.Items.ToDictionary(i => i.MiejscowoscId);
+    }
+}

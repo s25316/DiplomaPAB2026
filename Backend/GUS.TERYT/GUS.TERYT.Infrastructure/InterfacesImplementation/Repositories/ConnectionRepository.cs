@@ -1,5 +1,5 @@
-﻿using Base.Models.Extensions;
-using Base.Models.Interfaces.Repositories;
+﻿using Base.Models.Interfaces.Repositories;
+using GreenDonut.Data;
 using GUS.TERYT.Application.Repositories;
 using GUS.TERYT.Database;
 using GUS.TERYT.Models.Requests.Parameters;
@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GUS.TERYT.Infrastructure.InterfacesImplementation.Repositories;
 
-// TODO
 public class ConnectionRepository(TerytDbContext context) : IConnectionRepository
 {
     public async Task<Response<Connection>.ManyItems> GetAsync(ConnectionParameters parameters, CancellationToken cancellationToken = default)
@@ -32,7 +31,6 @@ public class ConnectionRepository(TerytDbContext context) : IConnectionRepositor
             .Where(i => miejscowoscIds.Contains(i.MiejscowoscCode));
         var miejscowosciTotalCount = await baseQueryMiejscowosci.CountAsync(cancellationToken);
 
-
         var baseQueryConnections = context
             .SimcUlics
             .AsNoTracking()
@@ -41,14 +39,29 @@ public class ConnectionRepository(TerytDbContext context) : IConnectionRepositor
 
 
         var totalCount = miejscowosciTotalCount + connectionsTotalCount;
+        int itemsPerPage = parameters.Pagination.ItemsPerPage;
+        int pageIndex = parameters.Pagination.Page - 1;
+        int skipGlobal = pageIndex * itemsPerPage;
 
-
-        var dbConnections = await baseQueryMiejscowosci
-            .Paginate(parameters.Pagination)
-            .ToListAsync(cancellationToken);
-
-        if (dbConnections.Count > 0)
+        if (skipGlobal > totalCount)
         {
+            return Response.Prepare<Connection>([], totalCount, parameters.Pagination);
+        }
+
+        int skipMiejscowosci = Math.Min(miejscowosciTotalCount, skipGlobal);
+        int takeMiejscowosci = Math.Max(0, Math.Min(miejscowosciTotalCount - skipMiejscowosci, itemsPerPage));
+
+        int skipConnections = Math.Max(0, skipGlobal - miejscowosciTotalCount);
+        int takeConnections = itemsPerPage - takeMiejscowosci;
+
+        if (takeMiejscowosci > 0)
+        {
+            var dbConnections = await baseQueryMiejscowosci
+                .AsNoTracking()
+                .Skip(skipMiejscowosci)
+                .Take(takeMiejscowosci)
+                .ToListAsync(cancellationToken);
+
             responseConnection = dbConnections.Select(i => new Connection
             {
                 MiejscowoscId = i.MiejscowoscCode,
@@ -58,16 +71,24 @@ public class ConnectionRepository(TerytDbContext context) : IConnectionRepositor
 
         if (responseConnection.Count >= parameters.Pagination.ItemsPerPage)
         {
-            return Response.Prepare(responseConnection.Take(parameters.Pagination.ItemsPerPage), totalCount, )
+            return Response.Prepare(responseConnection, totalCount, parameters.Pagination);
         }
 
-        var newPagination = new Pagination
+        if (takeConnections > 0)
         {
-            ItemsPerPage = parameters.Pagination.ItemsPerPage,
-            Page = 1,// ???
-        };
+            var dbConnections = await baseQueryConnections
+                .AsNoTracking()
+                .Skip(skipConnections)
+                .Take(takeConnections)
+                .ToListAsync(cancellationToken);
 
-
-        throw new NotImplementedException();
+            var responseConnection2 = dbConnections.Select(i => new Connection
+            {
+                MiejscowoscId = i.MiejscowoscCode,
+                UlicaId = i.UlicaCode,
+            }).ToList();
+            responseConnection.AddRange(responseConnection2);
+        }
+        return Response.Prepare(responseConnection, totalCount, parameters.Pagination);
     }
 }

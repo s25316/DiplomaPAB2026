@@ -60,9 +60,12 @@ public static class Program
             .AddType<PowiatObjectType>()
             .AddType<GminaObjectType>()
             .AddType<MiejscowoscObjectType>()
+            .AddType<ConnectionObjectType>()
             .AddDataLoader<WojewodztwoBatchDataLoader>()
             .AddDataLoader<PowiatBatchDataLoader>()
-            .AddDataLoader<GminaBatchDataLoader>();
+            .AddDataLoader<GminaBatchDataLoader>()
+            .AddDataLoader<MiejscowoscBatchDataLoader>()
+            .AddDataLoader<UlicaBatchDataLoader>();
 
         var app = builder.Build();
         app.UseExceptionHandler();
