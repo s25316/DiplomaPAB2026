@@ -63,18 +63,81 @@ namespace Base.Models {
         /// <summary>
         ///   Looks up a localized string similar to Liczba objektów na stronie musi być większa od 0..
         /// </summary>
-        internal static string ErrorMessageItemsPerPage {
+        internal static string ItemsPerPageErrorMessage {
             get {
-                return ResourceManager.GetString("ErrorMessageItemsPerPage", resourceCulture);
+                return ResourceManager.GetString("ItemsPerPageErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KRS ma format 0000000000.
+        /// </summary>
+        internal static string KrsDescription {
+            get {
+                return ResourceManager.GetString("KrsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to KRS ma format 0000000000.
+        /// </summary>
+        internal static string KrsErrorMessage {
+            get {
+                return ResourceManager.GetString("KrsErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NIP ma format 0000000000.
+        /// </summary>
+        internal static string NipDescription {
+            get {
+                return ResourceManager.GetString("NipDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NIP ma format 0000000000.
+        /// </summary>
+        internal static string NipErrorMessage {
+            get {
+                return ResourceManager.GetString("NipErrorMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Numer strony musi być większy od 0..
         /// </summary>
-        internal static string ErrorMessagePage {
+        internal static string PageErrorMessage {
             get {
-                return ResourceManager.GetString("ErrorMessagePage", resourceCulture);
+                return ResourceManager.GetString("PageErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REGON ma format 000000000 lub 00000000000000.
+        /// </summary>
+        internal static string RegonDescription {
+            get {
+                return ResourceManager.GetString("RegonDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REGON ma format 000000000 lub 00000000000000 .
+        /// </summary>
+        internal static string RegonErrorMessage {
+            get {
+                return ResourceManager.GetString("RegonErrorMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nieznany typ.
+        /// </summary>
+        internal static string UnknownType {
+            get {
+                return ResourceManager.GetString("UnknownType", resourceCulture);
             }
         }
     }

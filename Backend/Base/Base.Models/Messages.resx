@@ -117,10 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ErrorMessageItemsPerPage" xml:space="preserve">
+  <data name="KrsErrorMessage" xml:space="preserve">
+    <value>KRS ma format 0000000000</value>
+  </data>
+  <data name="ItemsPerPageErrorMessage" xml:space="preserve">
     <value>Liczba objektów na stronie musi być większa od 0.</value>
   </data>
-  <data name="ErrorMessagePage" xml:space="preserve">
+  <data name="PageErrorMessage" xml:space="preserve">
     <value>Numer strony musi być większy od 0.</value>
+  </data>
+  <data name="NipErrorMessage" xml:space="preserve">
+    <value>NIP ma format 0000000000</value>
+  </data>
+  <data name="RegonErrorMessage" xml:space="preserve">
+    <value>REGON ma format 000000000 lub 00000000000000 </value>
+  </data>
+  <data name="KrsDescription" xml:space="preserve">
+    <value>KRS ma format 0000000000</value>
+  </data>
+  <data name="NipDescription" xml:space="preserve">
+    <value>NIP ma format 0000000000</value>
+  </data>
+  <data name="RegonDescription" xml:space="preserve">
+    <value>REGON ma format 000000000 lub 00000000000000</value>
+  </data>
+  <data name="UnknownType" xml:space="preserve">
+    <value>Nieznany typ</value>
   </data>
 </root>

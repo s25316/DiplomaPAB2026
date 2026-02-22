@@ -10,10 +10,10 @@ public class PaginationValidator : AbstractValidator<Pagination>
     {
         RuleFor(x => x.Page)
             .GreaterThanOrEqualTo(1)
-            .WithMessage(Messages.ErrorMessagePage);
+            .WithMessage(Messages.PageErrorMessage);
 
         RuleFor(x => x.ItemsPerPage)
             .GreaterThanOrEqualTo(1)
-            .WithMessage(Messages.ErrorMessageItemsPerPage);
+            .WithMessage(Messages.ItemsPerPageErrorMessage);
     }
 }

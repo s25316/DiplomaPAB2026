@@ -1,9 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	  <TargetFramework>net10.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Envelopes\Responses\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+  </ItemGroup>
 
 </Project>

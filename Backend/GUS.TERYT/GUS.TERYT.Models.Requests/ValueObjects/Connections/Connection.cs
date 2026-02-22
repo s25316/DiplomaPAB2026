@@ -22,6 +22,9 @@ public sealed record Connection
     }
 
 
+    public static implicit operator string(Connection value) => value.ToString();
+    public static implicit operator Connection(string value) => Parse(value);
+
     public static bool TryParse([NotNullWhen(true)] string? value, [NotNullWhen(true)] out Connection? result)
     {
         if (string.IsNullOrWhiteSpace(value))

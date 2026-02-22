@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GUS.TERYT.API.Controllers;
 
-[Route("api/[controller]")]
+[Route("api")]
 [ApiController]
 public class TerytController : ControllerBase
 {
