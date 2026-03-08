@@ -1,27 +1,32 @@
-namespace GUS.REGON.API
+using GUS.REGON.Extensions;
+using Scalar.AspNetCore;
+
+namespace GUS.REGON.API;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+        builder.Services.AddRegonService("key", false);
 
-            builder.Services.AddControllers();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
+        builder.Services.AddControllers();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddOpenApi();
 
 
-            app.MapControllers();
+        var app = builder.Build();
 
-            app.Run();
-        }
+        app.UseExceptionHandler();
+
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        app.Run();
     }
 }

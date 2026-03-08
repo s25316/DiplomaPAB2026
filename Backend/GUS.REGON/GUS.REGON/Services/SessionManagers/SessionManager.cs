@@ -1,0 +1,94 @@
+﻿using GUS.REGON.Interfaces;
+
+namespace GUS.REGON.Services.SessionManagers;
+
+internal class SessionManager(Func<CancellationToken, Task<string>> getSessionIdFunc) :
+    ISessionManager,
+    IDisposable
+{
+    private static readonly TimeSpan lockingLifeTime = TimeSpan.FromMinutes(1);
+    private static readonly TimeSpan sessionLifeTime = TimeSpan.FromMinutes(60);
+
+    private readonly SemaphoreSlim semaphore = new(1, 1);
+
+    private Task? refreshTask = null;
+    private DateTimeOffset? sessionUpdated = null;
+    private DateTimeOffset? sessionExpired = null;
+    private DateTimeOffset? sessionCanUpdated = null;
+    private string? sessionId = null;
+    private bool disposed = false;
+
+    private bool CanUpdateSession =>
+        string.IsNullOrWhiteSpace(sessionId) ||
+        sessionExpired is null ||
+        sessionUpdated is null ||
+        DateTimeOffset.Now >= sessionCanUpdated;
+
+    public SessionInfo Session => GetStatus();
+
+
+    public async Task UpdateSessionAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+
+        Task taskToAwait;
+        await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (!CanUpdateSession) return;
+
+            if (refreshTask == null || refreshTask.IsCompleted)
+            {
+                refreshTask = InvokeUpdateSessionAsync(cancellationToken);
+            }
+
+            taskToAwait = refreshTask;
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+
+        await taskToAwait.ConfigureAwait(false);
+    }
+
+
+    private SessionInfo GetStatus()
+    {
+        if (string.IsNullOrWhiteSpace(sessionId) ||
+            sessionExpired is null ||
+            sessionUpdated is null ||
+            DateTimeOffset.Now >= sessionExpired)
+        {
+            return new SessionInfo(false, sessionId);
+        }
+        return new SessionInfo(true, sessionId);
+    }
+
+    public async Task InvokeUpdateSessionAsync(CancellationToken cancellationToken = default)
+    {
+        if (!CanUpdateSession) return;
+
+        var timeBeforeRequest = DateTimeOffset.Now;
+
+        sessionId = await getSessionIdFunc(cancellationToken).ConfigureAwait(false);
+        sessionUpdated = timeBeforeRequest;
+        sessionExpired = sessionUpdated + sessionLifeTime;
+        sessionCanUpdated = sessionUpdated + lockingLifeTime;
+    }
+
+    ~SessionManager() => Dispose(false);
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed) return;
+        if (disposing) semaphore.Dispose();
+        disposed = true;
+    }
+}

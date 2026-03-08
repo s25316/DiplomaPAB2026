@@ -41,10 +41,7 @@ public abstract class BaseFileReader : IDisposable
         }
     }
 
-    ~BaseFileReader()
-    {
-        Dispose(false);
-    }
+    ~BaseFileReader() => Dispose(false);
 
     public void Dispose()
     {
@@ -55,11 +52,7 @@ public abstract class BaseFileReader : IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (disposed) return;
-
-        if (disposing)
-        {
-            streamReader?.Dispose();
-        }
+        if (disposing) streamReader?.Dispose();
         disposed = true;
     }
 }

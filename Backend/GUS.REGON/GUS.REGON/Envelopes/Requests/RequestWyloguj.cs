@@ -3,9 +3,9 @@ using GUS.REGON.Configurations;
 
 namespace GUS.REGON.Envelopes.Requests;
 
-internal abstract partial class Request
+internal abstract partial record Request
 {
-    public sealed class Wyloguj(Endpoint endpoint) : Request
+    public sealed record Wyloguj(Endpoint endpoint) : Request
     {
         public string Generate(string sessionId) => $@"
             <soap:Envelope xmlns:soap=""http://www.w3.org/2003/05/soap-envelope"" xmlns:ns=""http://CIS/BIR/PUBL/2014/07"">

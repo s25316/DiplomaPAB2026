@@ -6,9 +6,9 @@ using GUS.REGON.Configurations;
 
 namespace GUS.REGON.Envelopes.Requests;
 
-internal abstract partial class Request
+internal abstract partial record Request
 {
-    public sealed class DaneSzukaj(Endpoint endpoint) : Request
+    public sealed record DaneSzukaj(Endpoint endpoint) : Request
     {
         public string Generate(Regon item) => Generate($"<dat:Regon>{item.Value}</dat:Regon>");
         public string Generate(Krs item) => Generate($"<dat:Krs>{item.Value}</dat:Krs>");

@@ -4,9 +4,9 @@ using GUS.REGON.Configurations;
 
 namespace GUS.REGON.Envelopes.Requests;
 
-internal abstract partial class Request
+internal abstract partial record Request
 {
-    public sealed class DanePobierzPelnyRaport(Endpoint endpoint) : Request
+    public sealed record DanePobierzPelnyRaport(Endpoint endpoint) : Request
     {
         public string Generate(Regon regon, string reportName) => $@"
             <soap:Envelope xmlns:soap=""http://www.w3.org/2003/05/soap-envelope"" xmlns:ns=""http://CIS/BIR/PUBL/2014/07"">

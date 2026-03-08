@@ -1,33 +1,48 @@
+using Base.Models.ValueObjects.Regony;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GUS.REGON.API.Controllers
+namespace GUS.REGON.API.Controllers;
+
+[ApiController]
+[Route("")]
+public class WeatherForecastController(RegonService service) : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    [HttpGet("serverTime")]
+    public IActionResult GetSeverTime() => Ok(DateTimeOffset.Now);
+
+    [HttpGet]
+    public async Task<IActionResult> GetAsync(string regonString, CancellationToken cancellationToken)
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        var regon = (Regon)regonString;
+        var items = await service.GetAsync(regon, cancellationToken);
+        return Ok(items);
+    }
 
-        private readonly ILogger<WeatherForecastController> _logger;
+    [HttpGet("komunikatUslugi")]
+    public async Task<IActionResult> GetKomunikatUslugiAsync(CancellationToken cancellationToken)
+    {
+        var result = await service.GetKomunikatUslugiAsync(cancellationToken);
+        return Ok(result);
+    }
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
-        {
-            _logger = logger;
-        }
+    [HttpGet("statusUslugi")]
+    public async Task<IActionResult> GetStatusUslugiAsync(CancellationToken cancellationToken)
+    {
+        var result = await service.GetStatusUslugiAsync(cancellationToken);
+        return Ok(result);
+    }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
-        {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
-        }
+    [HttpGet("statusSesji")]
+    public async Task<IActionResult> GetStatusSesjiAsync(CancellationToken cancellationToken)
+    {
+        var result = await service.GetStatusSesjiAsync(cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("stanDanych")]
+    public async Task<IActionResult> GetStanDanychAsync(CancellationToken cancellationToken)
+    {
+        var result = await service.GetStanDanychAsync(cancellationToken);
+        return Ok(result);
     }
 }

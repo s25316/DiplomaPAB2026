@@ -3,9 +3,9 @@ using GUS.REGON.Configurations;
 
 namespace GUS.REGON.Envelopes.Requests;
 
-internal abstract partial class Request
+internal abstract partial record Request
 {
-    public sealed class GetValue(Endpoint endpoint) : Request
+    public sealed record GetValue(Endpoint endpoint) : Request
     {
         private const string PARAMETER_KOMUNIKAT_USLUGI = "KomunikatUslugi";
         private const string PARAMETER_KOMUNIKAT_TRESC = "KomunikatTresc";
@@ -16,12 +16,24 @@ internal abstract partial class Request
 
 
         // UnAuthorize
+        /// <returns>string</returns>
         public string KomunikatUslugi() => Generate(PARAMETER_KOMUNIKAT_USLUGI);
-        public string StatusSesji() => Generate(PARAMETER_STATUS_SESJI);
+
+        /// <returns>enum StatusUslugi</returns>
         public string StatusUslugi() => Generate(PARAMETER_STATUS_USLUGI);
+
+        /// <returns>enum StatusSesji</returns>
+        public string StatusSesji() => Generate(PARAMETER_STATUS_SESJI);
+
         // Authorize
+
+        /// <returns>enum KomunikatKod?</returns>
         public string KomunikatKod() => Generate(PARAMETER_KOMUNIKAT_KOD);
+
+        /// <returns>string?</returns>
         public string KomunikatTresc() => Generate(PARAMETER_KOMUNIKAT_TRESC);
+
+        /// <returns>current date DateOnly? in format "dd-MM-yyyy"</returns>
         public string StanDanych() => Generate(PARAMETER_STAN_DANYCH);
 
         private string Generate(string parameter) => $@"
