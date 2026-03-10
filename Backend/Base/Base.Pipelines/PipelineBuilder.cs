@@ -1,4 +1,4 @@
-﻿using Base.Pipelines.Interfaces;
+﻿using Base.Pipelines.Interfaces.Operations;
 
 namespace Base.Pipelines;
 
@@ -22,9 +22,9 @@ public static class PipelineBuilder
     ) => new(operationName, func);*/
 
 
-    public static Operation<TInput, TOutput> Create<TInput, TOutput>(ISyncOperation<TInput, TOutput> operation, IEnumerable<Snapshot>? snapshots = null)
+    public static Pipeline<TInput, TOutput> Create<TInput, TOutput>(ISyncOperation<TInput, TOutput> operation, IEnumerable<Snapshot>? snapshots = null)
         => new(operation.Name, snapshots ?? [], operation.Execute);
 
-    public static Operation<TInput, TOutput> Create<TInput, TOutput>(IAsyncOperation<TInput, TOutput> operation, IEnumerable<Snapshot>? snapshots = null)
+    public static Pipeline<TInput, TOutput> Create<TInput, TOutput>(IAsyncOperation<TInput, TOutput> operation, IEnumerable<Snapshot>? snapshots = null)
         => new(operation.Name, snapshots ?? [], operation.ExecuteAsync);
 }

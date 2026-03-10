@@ -1,9 +1,9 @@
-﻿using Base.Models.Exceptions;
-using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+﻿using Base.Exceptions;
+using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using System.Globalization;
 
-namespace GUS.REGON.PipelineOperations.FirstValueTo;
+namespace GUS.REGON.PipelineOperations.Base.FirstValueTo;
 
 internal class FirstValueToDateOnlyOperation : ISyncOperation<string, DateOnly>
 {

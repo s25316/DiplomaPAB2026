@@ -1,8 +1,8 @@
-﻿using Base.Models.Exceptions;
-using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+﻿using Base.Exceptions;
+using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 
-namespace GUS.REGON.PipelineOperations.FirstValueTo;
+namespace GUS.REGON.PipelineOperations.Base.FirstValueTo;
 
 internal class FirstValueToBoolOperation : ISyncOperation<string, bool>
 {

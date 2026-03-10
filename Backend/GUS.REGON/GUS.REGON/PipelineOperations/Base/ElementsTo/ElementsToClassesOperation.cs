@@ -1,12 +1,12 @@
 ﻿// Ignore Spelling: Deserialize
-using Base.Models.Exceptions;
-using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+using Base.Exceptions;
+using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace GUS.REGON.PipelineOperations.ElementsTo;
+namespace GUS.REGON.PipelineOperations.Base.ElementsTo;
 
 internal class ElementsToClassesOperation<T> : ISyncOperation<IEnumerable<XElement>, IEnumerable<T>>
     where T : class

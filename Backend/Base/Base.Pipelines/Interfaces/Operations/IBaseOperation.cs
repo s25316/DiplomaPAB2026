@@ -1,4 +1,4 @@
-﻿namespace Base.Pipelines.Interfaces;
+﻿namespace Base.Pipelines.Interfaces.Operations;
 
 public interface IBaseOperation
 {

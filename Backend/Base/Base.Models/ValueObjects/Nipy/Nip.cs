@@ -1,5 +1,5 @@
 ﻿// Ignore Spelling: Nipy, Nip
-using Base.Models.Exceptions;
+using Base.Exceptions;
 using Base.Models.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;

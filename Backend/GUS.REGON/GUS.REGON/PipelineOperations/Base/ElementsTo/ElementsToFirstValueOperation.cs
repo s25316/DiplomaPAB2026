@@ -1,9 +1,8 @@
-﻿using Base.Pipelines;
-using Base.Pipelines.Interfaces;
-using GUS.REGON.Exceptions;
+﻿using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using System.Xml.Linq;
 
-namespace GUS.REGON.PipelineOperations.ElementsTo;
+namespace GUS.REGON.PipelineOperations.Base.ElementsTo;
 
 internal class ElementsToFirstValueOperation : ISyncOperation<IEnumerable<XElement>, string>
 {
@@ -18,7 +17,7 @@ internal class ElementsToFirstValueOperation : ISyncOperation<IEnumerable<XEleme
             string.IsNullOrWhiteSpace(element.Value))
         {
             var errorMessage = $"First element is empty";
-            return OperationResult.Failed<string>(errorMessage, new RegonException.InvalidKey(errorMessage));
+            return OperationResult.Failed<string>(errorMessage);
         }
         return OperationResult.Success(element.Value);
     }

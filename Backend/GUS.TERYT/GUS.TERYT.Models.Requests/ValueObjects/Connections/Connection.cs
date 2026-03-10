@@ -1,5 +1,5 @@
 ﻿// Ignore Spelling: Miejscowosc, Ulica
-using Base.Models.Exceptions;
+using Base.Exceptions;
 using GUS.TERYT.Models.Requests.ValueObjects.Miejscowosci;
 using GUS.TERYT.Models.Requests.ValueObjects.Ulicy;
 using Microsoft.AspNetCore.Mvc;

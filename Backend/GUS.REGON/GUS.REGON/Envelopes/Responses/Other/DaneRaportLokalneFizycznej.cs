@@ -1,5 +1,5 @@
 ﻿namespace RegonPlugin.Models.Responses.OtherDaneRaportLokalneFizycznej;
-
+/*
 public partial class rootDane
 {
     private string lokfiz_regon14;
@@ -57,4 +57,4 @@ public partial class rootDane
     private string lokfiz_dataZakonczeniaDzialalnosci;
 
     private string lokfiz_dataSkresleniazRegon;
-}
+}*/

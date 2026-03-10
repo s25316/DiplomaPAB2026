@@ -1,5 +1,5 @@
 ﻿namespace RegonPlugin.Models.Responses.Other.DaneRaportLokalnePrawnej;
-
+/*
 public partial class rootDane
 {
     private string lokpraw_regon14;
@@ -57,4 +57,4 @@ public partial class rootDane
     private string lokpraw_dataZakonczeniaDzialalnosci;
 
     private string lokpraw_dataSkresleniazRegon;
-}
+}*/

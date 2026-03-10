@@ -1,9 +1,9 @@
-﻿using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+﻿using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using GUS.REGON.Configurations;
 using System.Xml.Linq;
 
-namespace GUS.REGON.PipelineOperations;
+namespace GUS.REGON.PipelineOperations.Base;
 
 internal class DocumentToElementsOperation(ElementDefinition definition) : ISyncOperation<XDocument, IEnumerable<XElement>>
 {

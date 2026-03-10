@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Base.Pipelines;
+namespace Base.Pipelines.Models;
 
 public static class OperationResult
 {
@@ -11,7 +11,7 @@ public static class OperationResult
         => OperationResult<TItem>.Failed(errorMessage, exception);
 }
 
-public sealed class OperationResult<TItem>
+public sealed record OperationResult<TItem>
 {
     [MemberNotNullWhen(true, nameof(Value))]
     [MemberNotNullWhen(false, nameof(ErrorMessage))]
@@ -37,6 +37,11 @@ public sealed class OperationResult<TItem>
         Exception = exception;
     }
 
+
+
+    public static implicit operator OperationResult<TItem>(PipelineResult<TItem> operation) => operation.IsSuccess
+        ? OperationResult.Success(operation.Value)
+        : OperationResult.Failed<TItem>(operation.ErrorMessage);
 
     public static OperationResult<TItem> Success(TItem result)
         => new(true, result);

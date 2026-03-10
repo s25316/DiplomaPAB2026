@@ -1,5 +1,5 @@
 ﻿namespace RegonPlugin.Models.Responses.Other.DaneRaportWspolnicyPrawnej;
-
+/*
 public class rootDane
 {
     private string wspolsc_regonWspolnikSpolki;
@@ -11,4 +11,4 @@ public class rootDane
     private string wspolsc_nazwisko;
 
     private string wspolsc_firmaNazwa;
-}
+}*/

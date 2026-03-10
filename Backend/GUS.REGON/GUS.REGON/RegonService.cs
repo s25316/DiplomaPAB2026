@@ -3,23 +3,26 @@
 // Ignore Spelling: Komunikat, Uslugi, Sesji, Danych
 using Base.Models.ValueObjects.Regony;
 using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+using Base.Pipelines.Models;
 using GUS.REGON.Configurations;
 using GUS.REGON.Envelopes.Requests;
+using GUS.REGON.Exceptions;
 using GUS.REGON.Interfaces;
 using GUS.REGON.Models.Responses.Enums;
 using GUS.REGON.PipelineOperations;
-using GUS.REGON.PipelineOperations.ElementsTo;
-using GUS.REGON.PipelineOperations.FirstValueTo;
+using GUS.REGON.PipelineOperations.Base;
+using GUS.REGON.PipelineOperations.Base.ElementsTo;
 using GUS.REGON.Services.SessionManagers;
 using GUS.REGON.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using RegonResponse = GUS.REGON.Models.Responses.Response;
 
 namespace GUS.REGON;
 
 public class RegonService : IDisposable, IAsyncDisposable
 {
+    private readonly ILogger<RegonService> logger;
     private readonly IServiceProvider provider;
     private bool disposed = false;
 
@@ -31,7 +34,11 @@ public class RegonService : IDisposable, IAsyncDisposable
                 ? Endpoint.Production
                 : Endpoint.Testing;
 
-        services.AddLogging();
+        services.AddLogging(opt =>
+        {
+            opt.AddConsole();
+            opt.SetMinimumLevel(LogLevel.Trace);
+        });
 
         services.AddSingleton<Key>((Key)key);
         services.AddSingleton<Endpoint>(endpoint);
@@ -43,6 +50,17 @@ public class RegonService : IDisposable, IAsyncDisposable
         services.AddSingleton<Request.DaneSzukaj>();
         services.AddSingleton<Request.DanePobierzPelnyRaport>();
 
+        // Add Operations
+        services.AddSingleton<ZalogujOperation>();
+        services.AddSingleton<WylogujOperation>();
+
+        services.AddSingleton<KomunikatUslugiOperation>();
+        services.AddSingleton<StatusUslugiOperation>();
+        services.AddSingleton<KomunikatTrescOperation>();
+        services.AddSingleton<KomunikatKodOperation>();
+        services.AddSingleton<StatusSesjiOperation>();
+        services.AddSingleton<StanDanychOperation>();
+
         services.AddHttpClient(HttpClientNames.BASE, client =>
         {
             client.BaseAddress = endpoint.Value;
@@ -52,9 +70,13 @@ public class RegonService : IDisposable, IAsyncDisposable
 
         provider = services.BuildServiceProvider();
 
+        var factory = provider.GetRequiredService<ILoggerFactory>();
+        logger = factory.CreateLogger<RegonService>();
+
         Task.Run(async () => await provider.GetRequiredService<ISessionManager>().UpdateSessionAsync())
             .GetAwaiter()
             .GetResult();
+
     }
 
 
@@ -78,137 +100,55 @@ public class RegonService : IDisposable, IAsyncDisposable
             .Add(new ElementsToClassesOperation<RegonResponse.DaneSzukaj>())
             .ExecuteAsync(requestEnvelope, cancellationToken);
 
-        if (result.HasException) throw result.Exception;
         if (result.IsSuccess) return result.Value;
         else return [];
     }
 
-    private async Task<string> ZalogujAsync(CancellationToken cancellationToken = default)
+    private async Task<OperationResult<string>> ZalogujAsync(CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
 
-        using var client = provider
-            .GetRequiredService<IHttpClientFactory>()
-            .CreateClient(HttpClientNames.BASE);
+        var zalogujOperation = provider.GetRequiredService<ZalogujOperation>();
+        var statusUslugi = provider.GetRequiredService<StatusUslugiOperation>();
 
-        var key = provider.GetRequiredService<Key>();
-        var request = provider.GetRequiredService<Request.Zaloguj>();
-        var requestEnvelope = request.Generate(key);
+        var zalogujResult = await zalogujOperation.ExecuteAsync(cancellationToken);
+        if (zalogujResult.IsSuccess) return zalogujResult;
+        if (zalogujResult.HasException) throw zalogujResult.Exception;
 
-        var result = await PipelineBuilder
-            .Create(new MakeRequestOperation(client))
-            .Add(new ResponseToEnvelopeOperation())
-            .Add(new EnvelopeToDocumentOperation())
-            .Add(new DocumentToElementsOperation(ElementDefinition.Zaloguj))
-            .Add(new ElementsToFirstValueOperation())
-            .ExecuteAsync(requestEnvelope, cancellationToken);
-
-        if (result.HasException) throw result.Exception;
-        if (result.IsSuccess) return result.Value;
-        else throw new Exception("????");
+        var statusUslugiResult = await statusUslugi.ExecuteAsync(cancellationToken);
+        if (statusUslugiResult.IsSuccess) throw new RegonException.InvalidKey(Messages.KeyErrorMessageInvalid);
+        if (statusUslugiResult.HasException) throw statusUslugiResult.Exception;
+        throw new NotImplementedException();
     }
 
     private async Task<OperationResult<bool>> WylogujAsync(CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(disposed, this);
-
-        using var client = provider
-            .GetRequiredService<IHttpClientFactory>()
-            .CreateClient(HttpClientNames.BASE);
-
-        var sessionManager = provider.GetRequiredService<ISessionManager>();
-        var session = sessionManager.Session;
-
-        if (!session.IsExpired)
-        {
-            return OperationResult.Success(true);
-        }
-
-        var request = provider.GetRequiredService<Request.Wyloguj>();
-        var requestEnvelope = request.Generate(session.SessionId);
-
-        var result = await PipelineBuilder
-            .Create(new MakeRequestOperation(client, sessionManager))
-            .Add(new ResponseToEnvelopeOperation())
-            .Add(new EnvelopeToDocumentOperation())
-            .Add(new DocumentToElementsOperation(ElementDefinition.Wyloguj))
-            .Add(new ElementsToFirstValueOperation())
-            .Add(new FirstValueToBoolOperation())
-            .ExecuteAsync(requestEnvelope, cancellationToken);
-
-        if (result.HasException) throw result.Exception;
-        return result;
+        var wylogujOperation = provider.GetRequiredService<WylogujOperation>();
+        var wylogujResult = await wylogujOperation.ExecuteAsync(cancellationToken);
+        if (wylogujResult.IsSuccess) return wylogujResult;
+        if (wylogujResult.HasException) throw wylogujResult.Exception;
+        return OperationResult.Success(true);
     }
 
 
     #region GetValueAsync
-    public async Task<OperationResult<string>> GetKomunikatUslugiAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        false,
-        getValue => getValue.KomunikatUslugi(),
-        new FirstValueToFirstValueOperation(),
-        cancellationToken);
+    public async Task<OperationResult<string>> GetKomunikatUslugiAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<KomunikatUslugiOperation>().ExecuteAsync(cancellationToken);
 
-    public async Task<OperationResult<StatusUslugi>> GetStatusUslugiAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        false,
-        getValue => getValue.StatusUslugi(),
-        new FirstValueToEnumOperation<StatusUslugi>(),
-        cancellationToken);
+    public async Task<OperationResult<StatusUslugi>> GetStatusUslugiAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<StatusUslugiOperation>().ExecuteAsync(cancellationToken);
 
-    public async Task<OperationResult<StatusSesji>> GetStatusSesjiAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        false,
-        getValue => getValue.StatusSesji(),
-        new FirstValueToEnumOperation<StatusSesji>(),
-        cancellationToken);
+    public async Task<OperationResult<StatusSesji>> GetStatusSesjiAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<StatusSesjiOperation>().ExecuteAsync(cancellationToken);
 
-    public async Task<OperationResult<DateOnly>> GetStanDanychAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        true,
-        getValue => getValue.StanDanych(),
-        new FirstValueToDateOnlyOperation(),
-        cancellationToken);
+    public async Task<OperationResult<DateOnly>> GetStanDanychAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<StanDanychOperation>().ExecuteAsync(cancellationToken);
 
-    private async Task<OperationResult<KomunikatKod>> GetKomunikatKodAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        true,
-        getValue => getValue.KomunikatKod(),
-        new FirstValueToEnumOperation<KomunikatKod>(),
-        cancellationToken);
+    private async Task<OperationResult<KomunikatKod>> GetKomunikatKodAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<KomunikatKodOperation>().ExecuteAsync(cancellationToken);
 
-    private async Task<OperationResult<string>> GetKomunikatTrescAsync(CancellationToken cancellationToken = default) => await GetValueAsync(
-        true,
-        getValue => getValue.KomunikatTresc(),
-        new FirstValueToFirstValueOperation(),
-        cancellationToken);
-
-    private async Task<OperationResult<T>> GetValueAsync<T>(
-        bool isAuthorize,
-        Func<Request.GetValue, string> getValueFunc,
-        ISyncOperation<string, T> operation,
-        CancellationToken cancellationToken = default)
-    {
-        ObjectDisposedException.ThrowIf(disposed, this);
-
-        using var client = provider
-            .GetRequiredService<IHttpClientFactory>()
-            .CreateClient(HttpClientNames.BASE);
-
-        var sessionManager = isAuthorize
-            ? provider.GetRequiredService<ISessionManager>()
-            : null;
-
-        var request = provider.GetRequiredService<Request.GetValue>();
-        var requestEnvelope = getValueFunc(request);
-
-        var result = await PipelineBuilder
-            .Create(new MakeRequestOperation(client, sessionManager))
-            .Add(new ResponseToEnvelopeOperation())
-            .Add(new EnvelopeToDocumentOperation())
-            .Add(new DocumentToElementsOperation(ElementDefinition.GetValue))
-            .Add(new ElementsToFirstValueOperation())
-            .Add(operation)
-            .ExecuteAsync(requestEnvelope, cancellationToken);
-
-        if (result.HasException) throw result.Exception;
-        return result;
-    }
+    private async Task<OperationResult<string>> GetKomunikatTrescAsync(CancellationToken cancellationToken = default)
+        => await provider.GetRequiredService<KomunikatTrescOperation>().ExecuteAsync(cancellationToken);
     #endregion
 
 
@@ -221,23 +161,22 @@ public class RegonService : IDisposable, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
+    public ValueTask DisposeAsync()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
+    }
+
     protected virtual void Dispose(bool disposing)
     {
+        ObjectDisposedException.ThrowIf(disposed, this);
         if (disposed) return;
         var loggingOutResult = Task.Run(async () => await WylogujAsync().ConfigureAwait(false))
             .GetAwaiter()
             .GetResult();
-        Console.WriteLine($"Logged out: {loggingOutResult.Value}");
+        logger.LogInformation("Logged out (Async): {Value} at {Time}", loggingOutResult.Value, DateTimeOffset.Now);
         disposed = true;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (disposed) return;
-        var loggingOutResult = await WylogujAsync().ConfigureAwait(false);
-        Console.WriteLine($"Logged out: {loggingOutResult.Value}");
-        disposed = true;
-        GC.SuppressFinalize(this);
     }
     #endregion
 }

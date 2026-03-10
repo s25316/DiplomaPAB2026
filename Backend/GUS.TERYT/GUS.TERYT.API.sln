@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36804.6
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUS.TERYT.API", "GUS.TERYT.API\GUS.TERYT.API.csproj", "{5EC734E9-33BA-4345-B93D-5271E2B0FCB7}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUS.TERYT.Models.Requests", "GUS.TERYT.Models.Requests\GUS.TERYT.Models.Requests.csproj", "{B1F7330A-0618-4E4C-8C50-98D81283A501}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUS.TERYT.Models.Responses", "GUS.TERYT.Models.Responses\GUS.TERYT.Models.Responses.csproj", "{9F43AB2E-4182-4AC8-99BA-08CBFB31711B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Base.Exceptions", "..\Base\Base.Exceptions\Base.Exceptions.csproj", "{93C12005-10E9-901B-0F53-8241FB0E552A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{9F43AB2E-4182-4AC8-99BA-08CBFB31711B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F43AB2E-4182-4AC8-99BA-08CBFB31711B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F43AB2E-4182-4AC8-99BA-08CBFB31711B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C12005-10E9-901B-0F53-8241FB0E552A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C12005-10E9-901B-0F53-8241FB0E552A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C12005-10E9-901B-0F53-8241FB0E552A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C12005-10E9-901B-0F53-8241FB0E552A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +95,7 @@ Global
 		{73FDF632-2E46-7C83-F640-66CDB1D4E037} = {F6AF7D3F-5D41-4B3D-9BF7-76CB77362299}
 		{B1F7330A-0618-4E4C-8C50-98D81283A501} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{9F43AB2E-4182-4AC8-99BA-08CBFB31711B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{93C12005-10E9-901B-0F53-8241FB0E552A} = {F6AF7D3F-5D41-4B3D-9BF7-76CB77362299}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {065593D3-F6FD-400F-994C-697437140322}

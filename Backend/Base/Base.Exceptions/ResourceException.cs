@@ -1,4 +1,4 @@
-﻿namespace Base.Models.Exceptions;
+﻿namespace Base.Exceptions;
 
 public abstract class ResourceException(string? message) : Exception(message)
 {

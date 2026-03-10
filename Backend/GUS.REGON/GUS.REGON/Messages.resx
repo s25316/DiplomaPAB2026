@@ -120,4 +120,28 @@
   <data name="KeyErrorMessageEmpty" xml:space="preserve">
     <value>Klucz nie moze byc pusta wrtościa</value>
   </data>
+  <data name="KeyErrorMessageInvalid" xml:space="preserve">
+    <value>Klucz jest niepoprawny</value>
+  </data>
+  <data name="KomunikatKod1" xml:space="preserve">
+    <value>Konieczne jest pobranie i sprawdzenie kodu Captcha (metody PobierzCaptcha i SprawdzCaptcha). </value>
+  </data>
+  <data name="KomunikatKod2" xml:space="preserve">
+    <value>Do metody DaneSzukaj przekazano zbyt wiele identyfikatorów.</value>
+  </data>
+  <data name="KomunikatKod4" xml:space="preserve">
+    <value>Nie znaleziono podmiotów.</value>
+  </data>
+  <data name="KomunikatKod5" xml:space="preserve">
+    <value>Brak uprawnień do raportu.</value>
+  </data>
+  <data name="KomunikatKod7" xml:space="preserve">
+    <value>Brak sesji. Sesja wygasła lub przekazano nieprawidłową wartość nagłówka sid.</value>
+  </data>
+  <data name="StatusUslugi0" xml:space="preserve">
+    <value>Usluga Niedostepna</value>
+  </data>
+  <data name="StatusUslugi2" xml:space="preserve">
+    <value>Przerwa Techniczna</value>
+  </data>
 </root>

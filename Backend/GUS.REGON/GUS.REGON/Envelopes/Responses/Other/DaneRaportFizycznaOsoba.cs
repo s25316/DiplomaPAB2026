@@ -1,5 +1,5 @@
 ﻿namespace RegonPlugin.Models.Responses.Other.DaneRaportFizycznaOsoba;
-
+/*
 public partial class rootDane
 {
     private string fiz_regon9;
@@ -41,4 +41,4 @@ public partial class rootDane
     private string fiz_dzialalnosciZKrupgn;
 
     private string fiz_jednostekLokalnych;
-}
+}*/

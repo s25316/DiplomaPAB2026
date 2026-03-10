@@ -24,6 +24,10 @@
 		<PackageReference Include="HotChocolate.Validation" />
 		<PackageReference Include="HotChocolate.Data" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Base.Exceptions\Base.Exceptions.csproj" />
+	</ItemGroup>
 	
 	<ItemGroup>
 	  <Compile Update="Messages.Designer.cs">

@@ -58,7 +58,7 @@ public abstract partial record Teryt
                 public static Type Dzielnica { get; } = new("8", "dzielnica w m.st. Warszawa");
                 public static Type Delegatura { get; } = new("9", "delegatura miasta");
 
-                private static IReadOnlyDictionary<string, Type> all = new Dictionary<string, Type>()
+                private static readonly IReadOnlyDictionary<string, Type> all = new Dictionary<string, Type>()
                 {
                     { GminaMiejska.Id, GminaMiejska},
                     { GminaWiejska.Id, GminaWiejska},

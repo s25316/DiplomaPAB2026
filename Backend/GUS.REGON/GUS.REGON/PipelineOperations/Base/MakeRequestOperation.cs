@@ -1,11 +1,11 @@
 ﻿// Ignore Spelling: xml, sid
-using Base.Models.Exceptions;
-using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+using Base.Exceptions;
+using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using GUS.REGON.Interfaces;
 using System.Text;
 
-namespace GUS.REGON.PipelineOperations;
+namespace GUS.REGON.PipelineOperations.Base;
 
 internal class MakeRequestOperation(HttpClient client, ISessionManager? sessionManager = null) : IAsyncOperation<string, string>
 {
@@ -21,7 +21,7 @@ internal class MakeRequestOperation(HttpClient client, ISessionManager? sessionM
         if (sessionManager is not null)
         {
             var session = sessionManager.Session;
-            if (!session.IsExpired)
+            if (session.IsExpired)
             {
                 await sessionManager.UpdateSessionAsync(cancellationToken);
             }
@@ -29,7 +29,7 @@ internal class MakeRequestOperation(HttpClient client, ISessionManager? sessionM
             client.DefaultRequestHeaders.Add(SESSION_HEADER, session.SessionId);
         }
 
-        using HttpRequestMessage requestMessage = new HttpRequestMessage()
+        using var requestMessage = new HttpRequestMessage()
         {
             Method = HttpMethod.Post,
             Content = new StringContent(input, encoding, MEDIA_TYPE),

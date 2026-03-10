@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Base\Base.Exceptions\Base.Exceptions.csproj" />
     <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
     <ProjectReference Include="..\..\Base\Base.Pipelines\Base.Pipelines.csproj" />
   </ItemGroup>

@@ -1,8 +1,9 @@
-﻿using GUS.REGON.Interfaces;
+﻿using Base.Pipelines.Models;
+using GUS.REGON.Interfaces;
 
 namespace GUS.REGON.Services.SessionManagers;
 
-internal class SessionManager(Func<CancellationToken, Task<string>> getSessionIdFunc) :
+internal class SessionManager(Func<CancellationToken, Task<OperationResult<string>>> zalogujAsyncFunc) :
     ISessionManager,
     IDisposable
 {
@@ -24,7 +25,7 @@ internal class SessionManager(Func<CancellationToken, Task<string>> getSessionId
         sessionUpdated is null ||
         DateTimeOffset.Now >= sessionCanUpdated;
 
-    public SessionInfo Session => GetStatus();
+    public SessionInfo Session => PrepareSessionInfo();
 
 
     public async Task UpdateSessionAsync(CancellationToken cancellationToken = default)
@@ -53,7 +54,7 @@ internal class SessionManager(Func<CancellationToken, Task<string>> getSessionId
     }
 
 
-    private SessionInfo GetStatus()
+    private SessionInfo PrepareSessionInfo()
     {
         if (string.IsNullOrWhiteSpace(sessionId) ||
             sessionExpired is null ||
@@ -71,7 +72,12 @@ internal class SessionManager(Func<CancellationToken, Task<string>> getSessionId
 
         var timeBeforeRequest = DateTimeOffset.Now;
 
-        sessionId = await getSessionIdFunc(cancellationToken).ConfigureAwait(false);
+        var result = await zalogujAsyncFunc(cancellationToken).ConfigureAwait(false);
+        if (result.IsFailure)
+        {
+            throw new InvalidOperationException();
+        }
+        sessionId = result.Value;
         sessionUpdated = timeBeforeRequest;
         sessionExpired = sessionUpdated + sessionLifeTime;
         sessionCanUpdated = sessionUpdated + lockingLifeTime;

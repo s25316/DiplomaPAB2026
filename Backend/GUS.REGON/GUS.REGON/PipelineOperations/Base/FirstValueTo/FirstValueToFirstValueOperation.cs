@@ -1,7 +1,7 @@
-﻿using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+﻿using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 
-namespace GUS.REGON.PipelineOperations.FirstValueTo;
+namespace GUS.REGON.PipelineOperations.Base.FirstValueTo;
 
 internal class FirstValueToFirstValueOperation : ISyncOperation<string, string>
 {

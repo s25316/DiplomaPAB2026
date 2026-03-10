@@ -19,7 +19,7 @@ namespace GUS.REGON {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Messages {
@@ -66,6 +66,78 @@ namespace GUS.REGON {
         internal static string KeyErrorMessageEmpty {
             get {
                 return ResourceManager.GetString("KeyErrorMessageEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Klucz jest niepoprawny.
+        /// </summary>
+        internal static string KeyErrorMessageInvalid {
+            get {
+                return ResourceManager.GetString("KeyErrorMessageInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Konieczne jest pobranie i sprawdzenie kodu Captcha (metody PobierzCaptcha i SprawdzCaptcha). .
+        /// </summary>
+        internal static string KomunikatKod1 {
+            get {
+                return ResourceManager.GetString("KomunikatKod1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do metody DaneSzukaj przekazano zbyt wiele identyfikatorów..
+        /// </summary>
+        internal static string KomunikatKod2 {
+            get {
+                return ResourceManager.GetString("KomunikatKod2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nie znaleziono podmiotów..
+        /// </summary>
+        internal static string KomunikatKod4 {
+            get {
+                return ResourceManager.GetString("KomunikatKod4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Brak uprawnień do raportu..
+        /// </summary>
+        internal static string KomunikatKod5 {
+            get {
+                return ResourceManager.GetString("KomunikatKod5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Brak sesji. Sesja wygasła lub przekazano nieprawidłową wartość nagłówka sid..
+        /// </summary>
+        internal static string KomunikatKod7 {
+            get {
+                return ResourceManager.GetString("KomunikatKod7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usluga Niedostepna.
+        /// </summary>
+        internal static string StatusUslugi0 {
+            get {
+                return ResourceManager.GetString("StatusUslugi0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Przerwa Techniczna.
+        /// </summary>
+        internal static string StatusUslugi2 {
+            get {
+                return ResourceManager.GetString("StatusUslugi2", resourceCulture);
             }
         }
     }

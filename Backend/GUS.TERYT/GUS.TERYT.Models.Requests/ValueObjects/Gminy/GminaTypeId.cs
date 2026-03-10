@@ -1,5 +1,5 @@
 ﻿// Ignore Spelling: Gminy, Gmina
-using Base.Models.Exceptions;
+using Base.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 

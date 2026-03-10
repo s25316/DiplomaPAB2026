@@ -1,10 +1,10 @@
-﻿using Base.Models.Exceptions;
-using Base.Pipelines;
-using Base.Pipelines.Interfaces;
+﻿using Base.Exceptions;
+using Base.Pipelines.Interfaces.Operations;
+using Base.Pipelines.Models;
 using System.Net;
 using System.Xml.Linq;
 
-namespace GUS.REGON.PipelineOperations;
+namespace GUS.REGON.PipelineOperations.Base;
 
 internal class EnvelopeToDocumentOperation : ISyncOperation<string, XDocument>
 {
