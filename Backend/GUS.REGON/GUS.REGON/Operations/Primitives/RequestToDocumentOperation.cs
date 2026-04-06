@@ -113,10 +113,4 @@ internal class RequestToDocumentOperation(
         envelope = concatedLines;
         return true;
     }
-
-    private static string DecodeXmlEnvelope(string envelope) => envelope
-        .Replace("&lt;", "<")
-        .Replace("&gt;", ">")
-        .Replace("&#xD;", "")
-        .Replace("&amp;", "&");
 }

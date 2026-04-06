@@ -22,4 +22,3 @@ public abstract record RegonOperationError(string Message) : OperationError(Mess
     public record EmptyFirstValue() : RegonOperationError("");
     public record NotImplemented(string Message) : RegonOperationError(Message);
 }
-

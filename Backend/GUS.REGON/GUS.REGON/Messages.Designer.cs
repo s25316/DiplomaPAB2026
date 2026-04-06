@@ -124,7 +124,151 @@ namespace GUS.REGON {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Usluga Niedostepna.
+        ///   Looks up a localized string similar to Raport o miejscu prowadzenia działalności zarejestrowanej w CEIDG..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnoscFizycznejCeidg {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnoscFizycznejCeidg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport o miejscu prowadzenia pozostałej działalności..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnoscFizycznejPozostala {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnoscFizycznejPozostala", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport o miejscu prowadzenia działalności rolniczej..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnoscFizycznejRolnicza {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnoscFizycznejRolnicza", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Informacja o miejscu prowadzenia działalności zlikwidowanej..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnoscFizycznejWKrupgn {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnoscFizycznejWKrupgn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista prowadzonych przez jednostkę fizyczną działalności wg PKD..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnosciFizycznej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnosciFizycznej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista prowadzonych przez jednostkę lokalną jednostki fizycznej działalności wg.PKD..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnosciLokalnejFizycznej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnosciLokalnejFizycznej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista prowadzonych przez jednostkę lokalną jednostki prawnej działalności wg.PKD..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnosciLokalnejPrawnej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnosciLokalnejPrawnej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista prowadzonych przez jednostkę prawną działalności wg PKD..
+        /// </summary>
+        internal static string PublDaneRaportDzialalnosciPrawnej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportDzialalnosciPrawnej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport pełny o wybranej jednostce fizycznej. .
+        /// </summary>
+        internal static string PublDaneRaportFizycznaOsoba {
+            get {
+                return ResourceManager.GetString("PublDaneRaportFizycznaOsoba", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport o jednostce lokalnej jednostki fizycznej.
+        /// </summary>
+        internal static string PublDaneRaportLokalnaFizycznej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportLokalnaFizycznej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport o jednostce lokalnej jednostki prawnej..
+        /// </summary>
+        internal static string PublDaneRaportLokalnaPrawnej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportLokalnaPrawnej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista jednostek lokalnych jednostki fizycznej..
+        /// </summary>
+        internal static string PublDaneRaportLokalneFizycznej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportLokalneFizycznej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista jednostek lokalnych jednostki prawnej..
+        /// </summary>
+        internal static string PublDaneRaportLokalnePrawnej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportLokalnePrawnej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raport o jednostce prawnej..
+        /// </summary>
+        internal static string PublDaneRaportPrawna {
+            get {
+                return ResourceManager.GetString("PublDaneRaportPrawna", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Informacja o typie jednostki..
+        /// </summary>
+        internal static string PublDaneRaportTypJednostki {
+            get {
+                return ResourceManager.GetString("PublDaneRaportTypJednostki", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lista wspólników spółki cywilnej..
+        /// </summary>
+        internal static string PublDaneRaportWspolnicyPrawnej {
+            get {
+                return ResourceManager.GetString("PublDaneRaportWspolnicyPrawnej", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usluga Niedostepna..
         /// </summary>
         internal static string StatusUslugi0 {
             get {
@@ -133,7 +277,16 @@ namespace GUS.REGON {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Przerwa Techniczna.
+        ///   Looks up a localized string similar to Usluga Dostepna..
+        /// </summary>
+        internal static string StatusUslugi1 {
+            get {
+                return ResourceManager.GetString("StatusUslugi1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Przerwa Techniczna..
         /// </summary>
         internal static string StatusUslugi2 {
             get {

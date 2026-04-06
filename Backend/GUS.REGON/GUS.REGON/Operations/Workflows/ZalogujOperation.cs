@@ -42,7 +42,7 @@ internal class ZalogujOperation(
                 var statusUslugiResult = await statusUslugiOperation.ExecuteAsync(cancellationToken);
                 if (statusUslugiResult is StatusUslugi.UslugaDostepna)
                 {
-                    throw new RegonException.InvalidKey(key.Value);
+                    throw new RegonException.InvalidKey($"{Messages.KeyErrorMessageInvalid}: {key.Value}");
                 }
                 return RegonBaseResult.Failed<string>(statusUslugiResult);
 

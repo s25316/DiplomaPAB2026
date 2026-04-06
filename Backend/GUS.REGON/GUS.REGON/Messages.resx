@@ -138,10 +138,61 @@
   <data name="KomunikatKod7" xml:space="preserve">
     <value>Brak sesji. Sesja wygasła lub przekazano nieprawidłową wartość nagłówka sid.</value>
   </data>
+  <data name="PublDaneRaportDzialalnoscFizycznejCeidg" xml:space="preserve">
+    <value>Raport o miejscu prowadzenia działalności zarejestrowanej w CEIDG.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnoscFizycznejPozostala" xml:space="preserve">
+    <value>Raport o miejscu prowadzenia pozostałej działalności.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnoscFizycznejRolnicza" xml:space="preserve">
+    <value>Raport o miejscu prowadzenia działalności rolniczej.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnoscFizycznejWKrupgn" xml:space="preserve">
+    <value>Informacja o miejscu prowadzenia działalności zlikwidowanej.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnosciFizycznej" xml:space="preserve">
+    <value>Lista prowadzonych przez jednostkę fizyczną działalności wg PKD.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnosciLokalnejFizycznej" xml:space="preserve">
+    <value>Lista prowadzonych przez jednostkę lokalną jednostki fizycznej działalności wg.PKD.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnosciLokalnejPrawnej" xml:space="preserve">
+    <value>Lista prowadzonych przez jednostkę lokalną jednostki prawnej działalności wg.PKD.</value>
+  </data>
+  <data name="PublDaneRaportDzialalnosciPrawnej" xml:space="preserve">
+    <value>Lista prowadzonych przez jednostkę prawną działalności wg PKD.</value>
+  </data>
+  <data name="PublDaneRaportFizycznaOsoba" xml:space="preserve">
+    <value>Raport pełny o wybranej jednostce fizycznej. </value>
+  </data>
+  <data name="PublDaneRaportLokalnaFizycznej" xml:space="preserve">
+    <value>Raport o jednostce lokalnej jednostki fizycznej</value>
+  </data>
+  <data name="PublDaneRaportLokalnaPrawnej" xml:space="preserve">
+    <value>Raport o jednostce lokalnej jednostki prawnej.</value>
+  </data>
+  <data name="PublDaneRaportLokalneFizycznej" xml:space="preserve">
+    <value>Lista jednostek lokalnych jednostki fizycznej.</value>
+  </data>
+  <data name="PublDaneRaportLokalnePrawnej" xml:space="preserve">
+    <value>Lista jednostek lokalnych jednostki prawnej.</value>
+  </data>
+  <data name="PublDaneRaportPrawna" xml:space="preserve">
+    <value>Raport o jednostce prawnej.</value>
+  </data>
+  <data name="PublDaneRaportTypJednostki" xml:space="preserve">
+    <value>Informacja o typie jednostki.</value>
+  </data>
+  <data name="PublDaneRaportWspolnicyPrawnej" xml:space="preserve">
+    <value>Lista wspólników spółki cywilnej.</value>
+  </data>
   <data name="StatusUslugi0" xml:space="preserve">
-    <value>Usluga Niedostepna</value>
+    <value>Usluga Niedostepna.</value>
+  </data>
+  <data name="StatusUslugi1" xml:space="preserve">
+    <value>Usluga Dostepna.</value>
   </data>
   <data name="StatusUslugi2" xml:space="preserve">
-    <value>Przerwa Techniczna</value>
+    <value>Przerwa Techniczna.</value>
   </data>
 </root>
