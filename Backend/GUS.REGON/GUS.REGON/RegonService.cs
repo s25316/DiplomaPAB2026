@@ -2,21 +2,19 @@
 // Ignore Spelling: Zaloguj, Wyloguj
 // Ignore Spelling: Komunikat, Uslugi, Sesji, Danych
 using Base.Models.ValueObjects.Regony;
-using Base.Pipelines;
-using Base.Pipelines.Models;
 using GUS.REGON.Configurations;
 using GUS.REGON.Envelopes.Requests;
-using GUS.REGON.Exceptions;
 using GUS.REGON.Interfaces;
+using GUS.REGON.Mapping;
+using GUS.REGON.Models;
 using GUS.REGON.Models.Responses.Enums;
-using GUS.REGON.PipelineOperations;
-using GUS.REGON.PipelineOperations.Base;
-using GUS.REGON.PipelineOperations.Base.ElementsTo;
+using GUS.REGON.Models.Results;
+using GUS.REGON.Operations.Workflows;
 using GUS.REGON.Services.SessionManagers;
+using GUS.REGON.Strategies;
 using GUS.REGON.ValueObjects;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using RegonResponse = GUS.REGON.Models.Responses.Response;
 
 namespace GUS.REGON;
 
@@ -25,7 +23,7 @@ public class RegonService : IDisposable, IAsyncDisposable
     private readonly ILogger<RegonService> logger;
     private readonly IServiceProvider provider;
     private bool disposed = false;
-
+    private readonly SemaphoreSlim semaphore = new(1, 1);
 
     public RegonService(string key, bool isProduction = true)
     {
@@ -50,16 +48,24 @@ public class RegonService : IDisposable, IAsyncDisposable
         services.AddSingleton<Request.DaneSzukaj>();
         services.AddSingleton<Request.DanePobierzPelnyRaport>();
 
-        // Add Operations
-        services.AddSingleton<ZalogujOperation>();
-        services.AddSingleton<WylogujOperation>();
-
+        // Add Workflows Operations
         services.AddSingleton<KomunikatUslugiOperation>();
         services.AddSingleton<StatusUslugiOperation>();
         services.AddSingleton<KomunikatTrescOperation>();
         services.AddSingleton<KomunikatKodOperation>();
         services.AddSingleton<StatusSesjiOperation>();
         services.AddSingleton<StanDanychOperation>();
+
+        services.AddSingleton<ZalogujOperation>();
+        services.AddSingleton<WylogujOperation>();
+
+        services.AddSingleton<DaneSzukajOperation>();
+        services.AddSingleton<RaportJednostkiOperation>();
+
+        // Add Strategies
+        services.AddSingleton<RaportJednostkiStrategy>();
+        services.AddSingleton<RaportPkdStarategy>();
+
 
         services.AddHttpClient(HttpClientNames.BASE, client =>
         {
@@ -76,79 +82,122 @@ public class RegonService : IDisposable, IAsyncDisposable
         Task.Run(async () => await provider.GetRequiredService<ISessionManager>().UpdateSessionAsync())
             .GetAwaiter()
             .GetResult();
-
     }
 
+    #region Getting Data Operations
+    public async Task<RegonResult<IEnumerable<DaneSzukaj>>> GetDaneSzukajAsync(
+        Regon regon,
+        CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        try
+        {
+            await semaphore.WaitAsync(cancellationToken);
 
-    public async Task<IEnumerable<RegonResponse.DaneSzukaj>> GetAsync(Regon regon, CancellationToken cancellationToken = default)
+            var daneSzukajOperation = provider.GetRequiredService<DaneSzukajOperation>();
+            var request = provider.GetRequiredService<Request.DaneSzukaj>();
+
+            var requestEnvelope = request.Generate(regon);
+            var result = await daneSzukajOperation.ExecuteAsync(requestEnvelope, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return RegonResult.Failed<IEnumerable<DaneSzukaj>>(result.KomunikatKod, result.StatusUslugi);
+            }
+
+            var mappedResults = result.Value.Select(i => i.MapToAdapted());
+            return RegonResult.Success(mappedResults);
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    public async Task<RegonResult<RaportJednostki>> GetRaportJednostkiAsync(
+        Regon regon,
+        TypJednostki typ,
+        int? silosId,
+        CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
 
-        using var client = provider
-            .GetRequiredService<IHttpClientFactory>()
-            .CreateClient(HttpClientNames.BASE);
+        try
+        {
+            await semaphore.WaitAsync(cancellationToken);
 
-        var request = provider.GetRequiredService<Request.DaneSzukaj>();
-        var sessionManager = provider.GetRequiredService<ISessionManager>();
-        var requestEnvelope = request.Generate(regon);
+            var paportJednostkiOperation = provider.GetRequiredService<RaportJednostkiOperation>();
+            var raportJednostkiStrategy = provider.GetRequiredService<RaportJednostkiStrategy>();
+            var request = provider.GetRequiredService<Request.DanePobierzPelnyRaport>();
 
-        var result = await PipelineBuilder
-            .Create(new MakeRequestOperation(client, sessionManager))
-            .Add(new ResponseToEnvelopeOperation())
-            .Add(new EnvelopeToDocumentOperation())
-            .Add(new DocumentToElementsOperation(ElementDefinition.Dane))
-            .Add(new ElementsToClassesOperation<RegonResponse.DaneSzukaj>())
-            .ExecuteAsync(requestEnvelope, cancellationToken);
+            var reportResult = raportJednostkiStrategy.GetReport(typ, silosId);
+            if (reportResult.IsFailure)
+            {
+                return RegonResult.Failed<RaportJednostki>(KomunikatKod.NieZnalezionoPodmiotów);
+            }
 
-        if (result.IsSuccess) return result.Value;
-        else return [];
+            var requestEnvelope = request.Generate(regon, reportResult.Value.Value);
+            var result = await paportJednostkiOperation.ExecuteAsync(requestEnvelope, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return RegonResult.Failed<RaportJednostki>(result.KomunikatKod, result.StatusUslugi);
+            }
+
+            var mappedResult = result.Value.First().MapToAdapted();
+            return RegonResult.Success(mappedResult);
+        }
+        finally
+        {
+            semaphore.Release();
+        }
     }
+    #endregion
 
-    private async Task<OperationResult<string>> ZalogujAsync(CancellationToken cancellationToken = default)
+
+    #region Authorization Operations
+    private async Task<RegonBaseResult<string>> ZalogujAsync(CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(disposed, this);
 
         var zalogujOperation = provider.GetRequiredService<ZalogujOperation>();
-        var statusUslugi = provider.GetRequiredService<StatusUslugiOperation>();
-
-        var zalogujResult = await zalogujOperation.ExecuteAsync(cancellationToken);
-        if (zalogujResult.IsSuccess) return zalogujResult;
-        if (zalogujResult.HasException) throw zalogujResult.Exception;
-
-        var statusUslugiResult = await statusUslugi.ExecuteAsync(cancellationToken);
-        if (statusUslugiResult.IsSuccess) throw new RegonException.InvalidKey(Messages.KeyErrorMessageInvalid);
-        if (statusUslugiResult.HasException) throw statusUslugiResult.Exception;
-        throw new NotImplementedException();
+        return await zalogujOperation.ExecuteAsync(cancellationToken);
     }
 
-    private async Task<OperationResult<bool>> WylogujAsync(CancellationToken cancellationToken = default)
+    private async Task<RegonBaseResult<bool>> WylogujAsync(CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(disposed, this);
+
         var wylogujOperation = provider.GetRequiredService<WylogujOperation>();
-        var wylogujResult = await wylogujOperation.ExecuteAsync(cancellationToken);
-        if (wylogujResult.IsSuccess) return wylogujResult;
-        if (wylogujResult.HasException) throw wylogujResult.Exception;
-        return OperationResult.Success(true);
+        return await wylogujOperation.ExecuteAsync(cancellationToken);
+    }
+    #endregion
+
+
+    #region GetValue Operations
+    public async Task<string> GetKomunikatUslugiAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        return await provider.GetRequiredService<KomunikatUslugiOperation>().ExecuteAsync(cancellationToken);
     }
 
+    public async Task<StatusUslugi> GetStatusUslugiAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        return await provider.GetRequiredService<StatusUslugiOperation>().ExecuteAsync(cancellationToken);
+    }
 
-    #region GetValueAsync
-    public async Task<OperationResult<string>> GetKomunikatUslugiAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<KomunikatUslugiOperation>().ExecuteAsync(cancellationToken);
+    public async Task<RegonBaseResult<StatusSesji>> GetStatusSesjiAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        return await provider.GetRequiredService<StatusSesjiOperation>().ExecuteAsync(cancellationToken);
+    }
 
-    public async Task<OperationResult<StatusUslugi>> GetStatusUslugiAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<StatusUslugiOperation>().ExecuteAsync(cancellationToken);
-
-    public async Task<OperationResult<StatusSesji>> GetStatusSesjiAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<StatusSesjiOperation>().ExecuteAsync(cancellationToken);
-
-    public async Task<OperationResult<DateOnly>> GetStanDanychAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<StanDanychOperation>().ExecuteAsync(cancellationToken);
-
-    private async Task<OperationResult<KomunikatKod>> GetKomunikatKodAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<KomunikatKodOperation>().ExecuteAsync(cancellationToken);
-
-    private async Task<OperationResult<string>> GetKomunikatTrescAsync(CancellationToken cancellationToken = default)
-        => await provider.GetRequiredService<KomunikatTrescOperation>().ExecuteAsync(cancellationToken);
+    public async Task<RegonBaseResult<DateOnly>> GetStanDanychAsync(CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+        return await provider.GetRequiredService<StanDanychOperation>().ExecuteAsync(cancellationToken);
+    }
     #endregion
 
 

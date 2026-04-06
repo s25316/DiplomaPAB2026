@@ -21,6 +21,6 @@ public sealed record DaneSzukaj
     public required string Regon { get; init; } = null!;
     public required string Nazwa { get; init; } = null!;
     public required TypJednostki Typ { get; init; }
-    public int? SilosID { get; init; } = null;
+    public int? SilosId { get; init; } = null;
     public Address? Adres { get; init; } = null;
 }

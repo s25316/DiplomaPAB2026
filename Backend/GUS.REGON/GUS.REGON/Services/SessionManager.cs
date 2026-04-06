@@ -1,14 +1,14 @@
-﻿using Base.Pipelines.Models;
-using GUS.REGON.Interfaces;
+﻿using GUS.REGON.Interfaces;
+using GUS.REGON.Models.Results;
 
 namespace GUS.REGON.Services.SessionManagers;
 
-internal class SessionManager(Func<CancellationToken, Task<OperationResult<string>>> zalogujAsyncFunc) :
+internal class SessionManager(Func<CancellationToken, Task<RegonBaseResult<string>>> zalogujAsyncFunc) :
     ISessionManager,
     IDisposable
 {
     private static readonly TimeSpan lockingLifeTime = TimeSpan.FromMinutes(1);
-    private static readonly TimeSpan sessionLifeTime = TimeSpan.FromMinutes(60);
+    private static readonly TimeSpan sessionLifeTime = TimeSpan.FromMinutes(59);
 
     private readonly SemaphoreSlim semaphore = new(1, 1);
 
@@ -75,7 +75,7 @@ internal class SessionManager(Func<CancellationToken, Task<OperationResult<strin
         var result = await zalogujAsyncFunc(cancellationToken).ConfigureAwait(false);
         if (result.IsFailure)
         {
-            throw new InvalidOperationException();
+            return;
         }
         sessionId = result.Value;
         sessionUpdated = timeBeforeRequest;

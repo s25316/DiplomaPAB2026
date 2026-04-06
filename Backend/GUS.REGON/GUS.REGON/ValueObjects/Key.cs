@@ -1,4 +1,4 @@
-﻿using GUS.REGON.Exceptions;
+﻿using GUS.REGON.Errors;
 
 namespace GUS.REGON.ValueObjects;
 

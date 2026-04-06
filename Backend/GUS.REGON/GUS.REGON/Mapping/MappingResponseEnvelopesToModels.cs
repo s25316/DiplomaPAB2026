@@ -40,7 +40,7 @@ internal static class MappingResponseEnvelopesToModels
             Regon = regon,
             Nazwa = item.Nazwa,
             Typ = item.Typ,
-            SilosID = item.SilosID,
+            SilosId = item.SilosId,
             Adres = address,
         };
     }

@@ -15,8 +15,17 @@ public class RegonController(RegonService service) : ControllerBase
     public async Task<IActionResult> GetAsync(string regonString, CancellationToken cancellationToken)
     {
         var regon = (Regon)regonString;
-        var items = await service.GetAsync(regon, cancellationToken);
-        return Ok(items);
+        var daneSzukajResult = await service.GetDaneSzukajAsync(regon, cancellationToken);
+
+        if (daneSzukajResult.IsFailure)
+        {
+            return Ok(daneSzukajResult);
+        }
+
+        var value = daneSzukajResult.Value.First();
+        var raportJednostkiResult = await service.GetRaportJednostkiAsync(regon, value.Typ, value.SilosId);
+
+        return Ok(new { DaneSzukaj = daneSzukajResult, RaportJednostki = raportJednostkiResult });
     }
 
 

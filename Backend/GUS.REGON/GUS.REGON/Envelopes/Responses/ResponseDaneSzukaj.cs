@@ -37,7 +37,7 @@ public abstract partial record Response
         [XmlElement("Typ")]
         public TypJednostki Typ { get; init; }
 
-        [XmlElement("SilosID", IsNullable = true)]
-        public int? SilosID { get; init; }
+        [XmlElement("SilosId", IsNullable = true)]
+        public int? SilosId { get; init; }
     }
 }
