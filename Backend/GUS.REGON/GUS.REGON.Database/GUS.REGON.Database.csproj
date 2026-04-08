@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\Directory.Packages.props" />
+	
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+	
+	<ItemGroup Label="EntityFrameworkCore">
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+	</ItemGroup>
+	
+</Project>

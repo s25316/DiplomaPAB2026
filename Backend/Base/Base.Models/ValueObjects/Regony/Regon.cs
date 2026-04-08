@@ -59,5 +59,8 @@ public sealed record Regon
     }
 
     internal static string GetDescription() => Messages.RegonDescription;
+    public string To14SCharacters() => Value.Length == 14
+        ? Value
+        : $"{Value}00000";
     public override string ToString() => Value;
 }
