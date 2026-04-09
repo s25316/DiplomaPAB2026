@@ -1,4 +1,4 @@
-﻿namespace GUS.TERYT.Infrastructure.Configurations;
+﻿namespace GUS.REGON.Infrastructure.Configurations;
 
 public class DatabaseConfiguration
 {

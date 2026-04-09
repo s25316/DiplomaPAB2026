@@ -1,7 +1,9 @@
 ﻿using GUS.REGON.Database.Models;
 using GUS.REGON.Database.Models.Addresses;
+using GUS.REGON.Database.Models.RegistrationDetails;
 using GUS.REGON.Database.MsSql.Configurations;
 using GUS.REGON.Database.MsSql.Configurations.Addresses;
+using GUS.REGON.Database.MsSql.Configurations.RegistrationDetails;
 using Microsoft.EntityFrameworkCore;
 
 namespace GUS.REGON.Database.MsSql;
@@ -33,6 +35,7 @@ public class RegonMsSqlDbContext(DbContextOptions options) : RegonDbContext(opti
     {
         modelBuilder.ApplyConfiguration<Query>(new QueryEFConfiguration());
         modelBuilder.ApplyConfiguration<Report>(new ReportEFConfiguration());
+        modelBuilder.ApplyConfiguration<TypJednostki>(new TypJednostkiEFConfiguration());
 
         modelBuilder.ApplyConfiguration<Address>(new AddressEFConfiguration());
         modelBuilder.ApplyConfiguration<Kraj>(new KrajEFConfiguration());
@@ -42,6 +45,14 @@ public class RegonMsSqlDbContext(DbContextOptions options) : RegonDbContext(opti
         modelBuilder.ApplyConfiguration<MiejscowoscPoczty>(new MiejscowoscPocztyEFConfiguration());
         modelBuilder.ApplyConfiguration<Miejscowosc>(new MiejscowoscEFConfiguration());
         modelBuilder.ApplyConfiguration<Ulica>(new UlicaEFConfiguration());
+
+        modelBuilder.ApplyConfiguration<FormaFinansowania>(new FormaFinansowaniaEFConfiguration());
+        modelBuilder.ApplyConfiguration<FormaWlasnosci>(new FormaWlasnosciEFConfiguration());
+        modelBuilder.ApplyConfiguration<OrganRejestrowy>(new OrganRejestrowyEFConfiguration());
+        modelBuilder.ApplyConfiguration<OrganZalozycielski>(new OrganZalozycielskiEFConfiguration());
+        modelBuilder.ApplyConfiguration<PodstawowaFormaPrawna>(new PodstawowaFormaPrawnaEFConfiguration());
+        modelBuilder.ApplyConfiguration<SzczegolnaFormaPrawna>(new SzczegolnaFormaPrawnaEFConfiguration());
+        modelBuilder.ApplyConfiguration<RodzajRejestru>(new RodzajRejestruEFConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

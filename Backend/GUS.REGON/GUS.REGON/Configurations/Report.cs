@@ -39,18 +39,18 @@ internal abstract record Report(string Value, string Description)
     #endregion
 
 
-    #region  Raporty Dzialalnosci Lokalno Prawnej
+    #region  Raporty Dzialalnosci Prawnej
     /// <summary>
     /// Raport Dzialalnosci Prawnej PKD
     /// </summary>
-    public sealed record DzialalnosciPrawnej() : Report("PublDaneRaportDzialalnosciPrawnej", "");
+    public sealed record DzialalnosciPrawnej() : Report("PublDaneRaportDzialalnosciPrawnej", Messages.PublDaneRaportDzialalnosciPrawnej);
 
     /// <summary>
     /// Raport Dzialalnosci Prawnej
     /// </summary>
-    public sealed record Prawna() : Report("PublDaneRaportPrawna", "");
-    public sealed record LokalnePrawnej() : Report("PublDaneRaportLokalnePrawnej", ""); // List
-    public sealed record WspolnicyPrawnej() : Report("PublDaneRaportWspolnicyPrawnej", ""); // Wspolnicy
+    public sealed record Prawna() : Report("PublDaneRaportPrawna", Messages.PublDaneRaportPrawna);
+    public sealed record LokalnePrawnej() : Report("PublDaneRaportLokalnePrawnej", Messages.PublDaneRaportLokalnePrawnej); // List
+    public sealed record WspolnicyPrawnej() : Report("PublDaneRaportWspolnicyPrawnej", Messages.PublDaneRaportWspolnicyPrawnej); // Wspolnicy
     #endregion
 
 

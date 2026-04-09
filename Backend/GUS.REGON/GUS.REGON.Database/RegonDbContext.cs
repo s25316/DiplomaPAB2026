@@ -1,5 +1,6 @@
 ﻿using GUS.REGON.Database.Models;
 using GUS.REGON.Database.Models.Addresses;
+using GUS.REGON.Database.Models.RegistrationDetails;
 using Microsoft.EntityFrameworkCore;
 
 namespace GUS.REGON.Database;
@@ -8,6 +9,7 @@ public class RegonDbContext(DbContextOptions options) : DbContext(options)
 {
     public virtual DbSet<Query> Queries { get; set; }
     public virtual DbSet<Report> Reports { get; set; }
+    public virtual DbSet<TypJednostki> TypyJednostki { get; set; }
 
     public virtual DbSet<Address> Addresses { get; set; }
     public virtual DbSet<Kraj> Kraje { get; set; }
@@ -17,4 +19,12 @@ public class RegonDbContext(DbContextOptions options) : DbContext(options)
     public virtual DbSet<MiejscowoscPoczty> MiejscowosciPoczty { get; set; }
     public virtual DbSet<Miejscowosc> Miejscowosci { get; set; }
     public virtual DbSet<Ulica> Ulicy { get; set; }
+
+    public virtual DbSet<FormaFinansowania> FormyFinansowania { get; set; }
+    public virtual DbSet<FormaWlasnosci> FormyWlasnosci { get; set; }
+    public virtual DbSet<OrganRejestrowy> OrganyRejestrowe { get; set; }
+    public virtual DbSet<OrganZalozycielski> OrganyZalozycielskie { get; set; }
+    public virtual DbSet<PodstawowaFormaPrawna> PodstawowwFormyPrawne { get; set; }
+    public virtual DbSet<SzczegolnaFormaPrawna> SzczegolneFormyPrawne { get; set; }
+    public virtual DbSet<RodzajRejestru> RodzajeRejestru { get; set; }
 }

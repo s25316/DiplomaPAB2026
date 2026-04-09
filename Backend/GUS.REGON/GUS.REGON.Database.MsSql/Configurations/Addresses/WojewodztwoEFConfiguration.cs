@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GUS.REGON.Database.MsSql.Configurations.Addresses;
 
-internal class WojewodztwoEFConfiguration : IEntityTypeConfiguration<Wojewodztwo>
+public class WojewodztwoEFConfiguration : IEntityTypeConfiguration<Wojewodztwo>
 {
     public void Configure(EntityTypeBuilder<Wojewodztwo> builder)
     {

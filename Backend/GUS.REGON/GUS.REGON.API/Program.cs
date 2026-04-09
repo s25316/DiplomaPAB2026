@@ -1,4 +1,5 @@
-using GUS.REGON.Extensions;
+using GUS.REGON.Application;
+using GUS.REGON.Infrastructure;
 using Scalar.AspNetCore;
 
 namespace GUS.REGON.API;
@@ -9,12 +10,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddRegonService("key", false);
+        builder.Services.AddApplicationConfiguration();
+        builder.Services.AddInfrastructureConfiguration(builder.Configuration);
 
         builder.Services.AddControllers();
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
-
 
         var app = builder.Build();
 

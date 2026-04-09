@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GUS.REGON.Database.MsSql.Configurations.Addresses;
 
-internal class AddressEFConfiguration : IEntityTypeConfiguration<Address>
+public class AddressEFConfiguration : IEntityTypeConfiguration<Address>
 {
     public void Configure(EntityTypeBuilder<Address> builder)
     {

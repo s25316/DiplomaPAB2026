@@ -10,4 +10,9 @@ public static class ServiceCollectionExtensions
         string key,
         bool isProduction = true
     ) => services.AddSingleton<RegonService>(_ => new RegonService(key, isProduction));
+
+    public static IServiceCollection AddRegonService(
+        this IServiceCollection services,
+        Func<IServiceProvider, RegonService> configuration
+    ) => services.AddSingleton<RegonService>(configuration);
 }
