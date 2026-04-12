@@ -10,7 +10,7 @@ public class WojewodztwoEFConfiguration : IEntityTypeConfiguration<Wojewodztwo>
     {
         builder.ToTable(nameof(Wojewodztwo));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.WojewodztwoId)
             .HasName($"{nameof(Wojewodztwo)}_PK");
         builder
             .Property(p => p.Name)
@@ -20,7 +20,7 @@ public class WojewodztwoEFConfiguration : IEntityTypeConfiguration<Wojewodztwo>
         builder
             .HasMany(k => k.Addresses)
             .WithOne(k => k.Wojewodztwo)
-            .HasForeignKey(k => k.WojewodztwoCode)
+            .HasForeignKey(k => k.WojewodztwoId)
             .HasConstraintName($"{nameof(Address)}_{nameof(Wojewodztwo)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

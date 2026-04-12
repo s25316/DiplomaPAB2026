@@ -1,5 +1,6 @@
 ﻿using GUS.REGON.Database.Models;
 using GUS.REGON.Database.Models.Addresses;
+using GUS.REGON.Database.Models.Contacts;
 using GUS.REGON.Database.Models.RegistrationDetails;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,4 +28,8 @@ public class RegonDbContext(DbContextOptions options) : DbContext(options)
     public virtual DbSet<PodstawowaFormaPrawna> PodstawowwFormyPrawne { get; set; }
     public virtual DbSet<SzczegolnaFormaPrawna> SzczegolneFormyPrawne { get; set; }
     public virtual DbSet<RodzajRejestru> RodzajeRejestru { get; set; }
+
+    public virtual DbSet<PhoneNumber> PhoneNumbers { get; set; }
+    public virtual DbSet<Website> Websites { get; set; }
+    public virtual DbSet<Email> Emails { get; set; }
 }

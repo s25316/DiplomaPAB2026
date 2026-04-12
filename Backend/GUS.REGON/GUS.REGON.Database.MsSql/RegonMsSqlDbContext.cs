@@ -1,8 +1,10 @@
 ﻿using GUS.REGON.Database.Models;
 using GUS.REGON.Database.Models.Addresses;
+using GUS.REGON.Database.Models.Contacts;
 using GUS.REGON.Database.Models.RegistrationDetails;
 using GUS.REGON.Database.MsSql.Configurations;
 using GUS.REGON.Database.MsSql.Configurations.Addresses;
+using GUS.REGON.Database.MsSql.Configurations.Contacts;
 using GUS.REGON.Database.MsSql.Configurations.RegistrationDetails;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +16,7 @@ dotnet tool install --global dotnet-ef
 
 dotnet add GUS.REGON.Database.MsSql package Microsoft.EntityFrameworkCore.Design
 
-dotnet ef migrations add First `
+dotnet ef migrations add Hand `
   --project GUS.REGON.Database.MsSql `
   --startup-project GUS.REGON.API `
   --context RegonMsSqlDbContext `
@@ -53,6 +55,10 @@ public class RegonMsSqlDbContext(DbContextOptions options) : RegonDbContext(opti
         modelBuilder.ApplyConfiguration<PodstawowaFormaPrawna>(new PodstawowaFormaPrawnaEFConfiguration());
         modelBuilder.ApplyConfiguration<SzczegolnaFormaPrawna>(new SzczegolnaFormaPrawnaEFConfiguration());
         modelBuilder.ApplyConfiguration<RodzajRejestru>(new RodzajRejestruEFConfiguration());
+
+        modelBuilder.ApplyConfiguration<PhoneNumber>(new PhoneNumberEFConfiguration());
+        modelBuilder.ApplyConfiguration<Website>(new WebsiteEFConfiguration());
+        modelBuilder.ApplyConfiguration<Email>(new EmailEFConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

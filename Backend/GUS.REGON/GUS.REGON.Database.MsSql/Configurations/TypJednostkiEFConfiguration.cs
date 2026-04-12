@@ -11,7 +11,7 @@ public class TypJednostkiEFConfiguration : IEntityTypeConfiguration<TypJednostki
     {
         builder.ToTable(nameof(TypJednostki));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.TypJednostkiId)
             .HasName($"{nameof(TypJednostki)}_PK");
         builder
             .Property(p => p.Name)
@@ -21,26 +21,26 @@ public class TypJednostkiEFConfiguration : IEntityTypeConfiguration<TypJednostki
         builder
             .HasMany(k => k.Reports)
             .WithOne(k => k.TypJednostki)
-            .HasForeignKey(k => k.TypJednostkiCode)
+            .HasForeignKey(k => k.TypJednostkiId)
             .HasConstraintName($"{nameof(Report)}_{nameof(TypJednostki)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
 
         var data = new List<TypJednostki>()
         {
             new() {
-                Code = "F",
+                TypJednostkiId = "F",
                 Name = "Jednostka Fizyczna",
             },
             new() {
-                Code = "P",
+                TypJednostkiId = "P",
                 Name = "Jednostka Prawna",
             },
             new() {
-                Code = "LF",
+                TypJednostkiId = "LF",
                 Name = "Jednostka lokalna Jednostki Fizycznej",
             },
             new() {
-                Code = "LP",
+                TypJednostkiId = "LP",
                 Name = "Jednostka lokalna Jednostki Prawnej",
             },
         };

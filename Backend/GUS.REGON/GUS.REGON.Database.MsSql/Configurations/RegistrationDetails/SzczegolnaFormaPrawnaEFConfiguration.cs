@@ -11,7 +11,7 @@ public class SzczegolnaFormaPrawnaEFConfiguration : IEntityTypeConfiguration<Szc
     {
         builder.ToTable(nameof(SzczegolnaFormaPrawna));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.SzczegolnaFormaPrawnaId)
             .HasName($"{nameof(SzczegolnaFormaPrawna)}_PK");
         builder
             .Property(p => p.Name)
@@ -21,7 +21,7 @@ public class SzczegolnaFormaPrawnaEFConfiguration : IEntityTypeConfiguration<Szc
         builder
             .HasMany(k => k.Reports)
             .WithOne(k => k.SzczegolnaFormaPrawna)
-            .HasForeignKey(k => k.SzczegolnaFormaPrawnaCode)
+            .HasForeignKey(k => k.SzczegolnaFormaPrawnaId)
             .HasConstraintName($"{nameof(Report)}_{nameof(SzczegolnaFormaPrawna)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

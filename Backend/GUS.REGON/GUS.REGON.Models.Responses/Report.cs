@@ -34,9 +34,10 @@ public class Report
 
 
     public string Regon { get; init; } = null!;
-    public string? Nip { get; init; } = null;
     public string Nazwa { get; init; } = null!;
     public string? NazwaSkrocona { get; init; } = null;
+    public string? NumerwRejestrzeEwidencji { get; set; } = null;
+    public string? Dzialalnosci { get; set; } = null;
     public Address? Adres { get; init; } = null;
     public Dates Daty { get; init; } = null!;
     public Pair? OrganRejestrowy { get; init; } = null;

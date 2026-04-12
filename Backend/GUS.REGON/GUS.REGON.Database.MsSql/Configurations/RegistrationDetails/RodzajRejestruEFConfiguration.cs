@@ -11,7 +11,7 @@ public class RodzajRejestruEFConfiguration : IEntityTypeConfiguration<RodzajReje
     {
         builder.ToTable(nameof(RodzajRejestru));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.RodzajRejestruId)
             .HasName($"{nameof(RodzajRejestru)}_PK");
         builder
             .Property(p => p.Name)
@@ -21,7 +21,7 @@ public class RodzajRejestruEFConfiguration : IEntityTypeConfiguration<RodzajReje
         builder
             .HasMany(k => k.Reports)
             .WithOne(k => k.RodzajRejestru)
-            .HasForeignKey(k => k.RodzajRejestruCode)
+            .HasForeignKey(k => k.RodzajRejestruId)
             .HasConstraintName($"{nameof(Report)}_{nameof(RodzajRejestru)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

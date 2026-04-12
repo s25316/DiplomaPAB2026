@@ -2,7 +2,7 @@
 
 public class FormaWlasnosci
 {
-    public string Code { get; set; } = null!;
+    public string FormaWlasnosciId { get; set; } = null!;
     public string Name { get; set; } = null!;
 
     public virtual ICollection<Report> Reports { get; set; } = [];

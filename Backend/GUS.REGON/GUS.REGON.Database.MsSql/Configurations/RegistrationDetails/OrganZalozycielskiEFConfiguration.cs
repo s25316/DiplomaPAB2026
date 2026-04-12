@@ -11,7 +11,7 @@ public class OrganZalozycielskiEFConfiguration : IEntityTypeConfiguration<OrganZ
     {
         builder.ToTable(nameof(OrganZalozycielski));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.OrganZalozycielskiId)
             .HasName($"{nameof(OrganZalozycielski)}_PK");
         builder
             .Property(p => p.Name)
@@ -21,7 +21,7 @@ public class OrganZalozycielskiEFConfiguration : IEntityTypeConfiguration<OrganZ
         builder
             .HasMany(k => k.Reports)
             .WithOne(k => k.OrganZalozycielski)
-            .HasForeignKey(k => k.OrganZalozycielskiCode)
+            .HasForeignKey(k => k.OrganZalozycielskiId)
             .HasConstraintName($"{nameof(Report)}_{nameof(OrganZalozycielski)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

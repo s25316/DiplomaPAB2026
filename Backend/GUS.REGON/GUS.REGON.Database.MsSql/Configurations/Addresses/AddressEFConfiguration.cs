@@ -11,10 +11,10 @@ public class AddressEFConfiguration : IEntityTypeConfiguration<Address>
     {
         builder.ToTable(nameof(Address));
         builder
-            .HasKey(k => k.Id)
+            .HasKey(k => k.AddressId)
             .HasName($"{nameof(Address)}_PK");
         builder
-            .Property(p => p.Id)
+            .Property(p => p.AddressId)
             .HasDefaultValueSql(DefaultValue.GUID);
         builder
             .Property(p => p.KodPocztowy)

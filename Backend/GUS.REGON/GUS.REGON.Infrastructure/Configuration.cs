@@ -4,6 +4,7 @@ using GUS.REGON.Database;
 using GUS.REGON.Database.MsSql;
 using GUS.REGON.Extensions;
 using GUS.REGON.Infrastructure.Configurations;
+using GUS.REGON.Infrastructure.Interfaces;
 using GUS.REGON.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +17,13 @@ public static class Configuration
 {
     private const string SECTION_REGON = "Regon";
     private const string SECTION_DATABASE = "Database";
+    private const string SECTION_UPDATE_DATA = "UpdateData";
 
     public static IServiceCollection AddInfrastructureConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RegonConfiguration>(configuration.GetSection(SECTION_REGON));
         services.Configure<DatabaseConfiguration>(configuration.GetSection(SECTION_DATABASE));
+        services.Configure<UpdateDataConfiguration>(configuration.GetSection(SECTION_UPDATE_DATA));
 
         services.AddRegonService(p =>
         {
@@ -35,6 +38,8 @@ public static class Configuration
 
 
         services.AddTransient<IReportRepository, ReportRepository>();
+        services.AddTransient<IAddressRepository, AddressRepository>();
+        services.AddTransient<IQueryRepository, QueryRepository>();
 
         return services;
     }

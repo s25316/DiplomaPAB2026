@@ -10,7 +10,7 @@ public class UlicaEFConfiguration : IEntityTypeConfiguration<Ulica>
     {
         builder.ToTable(nameof(Ulica));
         builder
-            .HasKey(k => k.Code)
+            .HasKey(k => k.UlicaId)
             .HasName($"{nameof(Ulica)}_PK");
         builder
             .Property(p => p.Name)
@@ -20,7 +20,7 @@ public class UlicaEFConfiguration : IEntityTypeConfiguration<Ulica>
         builder
             .HasMany(k => k.Addresses)
             .WithOne(k => k.Ulica)
-            .HasForeignKey(k => k.UlicaCode)
+            .HasForeignKey(k => k.UlicaId)
             .HasConstraintName($"{nameof(Address)}_{nameof(Ulica)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
