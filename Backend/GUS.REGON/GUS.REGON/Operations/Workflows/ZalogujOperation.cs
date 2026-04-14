@@ -47,7 +47,7 @@ internal class ZalogujOperation(
                 return RegonBaseResult.Failed<string>(statusUslugiResult);
 
             default:
-                throw result.Error.MapToRegonException();
+                throw result.Error.MapToException();
         }
     }
 }

@@ -34,7 +34,7 @@ internal abstract class GetValueUnauthorizeOperation<T>(
         {
             { IsSuccess: true } => Result.Success<T>(result.Value),
             { IsFailure: true, Error: EmptyFirstValue } => Result.Failed<T>(),
-            _ => throw result.Error.MapToRegonException(),
+            _ => throw result.Error.MapToException(),
         };
     }
 }

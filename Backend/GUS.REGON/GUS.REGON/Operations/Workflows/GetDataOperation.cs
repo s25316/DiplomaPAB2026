@@ -68,7 +68,7 @@ internal abstract class GetDataOperation<TItem>(
                 throw new InvalidOperationException("Service is available but can not return reason of invalid Request");
             }).ExecuteAsync(operationInput, cancellationToken);
 
-        if (result.IsFailure) throw result.Error.MapToRegonException();
+        if (result.IsFailure) throw result.Error.MapToException();
         return result.Value;
     }
 

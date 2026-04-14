@@ -1,4 +1,5 @@
 ﻿//Ignore Spelling: Regon
+using Base.Exceptions;
 using Base.Models.ValueObjects.Regony;
 using GUS.REGON.Database;
 using GUS.REGON.Database.Models;
@@ -118,10 +119,13 @@ public class QueryRepository(
             case { IsFailure: true, KomunikatKod: KomunikatKod.KodCaptcha }:
             case { IsFailure: true, KomunikatKod: KomunikatKod.BrakSesji }:
             case { IsFailure: true, KomunikatKod: KomunikatKod.DaneSzukajWieleIdentyfikatorow }:
-                throw new Exception(result.KomunikatKod.ToString());
+                throw new NotImplementedException(result.KomunikatKod.ToString());
 
-            case { IsFailure: true, StatusUslugi: not StatusUslugi.UslugaDostepna }:
-                throw new Exception("Service not avaliable"); //TODO
+            case { IsFailure: true, StatusUslugi: StatusUslugi.PrzerwaTechniczna }:
+                throw new ServiceException.MaintenanceBreak(result.StatusUslugi.ToString());
+
+            case { IsFailure: true, StatusUslugi: StatusUslugi.UslugaNiedostepna }:
+                throw new ServiceException.NotAvailable(result.StatusUslugi.ToString());
 
             default: throw new NotImplementedException(nameof(result));
         }

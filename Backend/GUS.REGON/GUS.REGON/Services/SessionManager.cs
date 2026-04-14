@@ -68,7 +68,8 @@ internal class SessionManager(Func<CancellationToken, Task<RegonBaseResult<strin
 
     public async Task InvokeUpdateSessionAsync(CancellationToken cancellationToken = default)
     {
-        if (!CanUpdateSession) return;
+        if (!CanUpdateSession)
+            return;
 
         var timeBeforeRequest = DateTimeOffset.Now;
 
@@ -93,8 +94,10 @@ internal class SessionManager(Func<CancellationToken, Task<RegonBaseResult<strin
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposed) return;
-        if (disposing) semaphore.Dispose();
+        if (disposed)
+            return;
+        if (disposing)
+            semaphore.Dispose();
         disposed = true;
     }
 }

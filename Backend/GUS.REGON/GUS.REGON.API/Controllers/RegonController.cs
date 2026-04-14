@@ -1,62 +1,17 @@
-using Base.Models.ValueObjects.Regony;
+﻿using GUS.REGON.Application.Interfaces;
+using GUS.REGON.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GUS.REGON.API.Controllers;
 
+[Route("api")]
 [ApiController]
-[Route("")]
-public class RegonController(RegonService service) : ControllerBase
+public class RegonController(IReportRepository reportRepository) : ControllerBase
 {
-    [HttpGet("serverTime")]
-    public IActionResult GetSeverTime() => Ok(DateTimeOffset.Now);
-
-
     [HttpGet]
-    public async Task<IActionResult> GetAsync(string regonString, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAsync([FromQuery] InputParameters parameters, CancellationToken cancellationToken)
     {
-        var regon = (Regon)regonString;
-        var daneSzukajResult = await service.GetDaneSzukajAsync(regon, cancellationToken);
-
-        if (daneSzukajResult.IsFailure)
-        {
-            return Ok(daneSzukajResult);
-        }
-
-        var value = daneSzukajResult.Value.First();
-        var raportJednostkiResult = await service.GetRaportJednostkiAsync(regon, value.Typ, value.SilosId);
-
-        return Ok(new { DaneSzukaj = daneSzukajResult, RaportJednostki = raportJednostkiResult });
-    }
-
-
-    [HttpGet("komunikatUslugi")]
-    public async Task<IActionResult> GetKomunikatUslugiAsync(CancellationToken cancellationToken)
-    {
-        var result = await service.GetKomunikatUslugiAsync(cancellationToken);
-        return Ok(result);
-    }
-
-
-    [HttpGet("statusUslugi")]
-    public async Task<IActionResult> GetStatusUslugiAsync(CancellationToken cancellationToken)
-    {
-        var result = await service.GetStatusUslugiAsync(cancellationToken);
-        return Ok(result);
-    }
-
-
-    [HttpGet("statusSesji")]
-    public async Task<IActionResult> GetStatusSesjiAsync(CancellationToken cancellationToken)
-    {
-        var result = await service.GetStatusSesjiAsync(cancellationToken);
-        return Ok(result);
-    }
-
-
-    [HttpGet("stanDanych")]
-    public async Task<IActionResult> GetStanDanychAsync(CancellationToken cancellationToken)
-    {
-        var result = await service.GetStanDanychAsync(cancellationToken);
-        return Ok(result);
+        var items = await reportRepository.GetAsync(parameters, cancellationToken);
+        return Ok(items);
     }
 }

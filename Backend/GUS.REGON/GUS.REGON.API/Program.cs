@@ -1,3 +1,6 @@
+using AppAny.HotChocolate.FluentValidation;
+using Base.Models.ValueObjects.Regony;
+using GUS.REGON.API.GraphQL;
 using GUS.REGON.Application;
 using GUS.REGON.Infrastructure;
 using Scalar.AspNetCore;
@@ -17,10 +20,17 @@ public class Program
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi();
 
+        builder.Services
+            .AddGraphQLServer()
+            .AddFluentValidation()
+            .AddQueryType<Query>()
+            .BindRuntimeType<Regon, RegonScalar>();
+
         var app = builder.Build();
 
         app.UseExceptionHandler();
 
+        app.MapGraphQL();
         app.MapOpenApi();
         app.MapScalarApiReference();
 

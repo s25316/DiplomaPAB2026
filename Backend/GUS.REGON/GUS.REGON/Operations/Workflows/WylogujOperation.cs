@@ -50,7 +50,7 @@ internal class WylogujOperation(
                 return RegonBaseResult.Success(true);
 
             default:
-                throw result.Error.MapToRegonException();
+                throw result.Error.MapToException();
         }
     }
 }

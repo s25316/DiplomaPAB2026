@@ -8,7 +8,8 @@ internal sealed record Key
 
     private Key(string value)
     {
-        if (string.IsNullOrEmpty(value)) throw new RegonException.InvalidKey(Messages.KeyErrorMessageEmpty);
+        if (string.IsNullOrEmpty(value))
+            throw new RegonException.InvalidKey(Messages.KeyErrorMessageEmpty);
         Value = value;
     }
 

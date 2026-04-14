@@ -70,7 +70,7 @@ internal class RequestToDocumentOperation(
         if (input.IsAuthorize)
         {
             var session = sessionManager?.Session
-                ?? throw new RegonException.RequiredAuthorization();
+                ?? throw new RegonException.Unauthorized();
 
             if (session.IsExpired)
             {

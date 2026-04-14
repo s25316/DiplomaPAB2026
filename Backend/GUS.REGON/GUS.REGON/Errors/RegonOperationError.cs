@@ -20,5 +20,4 @@ public abstract record RegonOperationError(string Message) : OperationError(Mess
     public record DeserializeToDateOnly(string Input) : RegonOperationError("");
     public record DeserializeToEnum(Type Type, string Input) : RegonOperationError("");
     public record EmptyFirstValue() : RegonOperationError("");
-    public record NotImplemented(string Message) : RegonOperationError(Message);
 }

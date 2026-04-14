@@ -1,14 +1,13 @@
 ﻿// Ignore Spelling: Regony, Regon
-using Base.Models.ValueObjects.Krsy;
 using HotChocolate.Language;
 
 namespace Base.Models.ValueObjects.Regony;
 
-internal class RegonScalar : ScalarType<Regon, StringValueNode>
+public class RegonScalar : ScalarType<Regon, StringValueNode>
 {
     public RegonScalar() : base(nameof(Regon))
     {
-        Description = Krs.GetDescription();
+        Description = Regon.GetDescription();
     }
 
     protected override StringValueNode ParseValue(Regon runtimeValue) => new(runtimeValue.ToString());
