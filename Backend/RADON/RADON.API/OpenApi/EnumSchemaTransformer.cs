@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using RADON.Dictionaries;
+using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json.Nodes;
 using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
@@ -9,43 +10,46 @@ namespace RADON.API.OpenApi;
 
 public class EnumSchemaTransformer : IOpenApiSchemaTransformer
 {
+    private static readonly ConcurrentDictionary<Type, string> DescriptionCache = new();
+    private static readonly ConcurrentDictionary<Type, List<JsonNode>> EnumValuesCache = new();
+
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        if (context.JsonTypeInfo.Type.IsEnum && context.JsonTypeInfo.Type == typeof(DictionaryType))
+        var type = context.JsonTypeInfo.Type;
+
+        if (!type.IsEnum)
+            return;
+
+        schema.Type = JsonSchemaType.String;
+        schema.Enum = GetEnumValues(type);
+
+        if (type == typeof(DictionaryType))
         {
-            var enumType = context.JsonTypeInfo.Type;
-            var descriptions = new List<string>();
+            schema.Description = GetDictionaryDescription(type);
+        }
+    }
 
-            foreach (var name in Enum.GetNames(enumType))
-            {
-                var field = enumType.GetField(name);
+    private static List<JsonNode> GetEnumValues(Type enumType)
+    {
+        return EnumValuesCache.GetOrAdd(enumType, t =>
+            Enum.GetNames(t)
+                .Select(name => (JsonNode)JsonValue.Create(name)!)
+                .ToList());
+    }
 
-                if (field != null)
+    private static string GetDictionaryDescription(Type enumType)
+    {
+        return DescriptionCache.GetOrAdd(enumType, t =>
+        {
+            var descriptions = t.GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(field =>
                 {
                     var displayAttr = field.GetCustomAttribute<DisplayAttribute>();
+                    var label = displayAttr?.GetName() ?? field.Name;
+                    return $"`{field.Name}`: {label}";
+                });
 
-                    string? label = displayAttr?.GetName();
-
-                    descriptions.Add($"`{name}`: {label ?? name}");
-                }
-            }
-
-            if (descriptions.Any())
-            {
-                schema.Description = "### Typy słowników\n" + string.Join("\n\n", descriptions);
-            }
-
-            if (context.JsonTypeInfo.Type.IsEnum)
-            {
-                schema.Type = JsonSchemaType.String;
-
-                var names = Enum.GetNames(context.JsonTypeInfo.Type);
-
-                schema.Enum = names
-                    .Select(name => JsonValue.Create(name))
-                    .Cast<JsonNode>()
-                    .ToList();
-            }
-        }
+            return "### Typy słowników\n\n" + string.Join("\n\n", descriptions);
+        });
     }
 }
