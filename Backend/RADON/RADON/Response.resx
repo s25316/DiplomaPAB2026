@@ -117,8 +117,221 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="institution_branch_data" xml:space="preserve">
+    <value>Dane filii podlegającej pod instytucję / Institution branch data.</value>
+  </data>
+  <data name="institution_branch_branch_city" xml:space="preserve">
+    <value>Miejscowość filii / Branch city.</value>
+  </data>
+  <data name="institution_branch_branch_name" xml:space="preserve">
+    <value>Nazwa filii / Branch name.</value>
+  </data>
+  <data name="institution_branch_branch_uuid" xml:space="preserve">
+    <value>Identyfikator filii - uuid z POL-on 2.0 / Branch identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_b_number" xml:space="preserve">
+    <value>Numer budynku / Building number.</value>
+  </data>
+  <data name="institution_city" xml:space="preserve">
+    <value>Miasto / City.</value>
+  </data>
+  <data name="institution_country" xml:space="preserve">
+    <value>Kraj / Country.</value>
+  </data>
+  <data name="institution_country_cd" xml:space="preserve">
+    <value>Kraj - kod / Code of country.</value>
+  </data>
+  <data name="institution_data_source" xml:space="preserve">
+    <value>Informacja o źródle danych / Information about data source.</value>
+  </data>
+  <data name="institution_eda_address" xml:space="preserve">
+    <value>Adres do doręczeń elektronicznych (EDA)/ EDA - Electronic delivery address.</value>
+  </data>
+  <data name="institution_esp_address" xml:space="preserve">
+    <value>Adres elektronicznej skrzynki podawczej (ESP) / ESP - electronic inbox address.</value>
+  </data>
+  <data name="institution_eun_number" xml:space="preserve">
+    <value>Numer wpisu do ewidencji uczelni niepublicznych / Nonpublic university number.</value>
+  </data>
+  <data name="institution_e_mail" xml:space="preserve">
+    <value>Adres e-mail / E-mail address.</value>
+  </data>
+  <data name="institution_federation_institution_data" xml:space="preserve">
+    <value>Dane instytucji wchodzacych w skład federacji / Data of the federation institutions.</value>
+  </data>
+  <data name="institution_federation_institution_date_from" xml:space="preserve">
+    <value>W federacji od / Date from.</value>
+  </data>
+  <data name="institution_federation_institution_date_to" xml:space="preserve">
+    <value>W federacji do / Date to.</value>
+  </data>
+  <data name="institution_federation_institution_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji / Institution name.</value>
+  </data>
+  <data name="institution_federation_institution_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji - uuid z POL-on 2.0 / Institution identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_federation_number" xml:space="preserve">
+    <value>Numer w rejestrze federacji / Federation registry number.</value>
+  </data>
+  <data name="institution_id" xml:space="preserve">
+    <value>ID instytucji / Id of institution.</value>
+  </data>
+  <data name="institution_institution_uid" xml:space="preserve">
+    <value>Stary identyfikator instytucji - uid instytucji z POL-on 1.0 / Old institution identifier - POL-on 1.0 system uid.</value>
+  </data>
   <data name="institution_institution_uuid" xml:space="preserve">
     <value>Identyfikator instytucji - uuid instytucji z POL-on 2.0 / Institution identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_i_kind_cd" xml:space="preserve">
+    <value>Rodzaj instytucji - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of institution kind. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_i_kind_name" xml:space="preserve">
+    <value>Rodzaj instytucji - nazwa / Name of institution kind.</value>
+  </data>
+  <data name="institution_i_liq_dt" xml:space="preserve">
+    <value>Data likwidacji (jeśli dotyczy) / Institution liquidation date.</value>
+  </data>
+  <data name="institution_i_liq_start_dt" xml:space="preserve">
+    <value>Data postawienia w stan likwidacji (jeśli dotyczy) / Institution liquidation start date.</value>
+  </data>
+  <data name="institution_i_start_dt" xml:space="preserve">
+    <value>Data utworzenia instytucji / Institution creation date.</value>
+  </data>
+  <data name="institution_krs" xml:space="preserve">
+    <value>Numer KRS / National Court Register number (KRS number).</value>
+  </data>
+  <data name="institution_last_refresh" xml:space="preserve">
+    <value>Informacje o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</value>
+  </data>
+  <data name="institution_l_number" xml:space="preserve">
+    <value>Numer mieszkania / House number</value>
+  </data>
+  <data name="institution_manager_employee_in_institution_uuid" xml:space="preserve">
+    <value>Identyfikator zatrudnienia pracownika (osoby kierującej podmiotem) w instytucji / Manager employee in institution identifier.</value>
+  </data>
+  <data name="institution_manager_function" xml:space="preserve">
+    <value>Stanowisko/funkcja osoby kierującej podmiotem / Manager function name.</value>
+  </data>
+  <data name="institution_manager_name" xml:space="preserve">
+    <value>Imię osoby kierującej podmiotem / Manager name.</value>
+  </data>
+  <data name="institution_manager_other_names" xml:space="preserve">
+    <value>Pozostałe imiona osoby kierującej podmiotem / Manager other names.</value>
+  </data>
+  <data name="institution_manager_surname" xml:space="preserve">
+    <value>Nazwisko osoby kierującej podmiotem / Manager surnname.</value>
+  </data>
+  <data name="institution_manager_surname_prefix" xml:space="preserve">
+    <value>Przedrostek nazwiska osoby kierującej podmiotem / Manager surnname prefix.</value>
+  </data>
+  <data name="institution_ministry_number" xml:space="preserve">
+    <value>Numer uczelni nadany przez ministra / University number given by minister.</value>
+  </data>
+  <data name="institution_name" xml:space="preserve">
+    <value>Nazwa instytucji / Institution name.</value>
+  </data>
+  <data name="institution_nip" xml:space="preserve">
+    <value>NIP / Tax Identification Number (NIP).</value>
+  </data>
+  <data name="institution_pan_number" xml:space="preserve">
+    <value>Numer rejestru instytutów PAN / Number in the register of PAS institutes (Polish Academy of Sciences).</value>
+  </data>
+  <data name="institution_phone" xml:space="preserve">
+    <value>Numer telefonu / Phone number</value>
+  </data>
+  <data name="institution_pib" xml:space="preserve">
+    <value>Państwowy Instytut Badawczy (PIB) - znacznik instytucji posiadającej status PIB / National Research Institute (PIB) status marker.</value>
+  </data>
+  <data name="institution_postal_cd" xml:space="preserve">
+    <value>Kod pocztowy / Postal code.</value>
+  </data>
+  <data name="institution_regon" xml:space="preserve">
+    <value>REGON / Institution REGON.</value>
+  </data>
+  <data name="institution_si_type_cd" xml:space="preserve">
+    <value>Typ instytucji naukowej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of scientific institution type. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_si_type_name" xml:space="preserve">
+    <value>Typ instytucji naukowej - nazwa / Name of scientific institution type.</value>
+  </data>
+  <data name="institution_status" xml:space="preserve">
+    <value>Status instytucji / Institution status</value>
+  </data>
+  <data name="institution_status_code" xml:space="preserve">
+    <value>Status instytucji - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of institution status. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_street" xml:space="preserve">
+    <value>Ulica / Street.</value>
+  </data>
+  <data name="institution_supervising_institution_id" xml:space="preserve">
+    <value>ID instytucji nadzorującej. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Supervising institution id. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_supervising_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji nadzorującej / Supervising institution name.</value>
+  </data>
+  <data name="institution_target_institution_data" xml:space="preserve">
+    <value>Dane instytucji, na które bieżąca instytucja została przekształcona (instytucje dziedziczące) / Institutions into which the current institution has been transformed (inheriting institutions)</value>
+  </data>
+  <data name="institution_target_institution_target_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji / Target institution name.</value>
+  </data>
+  <data name="institution_target_institution_target_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji - uuid z POL-on 2.0 / Target institution identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_transformed_institution_data" xml:space="preserve">
+    <value>Dane instytucji przekształconych na bieżącą instytucję (instytucje poprzedzające) / Institutions transformed into the current institution (predecessor institutions).</value>
+  </data>
+  <data name="institution_base_institution_eun_number" xml:space="preserve">
+    <value>Numer wpisu do ewidencji uczelni niepublicznych / Nonpublic university number.</value>
+  </data>
+  <data name="institution_base_institution_krs" xml:space="preserve">
+    <value>Numer KRS / National Court Register number (KRS number).</value>
+  </data>
+  <data name="institution_base_institution_nip" xml:space="preserve">
+    <value>NIP / Tax Identification Number (NIP).</value>
+  </data>
+  <data name="institution_base_institution_pan_number" xml:space="preserve">
+    <value>Numer rejestru instytutów PAN / Number in the register of PAS institutes (Polish Academy of Sciences).</value>
+  </data>
+  <data name="institution_base_institution_regon" xml:space="preserve">
+    <value>REGON / Institution REGON.</value>
+  </data>
+  <data name="institution_base_institution_supervising_institution_id" xml:space="preserve">
+    <value>ID instytucji nadzorującej. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Supervising institution id. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_base_institution_supervising_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji nadzorującej / Supervising institution name</value>
+  </data>
+  <data name="institution_base_institution_transformation_date" xml:space="preserve">
+    <value>Data przekształcenia / Transformation date.</value>
+  </data>
+  <data name="institution_base_institution_transformation_kind" xml:space="preserve">
+    <value>Rodzaj przekształcenia / Type of transformation.</value>
+  </data>
+  <data name="institution_transformed_institution_transformed_institution_name" xml:space="preserve">
+    <value>Nazwa przekształconej instytucji / Transformed institution name.</value>
+  </data>
+  <data name="institution_transformed_institution_transformed_institution_uuid" xml:space="preserve">
+    <value>Identyfikator przekształconej instytucji - uuid z POL-on 2.0 / Transformed institution identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_u_type_cd" xml:space="preserve">
+    <value>Typ uczelni - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of university type. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_u_type_name" xml:space="preserve">
+    <value>Typ uczelni - nazwa / Name of university type.</value>
+  </data>
+  <data name="institution_voivodeship" xml:space="preserve">
+    <value>Województwo / Voivodeship.</value>
+  </data>
+  <data name="institution_voivodeship_code" xml:space="preserve">
+    <value>Województwo - kod. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Branch voivodeship code. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_www" xml:space="preserve">
+    <value>Adres strony WWW / Web address.</value>
+  </data>
+  <data name="institution_year_pib" xml:space="preserve">
+    <value>Rok uzyskania statusu Państwowego Instytutu Badawczego / Year of obtaining National Research Institute (PIB) status.</value>
   </data>
   <data name="max_count" xml:space="preserve">
     <value>Maksymalna liczba wyników dla danego zapytania / The maximum number of results to be taken for a given query.</value>
@@ -128,5 +341,347 @@
   </data>
   <data name="version" xml:space="preserve">
     <value>version</value>
+  </data>
+  <data name="institution_name_data" xml:space="preserve">
+    <value>Dane nazwy instytucji / Institution name data.</value>
+  </data>
+  <data name="institution_name_data_name" xml:space="preserve">
+    <value>Nazwa instytucji / Institution name.</value>
+  </data>
+  <data name="institution_name_data_date_from" xml:space="preserve">
+    <value>Data nadania nazwy / Date from.</value>
+  </data>
+  <data name="institution_supervising_institution_data" xml:space="preserve">
+    <value>Dane organu nadzorującego / Supervising institution data.</value>
+  </data>
+  <data name="institution_supervising_institution_date_from" xml:space="preserve">
+    <value>Data przypisania do organu / Date of assignment to authority.</value>
+  </data>
+  <data name="institution_status_data" xml:space="preserve">
+    <value>Dane statusu instytucji / Institution status data.</value>
+  </data>
+  <data name="institution_status_name" xml:space="preserve">
+    <value>Nazwa statusu / Status name</value>
+  </data>
+  <data name="institution_status_date_from" xml:space="preserve">
+    <value>Data nadania statusu / Date of granting the status.</value>
+  </data>
+  <data name="institution_type_data" xml:space="preserve">
+    <value>Dane typu instytucji / Institution type data</value>
+  </data>
+  <data name="institution_type_name" xml:space="preserve">
+    <value>Nazwa typu / Type name.</value>
+  </data>
+  <data name="institution_type_date_from" xml:space="preserve">
+    <value>Data nadania typu / Date of type assignment.</value>
+  </data>
+  <data name="institution_address_data" xml:space="preserve">
+    <value>Dane adresu instytucji / Institution address data.</value>
+  </data>
+  <data name="institution_address_country" xml:space="preserve">
+    <value>Kraj / Country.</value>
+  </data>
+  <data name="institution_address_voivodeship" xml:space="preserve">
+    <value>Województwo / Voivodeship.</value>
+  </data>
+  <data name="institution_address_city" xml:space="preserve">
+    <value>Miasto / City.</value>
+  </data>
+  <data name="institution_address_postal_cd" xml:space="preserve">
+    <value>Kod pocztowy / Postal code.</value>
+  </data>
+  <data name="institution_address_street" xml:space="preserve">
+    <value>Ulica / Street.</value>
+  </data>
+  <data name="institution_address_b_number" xml:space="preserve">
+    <value>Numer budynku / Building number.</value>
+  </data>
+  <data name="institution_address_l_number" xml:space="preserve">
+    <value>Numer mieszkania / House number.</value>
+  </data>
+  <data name="institution_address_date_from" xml:space="preserve">
+    <value>Data otrzymania adresu / Address from date.</value>
+  </data>
+  <data name="institution_names" xml:space="preserve">
+    <value>Historia zmian nazw instytucji / History of institution name changes.</value>
+  </data>
+  <data name="institution_supervising_institutions" xml:space="preserve">
+    <value>Historia zmian organu nadzorującego instytucję / History of institution supervisory authority changes.</value>
+  </data>
+  <data name="institution_statuses" xml:space="preserve">
+    <value>Historia zmian statusu instytucji / History of institution status changes.</value>
+  </data>
+  <data name="institution_types" xml:space="preserve">
+    <value>Historia zmian typu instytucji / History of institution type changes.</value>
+  </data>
+  <data name="institution_addresses" xml:space="preserve">
+    <value>Historia zmian adresu instytucji / History of institution address changes.</value>
+  </data>
+  <data name="course_co_leading_institution_data" xml:space="preserve">
+    <value>Dane instytucji współprowadzącej studia na kierunku / Co-leading institution data.</value>
+  </data>
+  <data name="course_co_leading_institution_co_leading_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji współprowadzącej studia na kierunku - uuid instytucji z POL-on 2.0 / Co-leading institution ID - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_co_leading_institution_co_leading_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji współprowadzącej studia na kierunku / Co-leading institution name.</value>
+  </data>
+  <data name="course_co_leading_institution_is_foreign" xml:space="preserve">
+    <value>Czy instytucja współprowadząca jest zagraniczna? / Foreign co-leading institution marker.</value>
+  </data>
+  <data name="course_co_leading_institution_course_uuid" xml:space="preserve">
+    <value>Identyfikator kierunku wchodzącego w skład studiów wspólnych /Course ID included in the co-led course.</value>
+  </data>
+  <data name="course_co_leading_institution_course_name" xml:space="preserve">
+    <value>Nazwa kierunku wchodzącego w skład studiów wspólnych / Course name included in the co-led course.</value>
+  </data>
+  <data name="course_co_leading_institution_date_from" xml:space="preserve">
+    <value>Data początku współprowadzenia studiów przez daną instytucję / Start date of the co-running of the field of study by the institution.</value>
+  </data>
+  <data name="course_co_leading_institution_date_to" xml:space="preserve">
+    <value>Data końca współprowadzenia studiów przez daną instytucję / End date of the co-running of the field of study by the institution.</value>
+  </data>
+  <data name="course_co_leading_institution_co_led_fos_confirmation_status" xml:space="preserve">
+    <value>Status potwierdzenia / Confirmation status.</value>
+  </data>
+  <data name="course_organizational_unit_data" xml:space="preserve">
+    <value>Dane jednostki organizacyjnej zarządzającej danymi studiów na kierunku (jednostka technicznie przypisana do kierunku) / Organizational unit data (technical fields).</value>
+  </data>
+  <data name="course_organizational_unit_organizational_unit_uuid" xml:space="preserve">
+    <value>Identyfikator jednostki organizacyjnej zarządzającej danymi studiów na kierunku - uuid z POL-on 2.0 (jednostka technicznie przypisana do kierunku) / Organizational unit identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_organizational_unit_organizational_unit_full_name" xml:space="preserve">
+    <value>Pełna nazwa jednostki organizacyjnej zarządzającej danymi studiów na kierunku (jednostka technicznie przypisana do kierunku) / Organizational unit name.</value>
+  </data>
+  <data name="course_language_data" xml:space="preserve">
+    <value>Dane języka filologii obcej / Course philological language data.</value>
+  </data>
+  <data name="course_language_language_code" xml:space="preserve">
+    <value>Kod języka filologii obcej / Language code.</value>
+  </data>
+  <data name="course_language_language_name" xml:space="preserve">
+    <value>Nazwa języka filologii obcej / Language name.</value>
+  </data>
+  <data name="course_discipline_data" xml:space="preserve">
+    <value>Dane dyscypliny, w której zgodnie z programem studiów uzyskiwane są efekty uczenia się / Course discipline data.</value>
+  </data>
+  <data name="course_discipline_discipline_code" xml:space="preserve">
+    <value>Kod słownikowy dyscypliny / Discipline code. Use discipline service to receive extended information.</value>
+  </data>
+  <data name="course_discipline_discipline_name" xml:space="preserve">
+    <value>Nazwa dyscypliny / Discipline name.</value>
+  </data>
+  <data name="course_discipline_discipline_percentage_share" xml:space="preserve">
+    <value>Udział procentowy dyscypliny / Discipline percentage share.</value>
+  </data>
+  <data name="course_discipline_discipline_leading" xml:space="preserve">
+    <value>Czy dyscyplina wiodąca? / Leading discipline marker.</value>
+  </data>
+  <data name="course_pka_data" xml:space="preserve">
+    <value>Dane oceny PKA / Evaluation PKA data.</value>
+  </data>
+  <data name="course_pka_rating" xml:space="preserve">
+    <value>Wynik oceny / Evaluation result.</value>
+  </data>
+  <data name="course_pka_resolution_date" xml:space="preserve">
+    <value>Data uchwały / Resolution date.</value>
+  </data>
+  <data name="course_pka_resolution_number" xml:space="preserve">
+    <value>Numer uchwały / Resolution number.</value>
+  </data>
+  <data name="course_pka_next_rating_year" xml:space="preserve">
+    <value>Planowany rok kolejnej oceny / Planned year of the next evaluation.</value>
+  </data>
+  <data name="course_instance_data" xml:space="preserve">
+    <value>Dane uruchomienia / Course instance data.</value>
+  </data>
+  <data name="course_instance_course_instance_uuid" xml:space="preserve">
+    <value>Identyfikator uruchomienia - uuid z POL-on 2.0 / Course instance identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_instance_course_instance_code" xml:space="preserve">
+    <value>Kod uruchomienia / Course instance code.</value>
+  </data>
+  <data name="course_instance_course_instance_old_code" xml:space="preserve">
+    <value>Stary kod uruchomienia / Course instance old code.</value>
+  </data>
+  <data name="course_instance_course_name" xml:space="preserve">
+    <value>Nazwa kierunku / Course name.</value>
+  </data>
+  <data name="course_instance_form_code" xml:space="preserve">
+    <value>Forma kształcenia - kod słownikowy / Course instance form code.</value>
+  </data>
+  <data name="course_instance_form_name" xml:space="preserve">
+    <value>Forma kształcenia - nazwa / Course instance form name.</value>
+  </data>
+  <data name="course_instance_title_code" xml:space="preserve">
+    <value>Tytuł zawodowy nadawany absolwentom studiów - kod słownikowy/ Course professional title code.</value>
+  </data>
+  <data name="course_instance_title_name" xml:space="preserve">
+    <value>Tytuł zawodowy nadawany absolwentom studiów - nazwa / Course professional title name.</value>
+  </data>
+  <data name="course_instance_language_code" xml:space="preserve">
+    <value>Język, w jakim odbywa się kształcenie - kod słownikowy / Course language code.</value>
+  </data>
+  <data name="course_instance_language_name" xml:space="preserve">
+    <value>Język, w jakim odbywa się kształcenie - nazwa / Course language name.</value>
+  </data>
+  <data name="course_instance_education_start_date" xml:space="preserve">
+    <value>Data uruchomienia / Beginning of education date.</value>
+  </data>
+  <data name="course_instance_number_of_semesters" xml:space="preserve">
+    <value>Liczba semestrów / Number of semesters.</value>
+  </data>
+  <data name="course_instance_ects" xml:space="preserve">
+    <value>Liczba punktów ECTS wymagana do uzyskania kwalifikacji / Ects points.</value>
+  </data>
+  <data name="course_instance_dual" xml:space="preserve">
+    <value>Czy studia dualne?/ Dual course marker?</value>
+  </data>
+  <data name="course_instance_bridging" xml:space="preserve">
+    <value>Czy studia pomostowe? / Bridging course marker?</value>
+  </data>
+  <data name="course_instance_status_code" xml:space="preserve">
+    <value>Status uruchomienia - kod słownikowy / Course instance status code.</value>
+  </data>
+  <data name="course_instance_status_name" xml:space="preserve">
+    <value>Status uruchomienia - nazwa / Course instance status name.</value>
+  </data>
+  <data name="course_instance_liquidation_date" xml:space="preserve">
+    <value>Data likwidacji uruchomienia (jeśli uruchomienie zostało zlikwidowane) / Course instance liquidation date.</value>
+  </data>
+  <data name="course_instance_coop_with_vocational" xml:space="preserve">
+    <value>Czy studia we współpracy z organizacją zawodową? / Cooperation with vocational marker.</value>
+  </data>
+  <data name="course_last_refresh" xml:space="preserve">
+    <value>Informacje o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</value>
+  </data>
+  <data name="course_data_source" xml:space="preserve">
+    <value>Informacja o źródle danych / Information about data source.</value>
+  </data>
+  <data name="course_legal_basis_date" xml:space="preserve">
+    <value>Data wydania aktu prawnego stanowiącego podstawę prawną utworzenia studiów / Legal basis date.</value>
+  </data>
+  <data name="course_legal_basis_number" xml:space="preserve">
+    <value>Nazwa aktu prawnego stanowiącego podstawę prawną utworzenia studiów / Legal basis number.</value>
+  </data>
+  <data name="course_legal_basis_type_name" xml:space="preserve">
+    <value>Rodzaj podstawy prawnej utworzenia studiów - nazwa / Legal basis type name.</value>
+  </data>
+  <data name="course_legal_basis_type_code" xml:space="preserve">
+    <value>Rodzaj podstawy prawnej utworzenia studiów - kod słownikowy / Legal basis type code.</value>
+  </data>
+  <data name="course_supervising_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji nadzorującej dla instytucji głównej / Supervising institution name.</value>
+  </data>
+  <data name="course_supervising_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji nadzorującej dla instytucji głównej / Supervising institution uuid.</value>
+  </data>
+  <data name="course_main_institution_kind_code" xml:space="preserve">
+    <value>Rodzaj instytucji prowadzącej studia na kierunku (dla instytucji głównej) - kod słownikowy / Main institution kind code.</value>
+  </data>
+  <data name="course_main_institution_kind" xml:space="preserve">
+    <value>Rodzaj instytucji prowadzącej studia na kierunku (dla instytucji głównej) / Main institution kind name.</value>
+  </data>
+  <data name="course_main_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji głównej dla instytucji prowadzącej / Main institution name.</value>
+  </data>
+  <data name="course_main_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji głównej dla instytucji prowadzącej (w większości przypadków leadingInstitutionUuid = mainInstitutionUuid; gdy filia jest instytucją prowadząca kierunek, to mainInstitutionUuid = instytucja głowna tej filii / Main institution uuid.</value>
+  </data>
+  <data name="course_leading_institution_voivodeship_code" xml:space="preserve">
+    <value>Województwo instytucji prowadzącej - kod słownikowy / Leading institution voivodeship - code.</value>
+  </data>
+  <data name="course_leading_institution_voivodeship" xml:space="preserve">
+    <value>Województwo instytucji prowadzącej (jeśli instytucją prowadzącą jest filia, to jest to województwo z adresu tej filii)/ Leading institution voivodeship.</value>
+  </data>
+  <data name="course_leading_institution_city" xml:space="preserve">
+    <value>Miasto instytucji prowadzącej (jeśli instytucją prowadzącą jest filia, to jest to miasto z adresu tej filii) / Leading institution city.</value>
+  </data>
+  <data name="course_leading_institution_is_foreign" xml:space="preserve">
+    <value>Czy jednostka zagraniczna/ Foreign institution marker.</value>
+  </data>
+  <data name="course_leading_institution_name" xml:space="preserve">
+    <value>Nazwa instytucji prowadzącej studia na kierunku / Leading institution name.</value>
+  </data>
+  <data name="course_leading_institution_uuid" xml:space="preserve">
+    <value>Identyfikator instytucji prowadzącej studia na kierunku - uuid instytucji z POL-on 2.0 / Leading institution identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_co_led" xml:space="preserve">
+    <value>Czy studia wspólne? / Co-led course marker?</value>
+  </data>
+  <data name="course_co_led_date_from" xml:space="preserve">
+    <value>Studia wspólne od (Data)/ Co-led course from (Date).</value>
+  </data>
+  <data name="course_co_led_interdisciplinary" xml:space="preserve">
+    <value>Studia wspólne interdyscyplinarne (Tak/Nie)/ Interdisciplinary Co-led course marker.</value>
+  </data>
+  <data name="course_individual_studies_without_leading_discipline" xml:space="preserve">
+    <value>Studia inne niż wspólne bez wskazania dyscypliny wiodącej (Tak/Nie)/ Studies other than a joint study programme without indicating a leading discipline marker.</value>
+  </data>
+  <data name="course_current_status_code" xml:space="preserve">
+    <value>Aktualny status kierunku studiów - kod słownikowy / Current course status code</value>
+  </data>
+  <data name="course_current_status_name" xml:space="preserve">
+    <value>Aktualny status kierunku studiów - nazwa / Current course status name.</value>
+  </data>
+  <data name="course_termination_initialization_date" xml:space="preserve">
+    <value>Data początku wygaszania (jeśli studia są wygaszone) / Course termination initialization date.</value>
+  </data>
+  <data name="course_liquidation_date" xml:space="preserve">
+    <value>Data likwidacji (jeśli studia są zlikwidowane) / Course liquidation date.</value>
+  </data>
+  <data name="course_philological" xml:space="preserve">
+    <value>Czy studia dotyczą filologii obcej? / Philological course marker?</value>
+  </data>
+  <data name="course_teacher_training" xml:space="preserve">
+    <value>Czy studia przygotowują do zawodu nauczyciela? / Teacher training marker?</value>
+  </data>
+  <data name="course_creation_date" xml:space="preserve">
+    <value>Data rozpoczęcia prowadzenia studiów / Education start date.</value>
+  </data>
+  <data name="course_isced_name" xml:space="preserve">
+    <value>Klasyfikacja ISCED - nazwa / ISCED classification name.</value>
+  </data>
+  <data name="course_isced_code" xml:space="preserve">
+    <value>Klasyfikacja ISCED - kod / ISCED classification code.</value>
+  </data>
+  <data name="course_profile_name" xml:space="preserve">
+    <value>Profil kształcenia - nazwa / Course profile name.</value>
+  </data>
+  <data name="course_profile_code" xml:space="preserve">
+    <value>Profil kształcenia - kod słownikowy / Course profile code.</value>
+  </data>
+  <data name="course_level_name" xml:space="preserve">
+    <value>Poziom - nazwa / Course level name.</value>
+  </data>
+  <data name="course_level_code" xml:space="preserve">
+    <value>Poziom - kod słownikowy / Course level code.</value>
+  </data>
+  <data name="course_course_name" xml:space="preserve">
+    <value>Nazwa kierunku / Course name.</value>
+  </data>
+  <data name="course_course_old_code" xml:space="preserve">
+    <value>Stary kod kierunku (uprawnienia) / Course old code.</value>
+  </data>
+  <data name="course_course_code" xml:space="preserve">
+    <value>Kod kierunku (pozwolenia) / Course code.</value>
+  </data>
+  <data name="course_course_uuid" xml:space="preserve">
+    <value>Identyfikator kierunku - uuid z POL-on 2.0 / Course identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_report" xml:space="preserve">
+    <value>Dane kierunku / Course object - applicable definition.</value>
+  </data>
+  <data name="dictionary_value" xml:space="preserve">
+    <value>Model słownika / Model of Dictionary.</value>
+  </data>
+  <data name="dictionary_code" xml:space="preserve">
+    <value>Kod słownikowy / Available code which is generated automatically.</value>
+  </data>
+  <data name="dictionary_name_pl" xml:space="preserve">
+    <value>Nazwa polska / Text in Polish.</value>
+  </data>
+  <data name="dictionary_name_en" xml:space="preserve">
+    <value>Nazwa angielska / Text in English.</value>
   </data>
 </root>

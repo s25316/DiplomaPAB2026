@@ -28,7 +28,7 @@
 	</ItemGroup>
 	
 	<ItemGroup Label="QueryParameter">
-		
+
 		<EmbeddedResource Update="QueryParameter.resx">
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>QueryParameter.Designer.cs</LastGenOutput>
@@ -77,6 +77,32 @@
 		  <DependentUpon>Response.tt</DependentUpon>
 		</None>
 		
+	</ItemGroup>
+
+	<ItemGroup Label="Dictionary">
+
+		<EmbeddedResource Update="Dictionary.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Dictionary.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Dictionary.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Dictionary.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Dictionary.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Dictionary.xml</LastGenOutput>
+		</None>
+
+		<None Update="Dictionary.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Dictionary.tt</DependentUpon>
+		</None>
+
 	</ItemGroup>
 
 </Project>

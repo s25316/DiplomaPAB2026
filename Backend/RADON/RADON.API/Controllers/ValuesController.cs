@@ -1,55 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RADON.Base.Responses;
 using RADON.Courses;
+using RADON.Courses.Responses;
+using RADON.Dictionaries;
+using RADON.Dictionaries.Responses;
 using RADON.Institutions;
 using RADON.Institutions.Responses;
-using System.Text.Json;
 
 namespace RADON.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ValuesController : ControllerBase
+public class ValuesController(IRadonService service) : ControllerBase
 {
     [ProducesResponseType(typeof(Response<InstitutionReport>), 200)]
     [HttpGet("institutions")]
-    public async Task<IActionResult> Get([FromQuery] InstitutionQueryParameters queryParameters)
+    public async Task<IActionResult> GetInstitutionsAsync(
+        [FromQuery] InstitutionQueryParameters queryParameters,
+        CancellationToken cancellationToken)
     {
-        var queryBuilder = new InstitutionUriBuilder(new Uri("https://radon.nauka.gov.pl/opendata/polon/institutions"));
-        var requestUri = queryBuilder.Build(queryParameters);
-
-        var x = queryParameters.ResultNumbers;
-        try
-        {
-            using var httpClient = new HttpClient();
-            // 3. Wysyłamy zapytanie GET
-            // GetFromJsonAsync to najszybsza metoda - wysyła i od razu deserializuje
-            var response = await httpClient.GetFromJsonAsync<Response<InstitutionReport>>(requestUri);
-
-            if (response == null)
-            {
-                return NotFound("API zwróciło pustą odpowiedź.");
-            }
-
-            var results = response.Results;
-
-            return Ok(response);
-        }
-        catch (HttpRequestException e)
-        {
-            // Obsługa błędów sieciowych (np. 404, 500, timeout)
-            return StatusCode(500, $"Błąd połączenia z API: {e.Message}");
-        }
-        catch (JsonException e)
-        {
-            // Obsługa błędów deserializacji
-            return StatusCode(500, $"Błąd przetwarzania danych: {e.Message}");
-        }
+        var response = await service.GetInstitutionsAsync(queryParameters, cancellationToken);
+        return Ok(response);
     }
 
+    [ProducesResponseType(typeof(Response<CourseReport>), 200)]
     [HttpGet("courses")]
-    public IActionResult Get([FromQuery] CourseQueryParameters queryParameters)
+    public async Task<IActionResult> GetCoursesAsync(
+        [FromQuery] CourseQueryParameters queryParameters,
+        CancellationToken cancellationToken)
     {
-        return Ok(queryParameters);
+        var response = await service.GetCoursesAsync(queryParameters, cancellationToken);
+        return Ok(response);
+    }
+
+    [ProducesResponseType(typeof(IEnumerable<DictValue>), 200)]
+    [HttpGet("dictionaries")]
+    public async Task<IActionResult> GetDictionariesAsync(
+        [FromQuery] DictionaryType type,
+        CancellationToken cancellationToken)
+    {
+        var response = await service.GetDictionariesAsync(type, cancellationToken);
+        return Ok(response);
     }
 }

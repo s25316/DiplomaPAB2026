@@ -1,10 +1,14 @@
 ﻿// Ignore Spelling: regon, pib, krs
 
 using RADON.Base;
+using RADON.Configurations;
 
 namespace RADON.Institutions;
 
-public sealed class InstitutionUriBuilder(Uri baseUri) : BaseUriBuilder<InstitutionQueryParameters>(baseUri)
+internal sealed record InstitutionUriConfiguration() : BaseUriConfiguration(new Uri(Uris.INSTITUTION));
+internal sealed class InstitutionUriBuilder(
+    InstitutionUriConfiguration configuration
+) : BaseUriBuilder<InstitutionQueryParameters, InstitutionUriConfiguration>(configuration)
 {
     private const string QUERY_PARAMETER_RESULT_NUMBERS = "resultNumbers";
     private const string QUERY_PARAMETER_TOKEN = "token";

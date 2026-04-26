@@ -7,9 +7,9 @@ namespace RADON.Courses;
 public record CourseQueryParameters : IInputQueryParameters
 {
     /// <include file='QueryParameter.xml' path='docs/members/member[@name="course_result_numbers_description"]/summary' />
-    [DefaultValue(10)]
+    [DefaultValue(100)]
     [Display(Name = nameof(QueryParameter.course_result_numbers_description), ResourceType = typeof(QueryParameter))]
-    public int ResultNumbers { get; init; } = 10;
+    public int ResultNumbers { get; init; } = 100;
 
     /// <include file='QueryParameter.xml' path='docs/members/member[@name="course_token_description"]/summary' />
     [DefaultValue(null)]

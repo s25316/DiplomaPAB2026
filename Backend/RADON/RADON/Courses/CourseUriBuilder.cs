@@ -1,8 +1,12 @@
 ﻿using RADON.Base;
+using RADON.Configurations;
 
 namespace RADON.Courses;
 
-internal sealed class CourseUriBuilder(Uri baseUri) : BaseUriBuilder<CourseQueryParameters>(baseUri)
+internal sealed record CourseUriConfiguration() : BaseUriConfiguration(new Uri(Uris.COURSE));
+internal sealed class CourseUriBuilder(
+    CourseUriConfiguration configuration
+) : BaseUriBuilder<CourseQueryParameters, CourseUriConfiguration>(configuration)
 {
     private const string QUERY_PARAMETER_RESULT_NUMBERS = "resultNumbers";
     private const string QUERY_PARAMETER_TOKEN = "token";
