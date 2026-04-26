@@ -1,0 +1,16 @@
+﻿<docs>
+  <members>
+    <member name="institution_institution_uuid">
+      <summary>Identyfikator instytucji - uuid instytucji z POL-on 2.0 / Institution identifier - POL-on 2.0 system uuid.</summary>
+    </member>
+    <member name="max_count">
+      <summary>Maksymalna liczba wyników dla danego zapytania / The maximum number of results to be taken for a given query.</summary>
+    </member>
+    <member name="token">
+      <summary>Każda poprawna odpowiedź usługi zawiera dane oraz token, który umożliwia pobranie kolejnej partii danych. Pobieranie kolejnej strony z wynikami odbywa się z użyciem tokenu, który został zwrócony w poprzedniej odpowiedzi (parametr 'token' w zapytaniu) / The token is generated after first search. It must be forwarded to QueryParameters (token field) to take next page of results.</summary>
+    </member>
+    <member name="version">
+      <summary>version</summary>
+    </member>
+  </members>
+</docs>

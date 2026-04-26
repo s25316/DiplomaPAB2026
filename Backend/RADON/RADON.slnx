@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/Base/">
+    <Project Path="../Base/Base.Models/Base.Models.csproj" />
+  </Folder>
+  <Folder Name="/Database/" />
+  <Folder Name="/Layers/" />
+  <Project Path="RADON.API/RADON.API.csproj" />
+  <Project Path="RADON/RADON.csproj" />
+</Solution>

@@ -8,7 +8,7 @@ namespace GUS.REGON.API.Controllers;
 [ApiController]
 public class RegonController(IReportRepository reportRepository) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("reports")]
     public async Task<IActionResult> GetAsync([FromQuery] InputParameters parameters, CancellationToken cancellationToken)
     {
         var items = await reportRepository.GetAsync(parameters, cancellationToken);

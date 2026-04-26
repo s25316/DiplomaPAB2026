@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="course_bridging_description" xml:space="preserve">
+    <value>Czy studia pomostowe? / Bridging course marker?</value>
+  </data>
+  <data name="course_coop_with_vocational_description" xml:space="preserve">
+    <value>Czy studia we współpracy z organizacją zawodową? / Cooperation with vocational marker?</value>
+  </data>
+  <data name="course_course_code_description" xml:space="preserve">
+    <value>Kod kierunku / Course code.</value>
+  </data>
+  <data name="course_course_instance_code_description" xml:space="preserve">
+    <value>Kod uruchomienia / Course instance code.</value>
+  </data>
+  <data name="course_course_instance_uuid_description" xml:space="preserve">
+    <value>Identyfikator uruchomienia - uuid z POL-on 2.0 / Course instance identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_course_name_description" xml:space="preserve">
+    <value>Nazwa kierunku / Course name.</value>
+  </data>
+  <data name="course_course_uuid_description" xml:space="preserve">
+    <value>Identyfikator kierunku - uuid z POL-on 2.0 / Course identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_co_leading_institution_is_foreign_description" xml:space="preserve">
+    <value>Czy instytucja współprowadząca jest zagraniczna? / Is the co-leading institution foreign?</value>
+  </data>
+  <data name="course_co_leading_institution_name_description" xml:space="preserve">
+    <value>Nazwa instytucji współprowadzącej studia na kierunku / Co-leading institution name.</value>
+  </data>
+  <data name="course_co_leading_institution_uuid_description" xml:space="preserve">
+    <value>Identyfikator instytucji współprowadzącej studia na kierunku - uuid instytucji z POL-on 2.0 / Co-leading institution identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_co_led_description" xml:space="preserve">
+    <value>Czy studia wspólne? / Co led course marker?</value>
+  </data>
+  <data name="course_current_status_code_description" xml:space="preserve">
+    <value>Aktualny status kierunku studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Current course status code Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_discipline_code_description" xml:space="preserve">
+    <value>Kod słownikowy dyscypliny. Skorzystaj z usługi Dyscypliny i dziedziny naukowe, aby uzyskać więcej informacji / Discipline code. Use discipline service to receive extended information.</value>
+  </data>
+  <data name="course_discipline_name_description" xml:space="preserve">
+    <value>Nazwa dyscypliny / Discipline name.</value>
+  </data>
+  <data name="course_dual_description" xml:space="preserve">
+    <value>Czy studia dualne? / Dual course marker?</value>
+  </data>
+  <data name="course_education_language_code_description" xml:space="preserve">
+    <value>Język kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Education language code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_form_code_description" xml:space="preserve">
+    <value>Forma kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course instance form code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_last_refresh_description" xml:space="preserve">
+    <value>Informacja o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</value>
+  </data>
+  <data name="course_leading_institution_city_description" xml:space="preserve">
+    <value>Miasto instytucji prowadzącej studia na kierunku (jeśli instytucją prowadzącą jest filia, to jest to miasto z adresu tej filii) / Leading institution city.</value>
+  </data>
+  <data name="course_leading_institution_is_foreign_description" xml:space="preserve">
+    <value>Czy instytucja prowadząca jest zagraniczna/ Foreign leading institution marker.</value>
+  </data>
+  <data name="course_leading_institution_name_description" xml:space="preserve">
+    <value>Nazwa instytucji prowadzącej studia na kierunku (instytucją prowadzącą może być instytucja główna lub filia) / Leading institution name.</value>
+  </data>
+  <data name="course_leading_institution_uuid_description" xml:space="preserve">
+    <value>Identyfikator instytucji prowadzącej studia na kierunku (instytucją prowadzącą może być instytucja główna lub filia) - uuid instytucji z POL-on 2.0 / Leading institution identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_leading_institution_voivodeship_code_description" xml:space="preserve">
+    <value>Województwo instytucji prowadzącej studia na kierunku (jeśli instytucją prowadzącą jest filia, to jest to województwo z adresu tej filii) - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Leading institution voivodeship code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_legal_basis_type_code_description" xml:space="preserve">
+    <value>Rodzaj podstawy prawnej utworzenia studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Legal basis type code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_level_code_description" xml:space="preserve">
+    <value>Poziom - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course level code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_main_institution_kind_code_description" xml:space="preserve">
+    <value>Rodzaj instytucji głownej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Main institution kind - dictionary code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_main_institution_name_description" xml:space="preserve">
+    <value>Nazwa instytucji głównej / Main institution name.</value>
+  </data>
+  <data name="course_main_institution_uuid_description" xml:space="preserve">
+    <value>Identyfikator instytucji głównej - uuid instytucji z POL-on 2.0 / Main institution identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_organizational_unit_full_name_description" xml:space="preserve">
+    <value>Pełna nazwa jednostki organizacyjnej zarządzającej danymi studiów na kierunku (jednostka technicznie przypisana do kierunku) / Organizational unit name (technical field).</value>
+  </data>
+  <data name="course_organizational_unit_uuid_description" xml:space="preserve">
+    <value>Identyfikator jednostki organizacyjnej zarządzającej danymi studiów na kierunku - uuid z POL-on 2.0 (jednostka technicznie przypisana do kierunku) / Organizational unit identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_philological_description" xml:space="preserve">
+    <value>Czy studia dotyczą filologii obcej? / Philological studies marker?</value>
+  </data>
+  <data name="course_philology_language_code_description" xml:space="preserve">
+    <value>Język filologii obcej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Language code of philology. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_profile_code_description" xml:space="preserve">
+    <value>Profil kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course profile code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_result_numbers_description" xml:space="preserve">
+    <value>Parametr określający liczbę wyników, która ma być zwrócona w odpowiedzi. Domyślna wartość = 10. Maksymalna wartość = 100. / Number of elements to return. Number of results that you want to receive. Default value = 10. Maximum value = 100.</value>
+  </data>
+  <data name="course_status_code_description" xml:space="preserve">
+    <value>Status uruchomienia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course instance status code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_supervising_institution_uuid_description" xml:space="preserve">
+    <value>Identyfikator instytucji nadzorującej dla instytucji głównej - uuid instytucji z POL-on 2.0 / Supervising institution identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="course_teacher_training_description" xml:space="preserve">
+    <value>Czy studia przygotowują do zawodu nauczyciela / Teacher training marker.</value>
+  </data>
+  <data name="course_title_code_description" xml:space="preserve">
+    <value>Tytuł zawodowy nadawany absolwentom studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course professional title code. Use dictionary service to receive extended information.</value>
+  </data>
+  <data name="course_token_description" xml:space="preserve">
+    <value>Każda poprawna odpowiedź usługi zawiera dane oraz token, który umożliwia pobranie kolejnej partii danych. Przy pierwszym wywołaniu usługi token musi być pustym stringiem. Pobieranie kolejnych stron z wynikami odbywa się z użyciem tokenu, który został zwrócony w poprzedniej odpowiedzi / At the first time the token must be empty string. The new token (after first search) is generated in response and must be forwarded to query if you want to get the next results.</value>
+  </data>
+  <data name="institution_branch_city_description" xml:space="preserve">
+    <value>Miejscowość filii / Branch city.</value>
+  </data>
+  <data name="institution_city_description" xml:space="preserve">
+    <value>Miejscowość instytucji / Institution city.</value>
+  </data>
+  <data name="institution_eun_number_description" xml:space="preserve">
+    <value>Numer wpisu do ewidencji uczelni niepublicznych / Nonpublic university number.</value>
+  </data>
+  <data name="institution_id_description" xml:space="preserve">
+    <value>Id instytucji / Id of institution.</value>
+  </data>
+  <data name="institution_institution_uid_description" xml:space="preserve">
+    <value>Stary identyfikator instytucji - uid instytucji z POL-on 1.0 / Old institution identifier - POL-on 1.0 system uid.</value>
+  </data>
+  <data name="institution_institution_uuid_description" xml:space="preserve">
+    <value>Identyfikator instytucji - uuid instytucji z POL-on 2.0 / Institution identifier - POL-on 2.0 system uuid.</value>
+  </data>
+  <data name="institution_i_kind_cd_description" xml:space="preserve">
+    <value>Rodzaj instytucji - tablica kodów słownikowych. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Array of codes of institution kinds. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_i_start_date_from_description" xml:space="preserve">
+    <value>Data utworzenia instytucji - od / Institution creation date from.</value>
+  </data>
+  <data name="institution_i_start_date_to_description" xml:space="preserve">
+    <value>Data utworzenia instytucji - do / Institution creation date to.</value>
+  </data>
+  <data name="institution_krs_description" xml:space="preserve">
+    <value>Numer KRS / National Court Register number (KRS number).</value>
+  </data>
+  <data name="institution_last_refresh_description" xml:space="preserve">
+    <value>Informacja o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</value>
+  </data>
+  <data name="institution_ministry_number_description" xml:space="preserve">
+    <value>Numer uczelni nadany przez ministra / University number given by minister.</value>
+  </data>
+  <data name="institution_name_description" xml:space="preserve">
+    <value>Nazwa instytucji / Name of institution in given language.</value>
+  </data>
+  <data name="institution_nip_description" xml:space="preserve">
+    <value>NIP / Tax Identification Number (NIP).</value>
+  </data>
+  <data name="institution_pan_number_description" xml:space="preserve">
+    <value>Numer rejestru instytutów PAN / Number in the register of PAS institutes (Polish Academy of Sciences).</value>
+  </data>
+  <data name="institution_pib_description" xml:space="preserve">
+    <value>Państwowy Instytut Badawczy (PIB) - znacznik instytucji posiadającej status PIB / National Research Institute (PIB) status marker.</value>
+  </data>
+  <data name="institution_regon_description" xml:space="preserve">
+    <value>REGON instytucji / REGON of institution.</value>
+  </data>
+  <data name="institution_result_numbers_description" xml:space="preserve">
+    <value>Parametr określający liczbę wyników, która ma być zwrócona w odpowiedzi. Domyślna wartość = 10. Maksymalna wartość = 100. / Number of elements to return. Number of results that you want to receive. Default value = 10. Maximum value = 100.</value>
+  </data>
+  <data name="institution_si_type_cd_description" xml:space="preserve">
+    <value>Typ instytucji naukowej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of scientific institution type. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_status_code_description" xml:space="preserve">
+    <value>Status instytucji - tablica kodów słownikowych. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Array of codes of institution statuses. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_supervising_institution_id_description" xml:space="preserve">
+    <value>ID instytucji nadzorującej. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Supervising institution id. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_token_description" xml:space="preserve">
+    <value>Każda poprawna odpowiedź usługi zawiera dane oraz token, który umożliwia pobranie kolejnej partii danych. Przy pierwszym wywołaniu usługi token musi być pustym stringiem. Pobieranie kolejnych stron z wynikami odbywa się z użyciem tokenu, który został zwrócony w poprzedniej odpowiedzi / At the first time the token must be empty string. The new token (after first search) is generated in response and must be forwarded to query if you want to get the next results.</value>
+  </data>
+  <data name="institution_u_type_cd_description" xml:space="preserve">
+    <value>Typ uczelni - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of university type. Use Dictionary's services to receive extended information.</value>
+  </data>
+  <data name="institution_voivodeship_code_description" xml:space="preserve">
+    <value>Województwo - kod. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Branch voivodeship code. Use Dictionary's services to receive extended information.</value>
+  </data>
+</root>

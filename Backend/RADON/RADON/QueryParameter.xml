@@ -1,0 +1,193 @@
+﻿<docs>
+  <members>
+    <member name="course_bridging_description">
+      <summary>Czy studia pomostowe? / Bridging course marker?</summary>
+    </member>
+    <member name="course_coop_with_vocational_description">
+      <summary>Czy studia we współpracy z organizacją zawodową? / Cooperation with vocational marker?</summary>
+    </member>
+    <member name="course_course_code_description">
+      <summary>Kod kierunku / Course code.</summary>
+    </member>
+    <member name="course_course_instance_code_description">
+      <summary>Kod uruchomienia / Course instance code.</summary>
+    </member>
+    <member name="course_course_instance_uuid_description">
+      <summary>Identyfikator uruchomienia - uuid z POL-on 2.0 / Course instance identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_course_name_description">
+      <summary>Nazwa kierunku / Course name.</summary>
+    </member>
+    <member name="course_course_uuid_description">
+      <summary>Identyfikator kierunku - uuid z POL-on 2.0 / Course identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_co_leading_institution_is_foreign_description">
+      <summary>Czy instytucja współprowadząca jest zagraniczna? / Is the co-leading institution foreign?</summary>
+    </member>
+    <member name="course_co_leading_institution_name_description">
+      <summary>Nazwa instytucji współprowadzącej studia na kierunku / Co-leading institution name.</summary>
+    </member>
+    <member name="course_co_leading_institution_uuid_description">
+      <summary>Identyfikator instytucji współprowadzącej studia na kierunku - uuid instytucji z POL-on 2.0 / Co-leading institution identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_co_led_description">
+      <summary>Czy studia wspólne? / Co led course marker?</summary>
+    </member>
+    <member name="course_current_status_code_description">
+      <summary>Aktualny status kierunku studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Current course status code Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_discipline_code_description">
+      <summary>Kod słownikowy dyscypliny. Skorzystaj z usługi Dyscypliny i dziedziny naukowe, aby uzyskać więcej informacji / Discipline code. Use discipline service to receive extended information.</summary>
+    </member>
+    <member name="course_discipline_name_description">
+      <summary>Nazwa dyscypliny / Discipline name.</summary>
+    </member>
+    <member name="course_dual_description">
+      <summary>Czy studia dualne? / Dual course marker?</summary>
+    </member>
+    <member name="course_education_language_code_description">
+      <summary>Język kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Education language code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_form_code_description">
+      <summary>Forma kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course instance form code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_last_refresh_description">
+      <summary>Informacja o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</summary>
+    </member>
+    <member name="course_leading_institution_city_description">
+      <summary>Miasto instytucji prowadzącej studia na kierunku (jeśli instytucją prowadzącą jest filia, to jest to miasto z adresu tej filii) / Leading institution city.</summary>
+    </member>
+    <member name="course_leading_institution_is_foreign_description">
+      <summary>Czy instytucja prowadząca jest zagraniczna/ Foreign leading institution marker.</summary>
+    </member>
+    <member name="course_leading_institution_name_description">
+      <summary>Nazwa instytucji prowadzącej studia na kierunku (instytucją prowadzącą może być instytucja główna lub filia) / Leading institution name.</summary>
+    </member>
+    <member name="course_leading_institution_uuid_description">
+      <summary>Identyfikator instytucji prowadzącej studia na kierunku (instytucją prowadzącą może być instytucja główna lub filia) - uuid instytucji z POL-on 2.0 / Leading institution identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_leading_institution_voivodeship_code_description">
+      <summary>Województwo instytucji prowadzącej studia na kierunku (jeśli instytucją prowadzącą jest filia, to jest to województwo z adresu tej filii) - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Leading institution voivodeship code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_legal_basis_type_code_description">
+      <summary>Rodzaj podstawy prawnej utworzenia studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Legal basis type code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_level_code_description">
+      <summary>Poziom - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course level code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_main_institution_kind_code_description">
+      <summary>Rodzaj instytucji głownej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Main institution kind - dictionary code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_main_institution_name_description">
+      <summary>Nazwa instytucji głównej / Main institution name.</summary>
+    </member>
+    <member name="course_main_institution_uuid_description">
+      <summary>Identyfikator instytucji głównej - uuid instytucji z POL-on 2.0 / Main institution identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_organizational_unit_full_name_description">
+      <summary>Pełna nazwa jednostki organizacyjnej zarządzającej danymi studiów na kierunku (jednostka technicznie przypisana do kierunku) / Organizational unit name (technical field).</summary>
+    </member>
+    <member name="course_organizational_unit_uuid_description">
+      <summary>Identyfikator jednostki organizacyjnej zarządzającej danymi studiów na kierunku - uuid z POL-on 2.0 (jednostka technicznie przypisana do kierunku) / Organizational unit identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_philological_description">
+      <summary>Czy studia dotyczą filologii obcej? / Philological studies marker?</summary>
+    </member>
+    <member name="course_philology_language_code_description">
+      <summary>Język filologii obcej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Language code of philology. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_profile_code_description">
+      <summary>Profil kształcenia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course profile code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_result_numbers_description">
+      <summary>Parametr określający liczbę wyników, która ma być zwrócona w odpowiedzi. Domyślna wartość = 10. Maksymalna wartość = 100. / Number of elements to return. Number of results that you want to receive. Default value = 10. Maximum value = 100.</summary>
+    </member>
+    <member name="course_status_code_description">
+      <summary>Status uruchomienia - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course instance status code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_supervising_institution_uuid_description">
+      <summary>Identyfikator instytucji nadzorującej dla instytucji głównej - uuid instytucji z POL-on 2.0 / Supervising institution identifier - POL-on 2 system uuid.</summary>
+    </member>
+    <member name="course_teacher_training_description">
+      <summary>Czy studia przygotowują do zawodu nauczyciela / Teacher training marker.</summary>
+    </member>
+    <member name="course_title_code_description">
+      <summary>Tytuł zawodowy nadawany absolwentom studiów - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Course professional title code. Use dictionary service to receive extended information.</summary>
+    </member>
+    <member name="course_token_description">
+      <summary>Każda poprawna odpowiedź usługi zawiera dane oraz token, który umożliwia pobranie kolejnej partii danych. Przy pierwszym wywołaniu usługi token musi być pustym stringiem. Pobieranie kolejnych stron z wynikami odbywa się z użyciem tokenu, który został zwrócony w poprzedniej odpowiedzi / At the first time the token must be empty string. The new token (after first search) is generated in response and must be forwarded to query if you want to get the next results.</summary>
+    </member>
+    <member name="institution_branch_city_description">
+      <summary>Miejscowość filii / Branch city.</summary>
+    </member>
+    <member name="institution_city_description">
+      <summary>Miejscowość instytucji / Institution city.</summary>
+    </member>
+    <member name="institution_eun_number_description">
+      <summary>Numer wpisu do ewidencji uczelni niepublicznych / Nonpublic university number.</summary>
+    </member>
+    <member name="institution_id_description">
+      <summary>Id instytucji / Id of institution.</summary>
+    </member>
+    <member name="institution_institution_uid_description">
+      <summary>Stary identyfikator instytucji - uid instytucji z POL-on 1.0 / Old institution identifier - POL-on 1.0 system uid.</summary>
+    </member>
+    <member name="institution_institution_uuid_description">
+      <summary>Identyfikator instytucji - uuid instytucji z POL-on 2.0 / Institution identifier - POL-on 2.0 system uuid.</summary>
+    </member>
+    <member name="institution_i_kind_cd_description">
+      <summary>Rodzaj instytucji - tablica kodów słownikowych. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Array of codes of institution kinds. Use Dictionary's services to receive extended information.</summary>
+    </member>
+    <member name="institution_i_start_date_from_description">
+      <summary>Data utworzenia instytucji - od / Institution creation date from.</summary>
+    </member>
+    <member name="institution_i_start_date_to_description">
+      <summary>Data utworzenia instytucji - do / Institution creation date to.</summary>
+    </member>
+    <member name="institution_krs_description">
+      <summary>Numer KRS / National Court Register number (KRS number).</summary>
+    </member>
+    <member name="institution_last_refresh_description">
+      <summary>Informacja o czasie ostatniego odświeżania danych (znacznik czasu - bieżący czas uniksowy w milisekundach) / Information about the last data refresh time (timestamp - current Unix epoch time in milliseconds).</summary>
+    </member>
+    <member name="institution_ministry_number_description">
+      <summary>Numer uczelni nadany przez ministra / University number given by minister.</summary>
+    </member>
+    <member name="institution_name_description">
+      <summary>Nazwa instytucji / Name of institution in given language.</summary>
+    </member>
+    <member name="institution_nip_description">
+      <summary>NIP / Tax Identification Number (NIP).</summary>
+    </member>
+    <member name="institution_pan_number_description">
+      <summary>Numer rejestru instytutów PAN / Number in the register of PAS institutes (Polish Academy of Sciences).</summary>
+    </member>
+    <member name="institution_pib_description">
+      <summary>Państwowy Instytut Badawczy (PIB) - znacznik instytucji posiadającej status PIB / National Research Institute (PIB) status marker.</summary>
+    </member>
+    <member name="institution_regon_description">
+      <summary>REGON instytucji / REGON of institution.</summary>
+    </member>
+    <member name="institution_result_numbers_description">
+      <summary>Parametr określający liczbę wyników, która ma być zwrócona w odpowiedzi. Domyślna wartość = 10. Maksymalna wartość = 100. / Number of elements to return. Number of results that you want to receive. Default value = 10. Maximum value = 100.</summary>
+    </member>
+    <member name="institution_si_type_cd_description">
+      <summary>Typ instytucji naukowej - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of scientific institution type. Use Dictionary's services to receive extended information.</summary>
+    </member>
+    <member name="institution_status_code_description">
+      <summary>Status instytucji - tablica kodów słownikowych. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Array of codes of institution statuses. Use Dictionary's services to receive extended information.</summary>
+    </member>
+    <member name="institution_supervising_institution_id_description">
+      <summary>ID instytucji nadzorującej. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Supervising institution id. Use Dictionary's services to receive extended information.</summary>
+    </member>
+    <member name="institution_token_description">
+      <summary>Każda poprawna odpowiedź usługi zawiera dane oraz token, który umożliwia pobranie kolejnej partii danych. Przy pierwszym wywołaniu usługi token musi być pustym stringiem. Pobieranie kolejnych stron z wynikami odbywa się z użyciem tokenu, który został zwrócony w poprzedniej odpowiedzi / At the first time the token must be empty string. The new token (after first search) is generated in response and must be forwarded to query if you want to get the next results.</summary>
+    </member>
+    <member name="institution_u_type_cd_description">
+      <summary>Typ uczelni - kod słownikowy. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Code of university type. Use Dictionary's services to receive extended information.</summary>
+    </member>
+    <member name="institution_voivodeship_code_description">
+      <summary>Województwo - kod. Skorzystaj z usług słownikowych, aby uzyskać więcej informacji / Branch voivodeship code. Use Dictionary's services to receive extended information.</summary>
+    </member>
+  </members>
+</docs>
