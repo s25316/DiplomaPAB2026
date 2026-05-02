@@ -6,7 +6,7 @@ namespace RADON.Contracts.Institutions.Responses;
 
 /// <include file='Response.xml' path='docs/members/member[@name="institution_federation_institution_data"]/summary' />
 [Display(Name = nameof(Response.institution_federation_institution_data), ResourceType = typeof(Response))]
-public class FederationInstitutionData
+public sealed class FederationInstitutionData
 {
     /// <include file='Response.xml' path='docs/members/member[@name="institution_federation_institution_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.institution_federation_institution_institution_uuid), ResourceType = typeof(Response))]
@@ -21,10 +21,10 @@ public class FederationInstitutionData
     /// <include file='Response.xml' path='docs/members/member[@name="institution_federation_institution_date_from"]/summary' />
     [Display(Name = nameof(Response.institution_federation_institution_date_from), ResourceType = typeof(Response))]
     [JsonPropertyName("dateFrom")]
-    public required string DateFrom { get; init; }
+    public required DateOnly DateFrom { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_federation_institution_date_to"]/summary' />
     [Display(Name = nameof(Response.institution_federation_institution_date_to), ResourceType = typeof(Response))]
     [JsonPropertyName("dateTo")]
-    public string? DateTo { get; init; } = null;
+    public required DateOnly? DateTo { get; init; } = null;
 }

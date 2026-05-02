@@ -15,6 +15,8 @@ public static class RadonJsonSerializerOptions
 
             new PolishBoolConverter(),
             new NullablePolishBoolConverter(),
+
+            new UnixDateTimeConverter(),
         },
 
         NumberHandling = JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString,

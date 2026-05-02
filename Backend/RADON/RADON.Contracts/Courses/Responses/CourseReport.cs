@@ -241,5 +241,6 @@ public sealed class CourseReport
     /// <include file='Response.xml' path='docs/members/member[@name="course_last_refresh"]/summary' />
     [Display(Name = nameof(Response.course_last_refresh), ResourceType = typeof(Response))]
     [JsonPropertyName("lastRefresh")]
-    public required string LastRefresh { get; init; }
+    [JsonConverter(typeof(UnixDateTimeConverter))]
+    public required DateTimeOffset LastRefresh { get; init; }
 }

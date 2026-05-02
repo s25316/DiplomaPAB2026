@@ -6,12 +6,12 @@ namespace RADON.Contracts.Institutions.Responses;
 
 /// <include file='Response.xml' path='docs/members/member[@name="institution_branch_data"]/summary' />
 [Display(Name = nameof(Response.institution_branch_data), ResourceType = typeof(Response))]
-public class BranchData
+public sealed class BranchData
 {
     /// <include file='Response.xml' path='docs/members/member[@name="institution_branch_branch_uuid"]/summary' />
     [Display(Name = nameof(Response.institution_branch_branch_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("branchUuid")]
-    public required string BranchUuid { get; init; }
+    public required Guid BranchUuid { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_branch_branch_name"]/summary' />
     [Display(Name = nameof(Response.institution_branch_branch_name), ResourceType = typeof(Response))]

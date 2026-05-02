@@ -43,7 +43,9 @@ public class NullablePolishBoolConverter : JsonConverter<bool?>
     public override bool? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.TokenType switch
     {
         JsonTokenType.Null => null,
-        JsonTokenType.String => PolishBoolMapper.ReadString(reader.GetString()),
+        JsonTokenType.String => string.IsNullOrWhiteSpace(reader.GetString())
+            ? null
+            : PolishBoolMapper.ReadString(reader.GetString()),
         JsonTokenType.False => false,
         JsonTokenType.True => true,
         _ => throw new JsonException($"Value '{reader.GetString()}' [{reader.TokenType}] is not a valid Polish boolean."),

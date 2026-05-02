@@ -6,7 +6,7 @@ namespace RADON.Contracts.Institutions.Responses;
 
 /// <include file='Response.xml' path='docs/members/member[@name="institution_type_data"]/summary' />
 [Display(Name = nameof(Response.institution_type_data), ResourceType = typeof(Response))]
-public class TypeData
+public sealed class TypeData
 {
     /// <include file='Response.xml' path='docs/members/member[@name="institution_type_name"]/summary' />
     [Display(Name = nameof(Response.institution_type_name), ResourceType = typeof(Response))]
@@ -16,5 +16,5 @@ public class TypeData
     /// <include file='Response.xml' path='docs/members/member[@name="institution_type_date_from"]/summary' />
     [Display(Name = nameof(Response.institution_type_date_from), ResourceType = typeof(Response))]
     [JsonPropertyName("dateFrom")]
-    public required string DateFrom { get; init; }
+    public required DateOnly DateFrom { get; init; }
 }

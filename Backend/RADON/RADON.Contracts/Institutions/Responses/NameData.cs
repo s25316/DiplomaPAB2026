@@ -16,5 +16,5 @@ public sealed class NameData
     /// <include file='Response.xml' path='docs/members/member[@name="institution_name_data_date_from"]/summary' />
     [Display(Name = nameof(Response.institution_name_data_date_from), ResourceType = typeof(Response))]
     [JsonPropertyName("dateFrom")]
-    public required string DateFrom { get; init; }
+    public required DateOnly DateFrom { get; init; }
 }

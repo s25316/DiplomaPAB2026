@@ -1,115 +1,136 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RADON.Contracts.JsonConfiguration.JsonConverters;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Response = RADON.Contracts.Descriptions.Institutions.Response;
 
 namespace RADON.Contracts.Institutions.Responses;
 
-public class InstitutionReport
+public sealed class InstitutionReport
 {
     /// <include file='Response.xml' path='docs/members/member[@name="institution_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.institution_institution_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("institutionUuid")]
-    public string? InstitutionUuid { get; init; } = null;
+    public required Guid InstitutionUuid { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_institution_uid"]/summary' />
     [Display(Name = nameof(Response.institution_institution_uid), ResourceType = typeof(Response))]
     [JsonPropertyName("institutionUid")]
-    public string? InstitutionUid { get; init; } = null;
+    public required string InstitutionUid { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_name"]/summary' />
     [Display(Name = nameof(Response.institution_name), ResourceType = typeof(Response))]
     [JsonPropertyName("name")]
-    public string? Name { get; init; } = null;
+    public required string Name { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_id"]/summary' />
     [Display(Name = nameof(Response.institution_id), ResourceType = typeof(Response))]
     [JsonPropertyName("id")]
-    public string? Id { get; init; } = null;
+    public int? Id { get; init; } = null;
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_kind_cd"]/summary' />
     [Display(Name = nameof(Response.institution_i_kind_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("iKindCd")]
-    public string? IKindCd { get; init; } = null;
+    public required string IKindCd { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_kind_name"]/summary' />
     [Display(Name = nameof(Response.institution_i_kind_name), ResourceType = typeof(Response))]
     [JsonPropertyName("iKindName")]
-    public string? IKindName { get; init; } = null;
+    public required string IKindName { get; init; }
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_u_type_cd"]/summary' />
     [Display(Name = nameof(Response.institution_u_type_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("uTypeCd")]
-    public string? UTypeCd { get; init; } = null;
+    public required string? UTypeCd { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_u_type_name"]/summary' />
     [Display(Name = nameof(Response.institution_u_type_name), ResourceType = typeof(Response))]
     [JsonPropertyName("uTypeName")]
-    public string? UTypeName { get; init; } = null;
+    public required string? UTypeName { get; init; } = null;
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_si_type_cd"]/summary' />
     [Display(Name = nameof(Response.institution_si_type_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("siTypeCd")]
-    public string? SiTypeCd { get; init; } = null;
+    public required string? SiTypeCd { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_si_type_name"]/summary' />
     [Display(Name = nameof(Response.institution_si_type_name), ResourceType = typeof(Response))]
     [JsonPropertyName("siTypeName")]
-    public string? SiTypeName { get; init; } = null;
+    public required string? SiTypeName { get; init; } = null;
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_status"]/summary' />
     [Display(Name = nameof(Response.institution_status), ResourceType = typeof(Response))]
     [JsonPropertyName("status")]
-    public string? Status { get; init; } = null;
+    public required string Status { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="institution_status_code"]/summary' />
+    [Display(Name = nameof(Response.institution_status_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("statusCode")]
+    public required string StatusCode { get; init; }
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_supervising_institution_id"]/summary' />
     [Display(Name = nameof(Response.institution_supervising_institution_id), ResourceType = typeof(Response))]
     [JsonPropertyName("supervisingInstitutionID")]
-    public string? SupervisingInstitutionId { get; init; } = null;
+    public required Guid? SupervisingInstitutionId { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_supervising_institution_name"]/summary' />
     [Display(Name = nameof(Response.institution_supervising_institution_name), ResourceType = typeof(Response))]
     [JsonPropertyName("supervisingInstitutionName")]
-    public string? SupervisingInstitutionName { get; init; } = null;
+    public required string? SupervisingInstitutionName { get; init; } = null;
 
+
+    #region Address
     /// <include file='Response.xml' path='docs/members/member[@name="institution_country_cd"]/summary' />
     [Display(Name = nameof(Response.institution_country_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("countryCd")]
-    public string? CountryCd { get; init; } = null;
+    public required string CountryCd { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_country"]/summary' />
     [Display(Name = nameof(Response.institution_country), ResourceType = typeof(Response))]
     [JsonPropertyName("country")]
-    public string? Country { get; init; } = null;
+    public required string Country { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_voivodeship"]/summary' />
     [Display(Name = nameof(Response.institution_voivodeship), ResourceType = typeof(Response))]
     [JsonPropertyName("voivodeship")]
-    public string? Voivodeship { get; init; } = null;
+    public required string Voivodeship { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="institution_voivodeship_code"]/summary' />
+    [Display(Name = nameof(Response.institution_voivodeship_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("voivodeshipCode")]
+    public required string VoivodeshipCode { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_city"]/summary' />
     [Display(Name = nameof(Response.institution_city), ResourceType = typeof(Response))]
     [JsonPropertyName("city")]
-    public string? City { get; init; } = null;
+    public required string City { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_postal_cd"]/summary' />
     [Display(Name = nameof(Response.institution_postal_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("postalCd")]
-    public string? PostalCd { get; init; } = null;
+    public required string PostalCd { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_street"]/summary' />
     [Display(Name = nameof(Response.institution_street), ResourceType = typeof(Response))]
     [JsonPropertyName("street")]
-    public string? Street { get; init; } = null;
+    public required string? Street { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_b_number"]/summary' />
     [Display(Name = nameof(Response.institution_b_number), ResourceType = typeof(Response))]
     [JsonPropertyName("bNumber")]
-    public string? BNumber { get; init; } = null;
+    public required string BNumber { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_l_number"]/summary' />
     [Display(Name = nameof(Response.institution_l_number), ResourceType = typeof(Response))]
     [JsonPropertyName("lNumber")]
     public string? LNumber { get; init; } = null;
+    #endregion
+
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_regon"]/summary' />
     [Display(Name = nameof(Response.institution_regon), ResourceType = typeof(Response))]
@@ -126,20 +147,22 @@ public class InstitutionReport
     [JsonPropertyName("krs")]
     public string? Krs { get; init; } = null;
 
+
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_start_dt"]/summary' />
     [Display(Name = nameof(Response.institution_i_start_dt), ResourceType = typeof(Response))]
     [JsonPropertyName("iStartDT")]
-    public string? IStartDt { get; init; } = null;
+    public required DateOnly IStartDt { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_liq_start_dt"]/summary' />
     [Display(Name = nameof(Response.institution_i_liq_start_dt), ResourceType = typeof(Response))]
     [JsonPropertyName("iLiqStartDT")]
-    public string? ILiqStartDt { get; init; } = null;
+    public required DateOnly? ILiqStartDt { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_liq_dt"]/summary' />
     [Display(Name = nameof(Response.institution_i_liq_dt), ResourceType = typeof(Response))]
     [JsonPropertyName("iLiqDT")]
-    public string? ILiqDt { get; init; } = null;
+    public required DateOnly? ILiqDt { get; init; } = null;
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_www"]/summary' />
     [Display(Name = nameof(Response.institution_www), ResourceType = typeof(Response))]
@@ -156,90 +179,83 @@ public class InstitutionReport
     [JsonPropertyName("phone")]
     public string? Phone { get; init; } = null;
 
+
     /// <include file='Response.xml' path='docs/members/member[@name="institution_pib"]/summary' />
     [Display(Name = nameof(Response.institution_pib), ResourceType = typeof(Response))]
     [JsonPropertyName("pib")]
-    public string? Pib { get; init; } = null;
+    public required int Pib { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_year_pib"]/summary' />
     [Display(Name = nameof(Response.institution_year_pib), ResourceType = typeof(Response))]
     [JsonPropertyName("yearPib")]
-    public string? YearPib { get; init; } = null;
-
-    /// <include file='Response.xml' path='docs/members/member[@name="institution_status_code"]/summary' />
-    [Display(Name = nameof(Response.institution_status_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("statusCode")]
-    public string? StatusCode { get; init; } = null;
-
-    /// <include file='Response.xml' path='docs/members/member[@name="institution_voivodeship_code"]/summary' />
-    [Display(Name = nameof(Response.institution_voivodeship_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("voivodeshipCode")]
-    public string? VoivodeshipCode { get; init; } = null;
+    public required int? YearPib { get; init; } = null;
 
 
     [JsonPropertyName("branches")]
     public List<BranchData>? Branches { get; init; } = null;
 
 
+    #region Manager
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_name"]/summary' />
     [Display(Name = nameof(Response.institution_manager_name), ResourceType = typeof(Response))]
     [JsonPropertyName("managerName")]
-    public string? ManagerName { get; init; } = null;
+    public required string? ManagerName { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_surname"]/summary' />
     [Display(Name = nameof(Response.institution_manager_surname), ResourceType = typeof(Response))]
     [JsonPropertyName("managerSurname")]
-    public string? ManagerSurname { get; init; } = null;
+    public required string? ManagerSurname { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_other_names"]/summary' />
     [Display(Name = nameof(Response.institution_manager_other_names), ResourceType = typeof(Response))]
     [JsonPropertyName("managerOtherNames")]
-    public string? ManagerOtherNames { get; init; } = null;
+    public required string? ManagerOtherNames { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_surname_prefix"]/summary' />
     [Display(Name = nameof(Response.institution_manager_surname_prefix), ResourceType = typeof(Response))]
     [JsonPropertyName("managerSurnamePrefix")]
-    public string? ManagerSurnamePrefix { get; init; } = null;
+    public required string? ManagerSurnamePrefix { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_employee_in_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.institution_manager_employee_in_institution_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("managerEmployeeInInstitutionUuid")]
-    public string? ManagerEmployeeInInstitutionUuid { get; init; } = null;
+    public required Guid? ManagerEmployeeInInstitutionUuid { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_manager_function"]/summary' />
     [Display(Name = nameof(Response.institution_manager_function), ResourceType = typeof(Response))]
     [JsonPropertyName("managerFunction")]
-    public string? ManagerFunction { get; init; } = null;
+    public required string? ManagerFunction { get; init; } = null;
+    #endregion
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_esp_address"]/summary' />
     [Display(Name = nameof(Response.institution_esp_address), ResourceType = typeof(Response))]
     [JsonPropertyName("espAddress")]
-    public string? EspAddress { get; init; } = null;
+    public required string? EspAddress { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_eda_address"]/summary' />
     [Display(Name = nameof(Response.institution_eda_address), ResourceType = typeof(Response))]
     [JsonPropertyName("edaAddress")]
-    public string? EdaAddress { get; init; } = null;
+    public required string? EdaAddress { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_pan_number"]/summary' />
     [Display(Name = nameof(Response.institution_pan_number), ResourceType = typeof(Response))]
     [JsonPropertyName("panNumber")]
-    public string? PanNumber { get; init; } = null;
+    public required string? PanNumber { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_ministry_number"]/summary' />
     [Display(Name = nameof(Response.institution_ministry_number), ResourceType = typeof(Response))]
     [JsonPropertyName("ministryNumber")]
-    public string? MinistryNumber { get; init; } = null;
+    public required string? MinistryNumber { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_eun_number"]/summary' />
     [Display(Name = nameof(Response.institution_eun_number), ResourceType = typeof(Response))]
     [JsonPropertyName("eunNumber")]
-    public string? EunNumber { get; init; } = null;
+    public required string? EunNumber { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_federation_number"]/summary' />
     [Display(Name = nameof(Response.institution_federation_number), ResourceType = typeof(Response))]
     [JsonPropertyName("federationNumber")]
-    public string? FederationNumber { get; init; } = null;
+    public required string? FederationNumber { get; init; } = null;
 
 
     [JsonPropertyName("federationComposition")]
@@ -285,5 +301,6 @@ public class InstitutionReport
     /// <include file='Response.xml' path='docs/members/member[@name="institution_last_refresh"]/summary' />
     [Display(Name = nameof(Response.institution_last_refresh), ResourceType = typeof(Response))]
     [JsonPropertyName("lastRefresh")]
-    public required string LastRefresh { get; init; }
+    [JsonConverter(typeof(UnixDateTimeConverter))]
+    public required DateTimeOffset LastRefresh { get; init; }
 }
