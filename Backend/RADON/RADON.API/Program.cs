@@ -19,7 +19,7 @@ public class Program
             options.AddOperationTransformer<QueryParametersOpenApiOperation>();
 
             options.AddSchemaTransformer<ResponseTypeOpenApiSchemaTransformer>();
-            options.AddSchemaTransformer<EnumSchemaTransformer>();
+            options.AddSchemaTransformer<DictionaryResourceEnumSchemaTransformer>();
         });
 
         var app = builder.Build();

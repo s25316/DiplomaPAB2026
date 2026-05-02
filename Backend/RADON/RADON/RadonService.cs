@@ -1,13 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using RADON.Base.Responses;
 using RADON.Configurations;
+using RADON.Contracts.Dictionaries;
+using RADON.Contracts.Dictionaries.Responses;
+using RADON.Contracts.Institutions.Responses;
+using RADON.Contracts.Shared.Responses;
 using RADON.Courses;
 using RADON.Courses.Responses;
 using RADON.Dictionaries;
-using RADON.Dictionaries.Responses;
 using RADON.Institutions;
-using RADON.Institutions.Responses;
 using System.Net.Http.Json;
+using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
+using InstitutionQueryParameters = RADON.Contracts.Institutions.QueryParameters;
 
 namespace RADON;
 
@@ -15,7 +18,7 @@ public interface IRadonService
 {
     Task<Response<InstitutionReport>> GetInstitutionsAsync(InstitutionQueryParameters parameters, CancellationToken cancellationToken = default);
     Task<Response<CourseReport>> GetCoursesAsync(CourseQueryParameters parameters, CancellationToken cancellationToken = default);
-    Task<IEnumerable<DictValue>> GetDictionariesAsync(DictionaryType type, CancellationToken cancellationToken = default);
+    Task<IEnumerable<DictValue>> GetDictionariesAsync(DictionaryResource resource, CancellationToken cancellationToken = default);
 }
 
 public class RadonService : IRadonService
@@ -62,7 +65,7 @@ public class RadonService : IRadonService
         services.AddSingleton<InstitutionUriBuilder>();
 
         // --- STRATEGIES ---
-        services.AddSingleton<IGetDictionaryTypeConfigurationStrategy, GetDictionaryTypeConfigurationStrategy>();
+        services.AddSingleton<IGetDictionaryResourceConfigurationStrategy, GetDictionaryResourceConfigurationStrategy>();
 
         provider = services.BuildServiceProvider();
     }
@@ -95,12 +98,12 @@ public class RadonService : IRadonService
         return response;
     }
 
-    public async Task<IEnumerable<DictValue>> GetDictionariesAsync(DictionaryType type, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<DictValue>> GetDictionariesAsync(DictionaryResource resource, CancellationToken cancellationToken = default)
     {
         var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
-        var strategy = provider.GetRequiredService<IGetDictionaryTypeConfigurationStrategy>();
+        var strategy = provider.GetRequiredService<IGetDictionaryResourceConfigurationStrategy>();
 
-        var configurationType = strategy.Execute(type);
+        var configurationType = strategy.Execute(resource);
         var configuration = provider.GetRequiredService(configurationType) as DictiionaryUriConfiguration;
         ArgumentNullException.ThrowIfNull(configuration);
 

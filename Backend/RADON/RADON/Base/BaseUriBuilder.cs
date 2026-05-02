@@ -3,16 +3,15 @@ using Microsoft.Extensions.Primitives;
 
 namespace RADON.Base;
 
-internal interface IInputQueryParameters;
 internal interface IUriBuilder<in TInputQueryParameters>
-    where TInputQueryParameters : class, IInputQueryParameters
+    where TInputQueryParameters : class
 {
     string Build(TInputQueryParameters parameters);
 }
 
 public abstract record BaseUriConfiguration(Uri Value);
 internal abstract class BaseUriBuilder<TInputQueryParameters, TUriConfiguration>(TUriConfiguration configuration) : IUriBuilder<TInputQueryParameters>
-    where TInputQueryParameters : class, IInputQueryParameters
+    where TInputQueryParameters : class
     where TUriConfiguration : BaseUriConfiguration
 {
     protected abstract HashSet<KeyValuePair<string, string>> PrepareInputParameters(TInputQueryParameters parameters);

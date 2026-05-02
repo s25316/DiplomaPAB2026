@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RADON.Base.Responses;
-using RADON.Courses;
+using RADON.Contracts.Dictionaries;
+using RADON.Contracts.Dictionaries.Responses;
+using RADON.Contracts.Institutions;
+using RADON.Contracts.Institutions.Responses;
+using RADON.Contracts.Shared.Responses;
 using RADON.Courses.Responses;
-using RADON.Dictionaries;
-using RADON.Dictionaries.Responses;
-using RADON.Institutions;
-using RADON.Institutions.Responses;
+using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
 
 namespace RADON.API.Controllers;
 
@@ -16,7 +16,7 @@ public class ValuesController(IRadonService service) : ControllerBase
     [ProducesResponseType(typeof(Response<InstitutionReport>), 200)]
     [HttpGet("institutions")]
     public async Task<IActionResult> GetInstitutionsAsync(
-        [FromQuery] InstitutionQueryParameters queryParameters,
+        [FromQuery] QueryParameters queryParameters,
         CancellationToken cancellationToken)
     {
         var response = await service.GetInstitutionsAsync(queryParameters, cancellationToken);
@@ -36,10 +36,10 @@ public class ValuesController(IRadonService service) : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<DictValue>), 200)]
     [HttpGet("dictionaries")]
     public async Task<IActionResult> GetDictionariesAsync(
-        [FromQuery] DictionaryType type,
+        [FromQuery] DictionaryResource resource,
         CancellationToken cancellationToken)
     {
-        var response = await service.GetDictionariesAsync(type, cancellationToken);
+        var response = await service.GetDictionariesAsync(resource, cancellationToken);
         return Ok(response);
     }
 }

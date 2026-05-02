@@ -4,6 +4,10 @@
   </Folder>
   <Folder Name="/Database/" />
   <Folder Name="/Layers/" />
+  <Folder Name="/Plugin/">
+    <Project Path="RADON.Contracts.Descriptions/RADON.Contracts.Descriptions.csproj" Id="1fbddd81-8ff3-4295-9311-93c5764f91ea" />
+    <Project Path="RADON.Contracts/RADON.Contracts.csproj" Id="940bb5dd-9b5c-4cd3-b146-8ee62becae7d" />
+    <Project Path="RADON/RADON.csproj" />
+  </Folder>
   <Project Path="RADON.API/RADON.API.csproj" />
-  <Project Path="RADON/RADON.csproj" />
 </Solution>

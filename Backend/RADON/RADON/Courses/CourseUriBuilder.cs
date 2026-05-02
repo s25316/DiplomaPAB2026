@@ -1,12 +1,13 @@
 ﻿using RADON.Base;
 using RADON.Configurations;
+using RADON.Contracts.Courses;
 
 namespace RADON.Courses;
 
 internal sealed record CourseUriConfiguration() : BaseUriConfiguration(new Uri(Uris.COURSE));
 internal sealed class CourseUriBuilder(
     CourseUriConfiguration configuration
-) : BaseUriBuilder<CourseQueryParameters, CourseUriConfiguration>(configuration)
+) : BaseUriBuilder<QueryParameters, CourseUriConfiguration>(configuration)
 {
     private const string QUERY_PARAMETER_RESULT_NUMBERS = "resultNumbers";
     private const string QUERY_PARAMETER_TOKEN = "token";
@@ -58,7 +59,7 @@ internal sealed class CourseUriBuilder(
 
     private const string QUERY_PARAMETER_LAST_REFRESH = "lastRefresh";
 
-    protected override HashSet<KeyValuePair<string, string>> PrepareInputParameters(CourseQueryParameters parameters)
+    protected override HashSet<KeyValuePair<string, string>> PrepareInputParameters(QueryParameters parameters)
     {
         var queryParams = new HashSet<KeyValuePair<string, string>>();
 

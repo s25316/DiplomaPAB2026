@@ -1,0 +1,205 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+	
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+	
+	<!--COURSES-->
+	<ItemGroup Label="Courses\QueryParameter">
+
+		<EmbeddedResource Update="Courses\QueryParameter.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>QueryParameter.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Courses\QueryParameter.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>QueryParameter.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Courses\QueryParameter.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>QueryParameter.xml</LastGenOutput>
+		</None>
+
+		<None Update="Courses\QueryParameter.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>QueryParameter.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+
+	<ItemGroup Label="Courses\Response">
+
+		<EmbeddedResource Update="Courses\Response.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Response.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Courses\Response.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Courses\Response.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Response.xml</LastGenOutput>
+		</None>
+
+		<None Update="Courses\Response.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+	
+	
+	<!--INSTITUTIONS-->
+	<ItemGroup Label="Institutions\QueryParameter">
+
+		<EmbeddedResource Update="Institutions\QueryParameter.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>QueryParameter.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Institutions\QueryParameter.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>QueryParameter.resx</DependentUpon>
+		</Compile>
+		
+		<None Update="Institutions\QueryParameter.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>QueryParameter.xml</LastGenOutput>
+		</None>
+
+		<None Update="Institutions\QueryParameter.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>QueryParameter.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+
+	<ItemGroup Label="Institutions\Response">
+
+		<EmbeddedResource Update="Institutions\Response.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Response.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Institutions\Response.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Institutions\Response.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Response.xml</LastGenOutput>
+		</None>
+
+		<None Update="Institutions\Response.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+
+
+
+	<!--DICTIONARIES-->
+	<ItemGroup Label="Dictionaries\DictionaryResource">
+
+		<EmbeddedResource Update="Dictionaries\DictionaryResource.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>DictionaryResource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Dictionaries\DictionaryResource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>DictionaryResource.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Dictionaries\DictionaryResource.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>DictionaryResource.xml</LastGenOutput>
+		</None>
+
+		<None Update="Dictionaries\DictionaryResource.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>DictionaryResource.tt</DependentUpon>
+		</None>
+
+
+	</ItemGroup>
+
+	<ItemGroup Label="Dictionaries\Response">
+
+		<EmbeddedResource Update="Dictionaries\Response.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Response.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		
+		<Compile Update="Dictionaries\Response.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Dictionaries\Response.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Response.xml</LastGenOutput>
+		</None>
+
+		<None Update="Dictionaries\Response.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+
+	<!--SHARED-->
+	<ItemGroup Label="Shared\Response">
+
+		<EmbeddedResource Update="Shared\Response.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Response.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="Shared\Response.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.resx</DependentUpon>
+		</Compile>
+
+		<None Update="Shared\Response.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Response.xml</LastGenOutput>
+		</None>
+
+		<None Update="Shared\Response.xml">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Response.tt</DependentUpon>
+		</None>
+
+	</ItemGroup>
+	
+</Project>

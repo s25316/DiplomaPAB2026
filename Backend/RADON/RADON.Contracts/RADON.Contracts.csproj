@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\RADON.Contracts.Descriptions\RADON.Contracts.Descriptions.csproj" />
+	</ItemGroup>
+	
+
+	<!--COURSES-->
+	<Target Name="Courses\QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Courses\QueryParameter.xml" DestinationFolder="Courses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Courses\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Courses\Response.xml" DestinationFolder="Courses\Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!--DICTIONARIES-->
+	<Target Name="Dictionaries\DictionaryResource" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Dictionaries\DictionaryResource.xml" DestinationFolder="Dictionaries" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Dictionaries\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Dictionaries\Response.xml" DestinationFolder="Dictionaries\Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!--INSTITUTIONS-->
+	<Target Name="Institutions\QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Institutions\QueryParameter.xml" DestinationFolder="Institutions" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Institutions\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Institutions\Response.xml" DestinationFolder="Institutions\Responses" SkipUnchangedFiles="true" />
+	</Target>
+	
+	<!--SHARED-->
+	<Target Name="CopyDocumentationForBuild" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Contracts.Descriptions\Shared\Response.xml" DestinationFolder="Shared\Responses" SkipUnchangedFiles="true" />
+	</Target>
+	
+</Project>
