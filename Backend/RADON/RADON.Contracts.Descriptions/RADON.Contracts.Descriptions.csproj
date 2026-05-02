@@ -120,7 +120,6 @@
 	</ItemGroup>
 
 
-
 	<!--DICTIONARIES-->
 	<ItemGroup Label="Dictionaries\DictionaryResource">
 
@@ -145,7 +144,6 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>DictionaryResource.tt</DependentUpon>
 		</None>
-
 
 	</ItemGroup>
 

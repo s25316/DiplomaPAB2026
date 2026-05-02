@@ -6,15 +6,15 @@ namespace RADON.Courses.Responses;
 
 /// <include file='Response.xml' path='docs/members/member[@name="course_organizational_unit_data"]/summary' />
 [Display(Name = nameof(Response.course_organizational_unit_data), ResourceType = typeof(Response))]
-public class OrganizationalUnitData
+public sealed class OrganizationalUnitData
 {
     /// <include file='Response.xml' path='docs/members/member[@name="course_organizational_unit_organizational_unit_uuid"]/summary' />
     [Display(Name = nameof(Response.course_organizational_unit_organizational_unit_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("organizationalUnitUuid")]
-    public string? OrganizationalUnitUuid { get; init; } = null;
+    public required Guid OrganizationalUnitUuid { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="course_organizational_unit_organizational_unit_full_name"]/summary' />
     [Display(Name = nameof(Response.course_organizational_unit_organizational_unit_full_name), ResourceType = typeof(Response))]
     [JsonPropertyName("organizationalUnitFullName")]
-    public string? OrganizationalUnitFullName { get; init; } = null;
+    public required string OrganizationalUnitFullName { get; init; }
 }

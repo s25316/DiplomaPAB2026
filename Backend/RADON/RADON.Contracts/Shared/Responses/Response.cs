@@ -4,7 +4,7 @@ using Response = RADON.Contracts.Descriptions.Shared.Response;
 
 namespace RADON.Contracts.Shared.Responses;
 
-public class Response<TResponseItem>
+public sealed class Response<TResponseItem>
     where TResponseItem : class
 {
     [JsonPropertyName("results")]

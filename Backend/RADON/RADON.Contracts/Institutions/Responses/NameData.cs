@@ -6,7 +6,7 @@ namespace RADON.Contracts.Institutions.Responses;
 
 /// <include file='Response.xml' path='docs/members/member[@name="institution_name_data"]/summary' />
 [Display(Name = nameof(Response.institution_name_data), ResourceType = typeof(Response))]
-public class NameData
+public sealed class NameData
 {
     /// <include file='Response.xml' path='docs/members/member[@name="institution_name_data_name"]/summary' />
     [Display(Name = nameof(Response.institution_name_data_name), ResourceType = typeof(Response))]

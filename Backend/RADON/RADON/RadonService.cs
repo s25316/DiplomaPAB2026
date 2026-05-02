@@ -3,12 +3,14 @@ using RADON.Configurations;
 using RADON.Contracts.Dictionaries;
 using RADON.Contracts.Dictionaries.Responses;
 using RADON.Contracts.Institutions.Responses;
+using RADON.Contracts.JsonConfiguration;
 using RADON.Contracts.Shared.Responses;
 using RADON.Courses;
 using RADON.Courses.Responses;
 using RADON.Dictionaries;
 using RADON.Institutions;
 using System.Net.Http.Json;
+using System.Text.Json;
 using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
 using InstitutionQueryParameters = RADON.Contracts.Institutions.QueryParameters;
 
@@ -31,6 +33,9 @@ public class RadonService : IRadonService
         var services = new ServiceCollection();
 
         services.AddHttpClient();
+
+        // --- JSON SERIALIZER --- 
+        services.AddSingleton<JsonSerializerOptions>(RadonJsonSerializerOptions.JsonSerializerOptions);
 
         // --- DICTIONARIES CONFIGURATIONS ---
         // --- INSTITUTION ---
@@ -67,18 +72,20 @@ public class RadonService : IRadonService
         // --- STRATEGIES ---
         services.AddSingleton<IGetDictionaryResourceConfigurationStrategy, GetDictionaryResourceConfigurationStrategy>();
 
+
         provider = services.BuildServiceProvider();
     }
 
     public async Task<Response<InstitutionReport>> GetInstitutionsAsync(InstitutionQueryParameters parameters, CancellationToken cancellationToken = default)
     {
         var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+        var jsonSerializerOptions = provider.GetRequiredService<JsonSerializerOptions>();
         var uriBuilder = provider.GetRequiredService<InstitutionUriBuilder>();
 
         var requestUri = uriBuilder.Build(parameters);
         var httpClient = httpClientFactory.CreateClient();
 
-        var response = await httpClient.GetFromJsonAsync<Response<InstitutionReport>>(requestUri, cancellationToken);
+        var response = await httpClient.GetFromJsonAsync<Response<InstitutionReport>>(requestUri, jsonSerializerOptions, cancellationToken);
         ArgumentNullException.ThrowIfNull(response);
 
         return response;
@@ -87,12 +94,13 @@ public class RadonService : IRadonService
     public async Task<Response<CourseReport>> GetCoursesAsync(CourseQueryParameters parameters, CancellationToken cancellationToken = default)
     {
         var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+        var jsonSerializerOptions = provider.GetRequiredService<JsonSerializerOptions>();
         var uriBuilder = provider.GetRequiredService<CourseUriBuilder>();
 
         var requestUri = uriBuilder.Build(parameters);
         var httpClient = httpClientFactory.CreateClient();
 
-        var response = await httpClient.GetFromJsonAsync<Response<CourseReport>>(requestUri, cancellationToken);
+        var response = await httpClient.GetFromJsonAsync<Response<CourseReport>>(requestUri, jsonSerializerOptions, cancellationToken);
         ArgumentNullException.ThrowIfNull(response);
 
         return response;
