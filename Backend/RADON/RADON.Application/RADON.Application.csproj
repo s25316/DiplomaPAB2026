@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\..\Directory.Packages.props" />
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+		<ProjectReference Include="..\RADON.Models.Requests\RADON.Models.Requests.csproj" />
+		<ProjectReference Include="..\RADON.Models.Responses\RADON.Models.Responses.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Label="DependencyInjection">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+	</ItemGroup>
+
+</Project>

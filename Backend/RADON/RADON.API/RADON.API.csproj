@@ -10,6 +10,18 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<StartupObject></StartupObject>
 	</PropertyGroup>
+
+	
+	<ItemGroup Label="EntityFrameworkCore">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 	
 	<ItemGroup Label="Docker">
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
@@ -26,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\RADON\RADON.csproj" />
+		<ProjectReference Include="..\RADON.Infrastructure\RADON.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

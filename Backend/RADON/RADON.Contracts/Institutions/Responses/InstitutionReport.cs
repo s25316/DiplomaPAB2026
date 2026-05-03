@@ -131,7 +131,6 @@ public sealed class InstitutionReport
     #endregion
 
 
-
     /// <include file='Response.xml' path='docs/members/member[@name="institution_regon"]/summary' />
     [Display(Name = nameof(Response.institution_regon), ResourceType = typeof(Response))]
     [JsonPropertyName("regon")]
@@ -235,7 +234,7 @@ public sealed class InstitutionReport
     /// <include file='Response.xml' path='docs/members/member[@name="institution_eda_address"]/summary' />
     [Display(Name = nameof(Response.institution_eda_address), ResourceType = typeof(Response))]
     [JsonPropertyName("edaAddress")]
-    public required string? EdaAddress { get; init; } = null;
+    public string? EdaAddress { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_pan_number"]/summary' />
     [Display(Name = nameof(Response.institution_pan_number), ResourceType = typeof(Response))]

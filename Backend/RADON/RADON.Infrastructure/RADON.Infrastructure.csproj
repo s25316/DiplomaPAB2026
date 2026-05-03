@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<Import Project="..\..\Directory.Packages.props" />
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+	
+	
+	<ItemGroup>
+		<ProjectReference Include="..\RADON.Application\RADON.Application.csproj" />
+		<ProjectReference Include="..\RADON.Database.MsSql\RADON.Database.MsSql.csproj" />
+		<ProjectReference Include="..\RADON\RADON.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Label="Quartz">
+		<PackageReference Include="Quartz.Extensions.DependencyInjection" />
+		<PackageReference Include="Quartz.Extensions.Hosting" />
+	</ItemGroup>
+
+</Project>

@@ -1,16 +1,19 @@
 using RADON.API.OpenApi;
+using RADON.Application;
+using RADON.Infrastructure;
 using Scalar.AspNetCore;
 
 namespace RADON.API;
 
 public class Program
 {
-    public static string JsonPropertyName(string name) => char.ToLowerInvariant(name[0]) + name.Substring(1);
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddSingleton<IRadonService, RadonService>();
+        builder.Services.AddApplicationConfiguration();
+        builder.Services.AddInfrastructureConfiguration(builder.Configuration);
+
 
         builder.Services.AddControllers();
         builder.Services.AddProblemDetails();

@@ -2,12 +2,20 @@
   <Folder Name="/Base/">
     <Project Path="../Base/Base.Models/Base.Models.csproj" />
   </Folder>
-  <Folder Name="/Database/" />
-  <Folder Name="/Layers/" />
+  <Folder Name="/Database/">
+    <Project Path="RADON.Database.MsSql/RADON.Database.MsSql.csproj" Id="ecc886eb-3494-439a-93b3-2dc416f10c2c" />
+    <Project Path="RADON.Database/RADON.Database.csproj" Id="89d4912d-fbb5-4500-8c53-0d82a28af5c3" />
+  </Folder>
+  <Folder Name="/Layers/">
+    <Project Path="RADON.API/RADON.API.csproj" />
+    <Project Path="RADON.Application/RADON.Application.csproj" Id="4b8c59ae-d04f-45ac-80b7-87f8fdd53e73" />
+    <Project Path="RADON.Infrastructure/RADON.Infrastructure.csproj" Id="0304df23-297c-41f5-a5ab-0ce92f0b4add" />
+    <Project Path="RADON.Models.Requests/RADON.Models.Requests.csproj" Id="abcd62c5-03cd-437d-8bbd-7f4246970f36" />
+    <Project Path="RADON.Models.Responses/RADON.Models.Responses.csproj" Id="d621dca4-8888-438d-86e9-9090686a5d01" />
+  </Folder>
   <Folder Name="/Plugin/">
     <Project Path="RADON.Contracts.Descriptions/RADON.Contracts.Descriptions.csproj" Id="1fbddd81-8ff3-4295-9311-93c5764f91ea" />
     <Project Path="RADON.Contracts/RADON.Contracts.csproj" Id="940bb5dd-9b5c-4cd3-b146-8ee62becae7d" />
     <Project Path="RADON/RADON.csproj" />
   </Folder>
-  <Project Path="RADON.API/RADON.API.csproj" />
 </Solution>
