@@ -226,6 +226,7 @@ public sealed class InstitutionReport
     public required string? ManagerFunction { get; init; } = null;
     #endregion
 
+
     /// <include file='Response.xml' path='docs/members/member[@name="institution_esp_address"]/summary' />
     [Display(Name = nameof(Response.institution_esp_address), ResourceType = typeof(Response))]
     [JsonPropertyName("espAddress")]

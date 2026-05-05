@@ -55,7 +55,6 @@ public static class Configuration
             );
 
 
-
             q.AddTrigger(opts => opts
                 .ForJob(nameof(CreateOrUpdateInstitutionKindsJob))
                 .StartNow());
@@ -76,7 +75,7 @@ public static class Configuration
                 .ForJob(nameof(CreateOrUpdateInstitutionsJob))
                 .StartNow());
         });
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+        //services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         return services;
     }

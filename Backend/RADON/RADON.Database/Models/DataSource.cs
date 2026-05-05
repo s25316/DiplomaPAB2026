@@ -1,4 +1,5 @@
-﻿using RADON.Database.Models.Institutions;
+﻿using RADON.Database.Models.Courses;
+using RADON.Database.Models.Institutions;
 
 namespace RADON.Database.Models;
 
@@ -9,4 +10,5 @@ public class DataSource
 
 
     public virtual ICollection<Institution> Institutions { get; set; } = [];
+    public virtual ICollection<Course> Courses { get; set; } = [];
 }

@@ -30,94 +30,10 @@ public sealed class CourseReport
     public required string CourseName { get; init; }
 
 
-    /// <include file='Response.xml' path='docs/members/member[@name="course_level_code"]/summary' />
-    [Display(Name = nameof(Response.course_level_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("levelCode")]
-    public required string LevelCode { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_level_name"]/summary' />
-    [Display(Name = nameof(Response.course_level_name), ResourceType = typeof(Response))]
-    [JsonPropertyName("levelName")]
-    public required string LevelName { get; init; }
-
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_profile_code"]/summary' />
-    [Display(Name = nameof(Response.course_profile_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("profileCode")]
-    public required string ProfileCode { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_profile_name"]/summary' />
-    [Display(Name = nameof(Response.course_profile_name), ResourceType = typeof(Response))]
-    [JsonPropertyName("profileName")]
-    public required string ProfileName { get; init; }
-
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_isced_code"]/summary' />
-    [Display(Name = nameof(Response.course_isced_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("iscedCode")]
-    public required string IscedCode { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_isced_name"]/summary' />
-    [Display(Name = nameof(Response.course_isced_name), ResourceType = typeof(Response))]
-    [JsonPropertyName("iscedName")]
-    public required string IscedName { get; init; }
-
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_current_status_code"]/summary' />
-    [Display(Name = nameof(Response.course_current_status_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("currentStatusCode")]
-    public required string CurrentStatusCode { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_current_status_name"]/summary' />
-    [Display(Name = nameof(Response.course_current_status_name), ResourceType = typeof(Response))]
-    [JsonPropertyName("currentStatusName")]
-    public required string CurrentStatusName { get; init; }
-
-
     /// <include file='Response.xml' path='docs/members/member[@name="course_creation_date"]/summary' />
     [Display(Name = nameof(Response.course_creation_date), ResourceType = typeof(Response))]
     [JsonPropertyName("creationDate")]
     public required DateOnly? CreationDate { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_teacher_training"]/summary' />
-    [Display(Name = nameof(Response.course_teacher_training), ResourceType = typeof(Response))]
-    [JsonPropertyName("teacherTraining")]
-    [JsonConverter(typeof(PolishBoolConverter))]
-    public required bool TeacherTraining { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_philological"]/summary' />
-    [Display(Name = nameof(Response.course_philological), ResourceType = typeof(Response))]
-    [JsonPropertyName("philological")]
-    [JsonConverter(typeof(PolishBoolConverter))]
-    public required bool Philological { get; init; }
-
-
-    [JsonPropertyName("philologicalLanguages")]
-    public List<LanguageData> PhilologicalLanguages { get; init; } = [];
-
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led"]/summary' />
-    [Display(Name = nameof(Response.course_co_led), ResourceType = typeof(Response))]
-    [JsonPropertyName("coLed")]
-    [JsonConverter(typeof(PolishBoolConverter))]
-    public required bool CoLed { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led_date_from"]/summary' />
-    [Display(Name = nameof(Response.course_co_led_date_from), ResourceType = typeof(Response))]
-    [JsonPropertyName("coLedDateFrom")]
-    public required DateOnly? CoLedDateFrom { get; init; } = null;
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led_interdisciplinary"]/summary' />
-    [Display(Name = nameof(Response.course_co_led_interdisciplinary), ResourceType = typeof(Response))]
-    [JsonPropertyName("coLedInterdisciplinary")]
-    [JsonConverter(typeof(NullablePolishBoolConverter))]
-    public required bool? CoLedInterdisciplinary { get; init; } = null;
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_individual_studies_without_leading_discipline"]/summary' />
-    [Display(Name = nameof(Response.course_individual_studies_without_leading_discipline), ResourceType = typeof(Response))]
-    [JsonPropertyName("individualStudiesWithoutLeadingDiscipline")]
-    [JsonConverter(typeof(PolishBoolConverter))]
-    public required bool IndividualStudiesWithoutLeadingDiscipline { get; init; }
 
     /// <include file='Response.xml' path='docs/members/member[@name="course_termination_initialization_date"]/summary' />
     [Display(Name = nameof(Response.course_termination_initialization_date), ResourceType = typeof(Response))]
@@ -130,13 +46,83 @@ public sealed class CourseReport
     public required DateOnly? LiquidationDate { get; init; } = null;
 
 
+    #region LEVEL
+    /// <include file='Response.xml' path='docs/members/member[@name="course_level_code"]/summary' />
+    [Display(Name = nameof(Response.course_level_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("levelCode")]
+    public required string LevelCode { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_level_name"]/summary' />
+    [Display(Name = nameof(Response.course_level_name), ResourceType = typeof(Response))]
+    [JsonPropertyName("levelName")]
+    public required string LevelName { get; init; }
+    #endregion
+
+
+    #region PROFILE
+    /// <include file='Response.xml' path='docs/members/member[@name="course_profile_code"]/summary' />
+    [Display(Name = nameof(Response.course_profile_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("profileCode")]
+    public required string ProfileCode { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_profile_name"]/summary' />
+    [Display(Name = nameof(Response.course_profile_name), ResourceType = typeof(Response))]
+    [JsonPropertyName("profileName")]
+    public required string ProfileName { get; init; }
+    #endregion
+
+
+    #region ISCED
+    /// <include file='Response.xml' path='docs/members/member[@name="course_isced_code"]/summary' />
+    [Display(Name = nameof(Response.course_isced_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("iscedCode")]
+    public required string IscedCode { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_isced_name"]/summary' />
+    [Display(Name = nameof(Response.course_isced_name), ResourceType = typeof(Response))]
+    [JsonPropertyName("iscedName")]
+    public required string IscedName { get; init; }
+    #endregion
+
+
+    #region CURRENT STATUS
+    /// <include file='Response.xml' path='docs/members/member[@name="course_current_status_code"]/summary' />
+    [Display(Name = nameof(Response.course_current_status_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("currentStatusCode")]
+    public required string CurrentStatusCode { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_current_status_name"]/summary' />
+    [Display(Name = nameof(Response.course_current_status_name), ResourceType = typeof(Response))]
+    [JsonPropertyName("currentStatusName")]
+    public required string CurrentStatusName { get; init; }
+    #endregion
+
+
+    #region PHILOLOGICAL
+    /// <include file='Response.xml' path='docs/members/member[@name="course_philological"]/summary' />
+    [Display(Name = nameof(Response.course_philological), ResourceType = typeof(Response))]
+    [JsonPropertyName("philological")]
+    [JsonConverter(typeof(PolishBoolConverter))]
+    public required bool Philological { get; init; }
+
+    [JsonPropertyName("philologicalLanguages")]
+    public List<LanguageData> PhilologicalLanguages { get; init; } = [];
+    #endregion
+
+
+    #region DISCIPLINE
+    /// <include file='Response.xml' path='docs/members/member[@name="course_individual_studies_without_leading_discipline"]/summary' />
+    [Display(Name = nameof(Response.course_individual_studies_without_leading_discipline), ResourceType = typeof(Response))]
+    [JsonPropertyName("individualStudiesWithoutLeadingDiscipline")]
+    [JsonConverter(typeof(PolishBoolConverter))]
+    public required bool IndividualStudiesWithoutLeadingDiscipline { get; init; }
+
     [JsonPropertyName("disciplines")]
     public List<DisciplineData> Disciplines { get; init; } = [];
-
-    [JsonPropertyName("pka")]
-    public List<EvaluationPkaData> Pka { get; init; } = [];
+    #endregion
 
 
+    #region LEADING INSTITUTION
     /// <include file='Response.xml' path='docs/members/member[@name="course_leading_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.course_leading_institution_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("leadingInstitutionUuid")]
@@ -167,7 +153,10 @@ public sealed class CourseReport
     [Display(Name = nameof(Response.course_leading_institution_voivodeship_code), ResourceType = typeof(Response))]
     [JsonPropertyName("leadingInstitutionVoivodeshipCode")]
     public required string? LeadingInstitutionVoivodeshipCode { get; init; } = null;
+    #endregion
 
+
+    #region MAIN INSTITUTION
     /// <include file='Response.xml' path='docs/members/member[@name="course_main_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.course_main_institution_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("mainInstitutionUuid")]
@@ -178,7 +167,6 @@ public sealed class CourseReport
     [JsonPropertyName("mainInstitutionName")]
     public required string MainInstitutionName { get; init; }
 
-
     /// <include file='Response.xml' path='docs/members/member[@name="course_main_institution_kind"]/summary' />
     [Display(Name = nameof(Response.course_main_institution_kind), ResourceType = typeof(Response))]
     [JsonPropertyName("mainInstitutionKind")]
@@ -188,8 +176,10 @@ public sealed class CourseReport
     [Display(Name = nameof(Response.course_main_institution_kind_code), ResourceType = typeof(Response))]
     [JsonPropertyName("mainInstitutionKindCode")]
     public required string MainInstitutionKindCode { get; init; }
+    #endregion
 
 
+    #region SUPERVISING INSTITUTION
     /// <include file='Response.xml' path='docs/members/member[@name="course_supervising_institution_uuid"]/summary' />
     [Display(Name = nameof(Response.course_supervising_institution_uuid), ResourceType = typeof(Response))]
     [JsonPropertyName("supervisingInstitutionUuid")]
@@ -199,13 +189,45 @@ public sealed class CourseReport
     [Display(Name = nameof(Response.course_supervising_institution_name), ResourceType = typeof(Response))]
     [JsonPropertyName("supervisingInstitutionName")]
     public required string SupervisingInstitutionName { get; init; }
+    #endregion
 
+
+    #region CO LED
+    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led"]/summary' />
+    [Display(Name = nameof(Response.course_co_led), ResourceType = typeof(Response))]
+    [JsonPropertyName("coLed")]
+    [JsonConverter(typeof(PolishBoolConverter))]
+    public required bool CoLed { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led_date_from"]/summary' />
+    [Display(Name = nameof(Response.course_co_led_date_from), ResourceType = typeof(Response))]
+    [JsonPropertyName("coLedDateFrom")]
+    public required DateOnly? CoLedDateFrom { get; init; } = null;
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_co_led_interdisciplinary"]/summary' />
+    [Display(Name = nameof(Response.course_co_led_interdisciplinary), ResourceType = typeof(Response))]
+    [JsonPropertyName("coLedInterdisciplinary")]
+    [JsonConverter(typeof(NullablePolishBoolConverter))]
+    public required bool? CoLedInterdisciplinary { get; init; } = null;
 
     [JsonPropertyName("coLeadingInstitutions")]
     public List<CoLeadingInstitutionData> CoLeadingInstitutions { get; init; } = [];
+    #endregion
+
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_teacher_training"]/summary' />
+    [Display(Name = nameof(Response.course_teacher_training), ResourceType = typeof(Response))]
+    [JsonPropertyName("teacherTraining")]
+    [JsonConverter(typeof(PolishBoolConverter))]
+    public required bool TeacherTraining { get; init; }
+
 
     [JsonPropertyName("organizationalUnits")]
     public List<OrganizationalUnitData> OrganizationalUnits { get; init; } = [];
+
+
+    [JsonPropertyName("pka")]
+    public List<EvaluationPkaData> Pka { get; init; } = [];
 
 
     /// <include file='Response.xml' path='docs/members/member[@name="course_legal_basis_type_code"]/summary' />

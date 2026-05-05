@@ -30,6 +30,8 @@ public sealed class CourseInstanceData
     [JsonPropertyName("courseName")]
     public required string CourseName { get; init; }
 
+
+    #region FORM
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_form_code"]/summary' />
     [Display(Name = nameof(Response.course_instance_form_code), ResourceType = typeof(Response))]
     [JsonPropertyName("formCode")]
@@ -39,7 +41,10 @@ public sealed class CourseInstanceData
     [Display(Name = nameof(Response.course_instance_form_name), ResourceType = typeof(Response))]
     [JsonPropertyName("formName")]
     public required string FormName { get; init; }
+    #endregion
 
+
+    #region TITLE
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_title_code"]/summary' />
     [Display(Name = nameof(Response.course_instance_title_code), ResourceType = typeof(Response))]
     [JsonPropertyName("titleCode")]
@@ -49,7 +54,10 @@ public sealed class CourseInstanceData
     [Display(Name = nameof(Response.course_instance_title_name), ResourceType = typeof(Response))]
     [JsonPropertyName("titleName")]
     public required string TitleName { get; init; }
+    #endregion
 
+
+    #region LANGUAGE
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_language_code"]/summary' />
     [Display(Name = nameof(Response.course_instance_language_code), ResourceType = typeof(Response))]
     [JsonPropertyName("languageCode")]
@@ -59,6 +67,20 @@ public sealed class CourseInstanceData
     [Display(Name = nameof(Response.course_instance_language_name), ResourceType = typeof(Response))]
     [JsonPropertyName("languageName")]
     public required string LanguageName { get; init; }
+    #endregion
+
+
+    #region STATUS
+    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_status_code"]/summary' />
+    [Display(Name = nameof(Response.course_instance_status_code), ResourceType = typeof(Response))]
+    [JsonPropertyName("statusCode")]
+    public required string StatusCode { get; init; }
+
+    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_status_name"]/summary' />
+    [Display(Name = nameof(Response.course_instance_status_name), ResourceType = typeof(Response))]
+    [JsonPropertyName("statusName")]
+    public required string StatusName { get; init; }
+    #endregion
 
 
     [JsonPropertyName("philologicalLanguages")]
@@ -70,6 +92,12 @@ public sealed class CourseInstanceData
     [JsonPropertyName("educationStartDate")]
     public required DateOnly EducationStartDate { get; init; }
 
+    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_liquidation_date"]/summary' />
+    [Display(Name = nameof(Response.course_instance_liquidation_date), ResourceType = typeof(Response))]
+    [JsonPropertyName("liquidationDate")]
+    public required DateOnly? LiquidationDate { get; init; } = null;
+
+
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_number_of_semesters"]/summary' />
     [Display(Name = nameof(Response.course_instance_number_of_semesters), ResourceType = typeof(Response))]
     [JsonPropertyName("numberOfSemesters")]
@@ -79,6 +107,7 @@ public sealed class CourseInstanceData
     [Display(Name = nameof(Response.course_instance_ects), ResourceType = typeof(Response))]
     [JsonPropertyName("ects")]
     public required int Ects { get; init; }
+
 
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_dual"]/summary' />
     [Display(Name = nameof(Response.course_instance_dual), ResourceType = typeof(Response))]
@@ -91,21 +120,6 @@ public sealed class CourseInstanceData
     [JsonPropertyName("bridging")]
     [JsonConverter(typeof(PolishBoolConverter))]
     public required bool Bridging { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_status_code"]/summary' />
-    [Display(Name = nameof(Response.course_instance_status_code), ResourceType = typeof(Response))]
-    [JsonPropertyName("statusCode")]
-    public required string StatusCode { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_status_name"]/summary' />
-    [Display(Name = nameof(Response.course_instance_status_name), ResourceType = typeof(Response))]
-    [JsonPropertyName("statusName")]
-    public required string StatusName { get; init; }
-
-    /// <include file='Response.xml' path='docs/members/member[@name="course_instance_liquidation_date"]/summary' />
-    [Display(Name = nameof(Response.course_instance_liquidation_date), ResourceType = typeof(Response))]
-    [JsonPropertyName("liquidationDate")]
-    public required DateOnly? LiquidationDate { get; init; } = null;
 
     /// <include file='Response.xml' path='docs/members/member[@name="course_instance_coop_with_vocational"]/summary' />
     [Display(Name = nameof(Response.course_instance_coop_with_vocational), ResourceType = typeof(Response))]

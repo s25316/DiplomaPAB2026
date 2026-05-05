@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RADON.Database.Models;
+using RADON.Database.Models.Courses;
 using RADON.Database.Models.Institutions;
 
 namespace RADON.Database.MsSql.Configurations;
@@ -27,6 +28,12 @@ internal class DataSourceEFConfiguration : IEntityTypeConfiguration<DataSource>
             .WithOne(k => k.DataSource)
             .HasForeignKey(k => k.DataSourceId)
             .HasConstraintName($"{nameof(DataSource)}_{nameof(Institution)}_FK")
+            .OnDelete(DeleteBehavior.Restrict);
+        builder
+            .HasMany(k => k.Courses)
+            .WithOne(k => k.DataSource)
+            .HasForeignKey(k => k.DataSourceId)
+            .HasConstraintName($"{nameof(DataSource)}_{nameof(Course)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
