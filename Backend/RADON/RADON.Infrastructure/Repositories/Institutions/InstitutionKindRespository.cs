@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RADON.Application.Interfaces;
+using RADON.Application.Interfaces.Institutions;
 using RADON.Database;
 using RADON.Database.Models.Institutions;
 using RADON.Models.Responses.Dictionaries;

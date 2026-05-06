@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RADON.Application.Interfaces;
+using RADON.Application.Interfaces.Base;
+using RADON.Application.Interfaces.Institutions;
 using RADON.Database;
 using RADON.Database.Enums;
 using RADON.Database.Models.Institutions;
@@ -7,7 +8,7 @@ using RADON.Models.Responses.Dictionaries;
 
 namespace RADON.Infrastructure.Repositories.Institutions;
 
-internal abstract class InstitutionTypeRespository(RadonDbContext context, string code) : IRadonDictionaryRespository
+public abstract class InstitutionTypeRespository(RadonDbContext context, string code) : IRadonDictionaryRespository
 {
     public async Task CreateOrUpdateAsync(IEnumerable<DictionaryItem> items, CancellationToken cancellationToken = default)
     {
@@ -59,10 +60,10 @@ internal abstract class InstitutionTypeRespository(RadonDbContext context, strin
         .ToDictionaryAsync(k => k.Code, cancellationToken);
 }
 
-internal class UniversityTypeRespository(RadonDbContext context) :
+public class UniversityTypeRespository(RadonDbContext context) :
     InstitutionTypeRespository(context, ((int)InstitutionClassificationCode.UNIVERSITY).ToString()),
     IUniversityTypeRespository;
 
-internal class ScientificInstitutionTypeRespository(RadonDbContext context) :
+public class ScientificInstitutionTypeRespository(RadonDbContext context) :
     InstitutionTypeRespository(context, ((int)InstitutionClassificationCode.SCIENTIFIC_INSTITUTION).ToString()),
     IScientificInstitutionTypeRespository;

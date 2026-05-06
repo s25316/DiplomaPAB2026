@@ -1,8 +1,9 @@
 ﻿using Quartz;
-using RADON.Application.Interfaces;
+using RADON.Application.Interfaces.Institutions;
 using RADON.Contracts.Dictionaries;
 using RADON.Contracts.Institutions;
 using RADON.Contracts.Institutions.Responses;
+using RADON.Infrastructure.Jobs.Base;
 using RADON.Infrastructure.Repositories.Institutions;
 using RADON.Models.Responses.Dictionaries;
 using static RADON.Models.Responses.Institutions.Institution;
@@ -11,45 +12,32 @@ using ResponseInstitution = RADON.Models.Responses.Institutions.Institution;
 namespace RADON.Infrastructure.Jobs;
 
 [DisallowConcurrentExecution]
-public abstract class CreateOrUpdateDictionaryInstitutionDataJob(
-    IRadonDictionaryRespository respository,
-    IRadonService radonService,
-    DictionaryResource dictionaryResource) : IJob
-{
-    public async Task Execute(IJobExecutionContext context)
-    {
-        var radonData = await radonService.GetDictionariesAsync(dictionaryResource);
-        var dictionaryItems = radonData.Select(i => new DictionaryItem(i.Code, i.NamePl));
-        await respository.CreateOrUpdateAsync(dictionaryItems);
-    }
-};
-
-[DisallowConcurrentExecution]
-public class CreateOrUpdateInstitutionKindsJob(
+public class UpdateInstitutionKindsJob(
     IInstitutionKindRespository respository,
     IRadonService radonService
-) : CreateOrUpdateDictionaryInstitutionDataJob(respository, radonService, DictionaryResource.InstitutionKinds);
+) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.InstitutionKinds);
 
 [DisallowConcurrentExecution]
-public class CreateOrUpdateInstitutionStatusesJob(
+public class UpdateInstitutionStatusesJob(
     IInstitutionStatusRespository respository,
     IRadonService radonService
-) : CreateOrUpdateDictionaryInstitutionDataJob(respository, radonService, DictionaryResource.InstitutionStatuses);
+) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.InstitutionStatuses);
 
 [DisallowConcurrentExecution]
-public class CreateOrUpdateUniversityTypesJob(
+public class UpdateUniversityTypesJob(
     IUniversityTypeRespository respository,
     IRadonService radonService
-) : CreateOrUpdateDictionaryInstitutionDataJob(respository, radonService, DictionaryResource.InstitutionUniversityTypes);
+) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.InstitutionUniversityTypes);
 
 [DisallowConcurrentExecution]
-public class CreateOrUpdateScientificInstitutionTypesJob(
+public class UpdateScientificInstitutionTypesJob(
     IScientificInstitutionTypeRespository respository,
     IRadonService radonService
-) : CreateOrUpdateDictionaryInstitutionDataJob(respository, radonService, DictionaryResource.InstitutionScientificInstitutionTypes);
+) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.InstitutionScientificInstitutionTypes);
+
 
 [DisallowConcurrentExecution]
-public class CreateOrUpdateInstitutionsJob(
+public class UpdateInstitutionsJob(
     IInstitutionRespository respository,
     IRadonService radonService) : IJob
 {
