@@ -7,7 +7,7 @@ namespace RADON.Infrastructure.Jobs.Base;
 
 [DisallowConcurrentExecution]
 public abstract class UpdateDictionaryDataJob(
-    IRadonDictionaryRespository respository,
+    IRadonDictionaryRepository repository,
     IRadonService radonService,
     DictionaryResource dictionaryResource) : IJob
 {
@@ -15,6 +15,6 @@ public abstract class UpdateDictionaryDataJob(
     {
         var radonData = await radonService.GetDictionariesAsync(dictionaryResource);
         var dictionaryItems = radonData.Select(i => new DictionaryItem(i.Code, i.NamePl));
-        await respository.CreateOrUpdateAsync(dictionaryItems);
+        await repository.CreateOrUpdateAsync(dictionaryItems);
     }
 }

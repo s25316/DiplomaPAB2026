@@ -32,6 +32,5 @@ public class Institution
     public virtual ICollection<InstitutionTypeSnapshot> TypeSnapshots { get; set; } = [];
     public virtual ICollection<InstitutionStatusSnapshot> StatusSnapshots { get; set; } = [];
 
-    public virtual ICollection<Course> CoursesWithMainInstitution { get; set; } = [];
-    public virtual ICollection<Course> CoursesWithLeadingInstitution { get; set; } = [];
+    public virtual ICollection<Course> Courses { get; set; } = [];
 }

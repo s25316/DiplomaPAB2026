@@ -5,8 +5,8 @@ namespace RADON.Database.Models.Shared;
 public class CourseDiscipline
 {
     public Guid CourseDisciplineUuid { get; set; }
-    public int PercentageShare { get; init; }
-    public bool Leading { get; init; }
+    public int PercentageShare { get; set; }
+    public bool Leading { get; set; }
 
 
     public Guid CourseUuid { get; set; }

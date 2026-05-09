@@ -8,6 +8,7 @@ namespace RADON.Database;
 
 public class RadonDbContext(DbContextOptions options) : DbContext(options)
 {
+    public virtual DbSet<Error> Errors { get; set; }
     public virtual DbSet<DataSource> DataSources { get; set; }
 
     #region INSTITUTIONS

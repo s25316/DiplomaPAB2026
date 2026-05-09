@@ -18,9 +18,9 @@ internal class InstitutionTypeEFConfiguration : IEntityTypeConfiguration<Institu
             .HasDefaultValueSql(DefaultValue.GUID);
         builder
             .Property(p => p.InstitutionTypeCode)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_50);
         builder
             .Property(p => p.Name)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
     }
 }

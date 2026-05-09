@@ -12,10 +12,8 @@ public class Course
     public DateOnly? TerminationInitializationDate { get; set; } = null;
     public DateOnly? LiquidationDate { get; set; } = null;
 
-
     public bool TeacherTraining { get; set; }
     public bool Philological { get; set; }
-
 
     public DateTimeOffset LastRefresh { get; set; }
     public DateTimeOffset SourceLastRefresh { get; set; }
@@ -36,13 +34,10 @@ public class Course
     public string CourseStatusCode { get; set; } = null!;
     public virtual CourseStatus CourseStatus { get; set; } = null!;
 
-    public Guid MainInstitutionUuid { get; set; }
-    public virtual Institution MainInstitution { get; set; } = null!;
-
-    public Guid LeadingInstitutionUuid { get; set; }
-    public virtual Institution LeadingInstitution { get; set; } = null!;
+    public Guid InstitutionUuid { get; set; }
+    public virtual Institution Institution { get; set; } = null!;
 
 
-    public virtual ICollection<CourseInstance> CourseInstances { get; set; } = [];
     public virtual ICollection<CourseDiscipline> Disciplines { get; set; } = [];
+    public virtual ICollection<CourseInstance> CourseInstances { get; set; } = [];
 }

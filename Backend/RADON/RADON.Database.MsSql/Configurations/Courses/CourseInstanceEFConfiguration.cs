@@ -15,7 +15,7 @@ public class CourseInstanceEFConfiguration : IEntityTypeConfiguration<CourseInst
 
         builder
             .Property(p => p.Name)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
 
 
         builder

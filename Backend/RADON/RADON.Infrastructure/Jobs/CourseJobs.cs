@@ -1,48 +1,136 @@
 ﻿using Quartz;
 using RADON.Application.Interfaces.Courses;
+using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Contracts.Dictionaries;
 using RADON.Infrastructure.Jobs.Base;
+using RADON.Models.Responses.Courses;
+using RADON.Models.Responses.Dictionaries;
+using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
 
 namespace RADON.Infrastructure.Jobs;
 
 [DisallowConcurrentExecution]
 public class UpdateCourseFormJob(
-    ICourseFormRespository respository,
+    ICourseFormRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseInstanceForms);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseInstanceForms);
 
 [DisallowConcurrentExecution]
 public class UpdateCourseInstanceStatusJob(
-    ICourseInstanceStatusRespository respository,
+    ICourseInstanceStatusRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseInstanceStatuses);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseInstanceStatuses);
 
 [DisallowConcurrentExecution]
 public class UpdateCourseLevelJob(
-    ICourseLevelRespository respository,
+    ICourseLevelRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseLevels);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseLevels);
 
 [DisallowConcurrentExecution]
 public class UpdateCourseProfileJob(
-    ICourseProfileRespository respository,
+    ICourseProfileRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseProfiles);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseProfiles);
 
 [DisallowConcurrentExecution]
 public class UpdateCourseStatusJob(
-    ICourseStatusRespository respository,
+    ICourseStatusRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseCurrentStatuses);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseCurrentStatuses);
 
 [DisallowConcurrentExecution]
 public class UpdateLanguageJob(
-    ILanguageRespository respository,
+    ILanguageRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CoursePhilologicalLanguages);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CoursePhilologicalLanguages);
 
 [DisallowConcurrentExecution]
 public class UpdateProfessionalTitleJob(
-    IProfessionalTitleRespository respository,
+    IProfessionalTitleRepository repository,
     IRadonService radonService
-) : UpdateDictionaryDataJob(respository, radonService, DictionaryResource.CourseProfessionalTitles);
+) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.CourseProfessionalTitles);
+
+
+[DisallowConcurrentExecution]
+public class UpdateCourseJob(
+    ICourseRepository repository,
+    IRadonService radonService) : IJob
+{
+    public async Task Execute(IJobExecutionContext context)
+    {
+        string? token = null;
+        int totalCount = 0;
+        int actualCount = 0;
+
+        do
+        {
+            var queryParameters = new CourseQueryParameters
+            {
+                Token = token,
+                ResultNumbers = 100,
+            };
+            var response = await radonService.GetCoursesAsync(queryParameters);
+            var items = response.Results.Select(i => new Course
+            {
+                CourseUuid = i.CourseUuid,
+                Name = i.CourseName,
+
+                CreationDate = i.CreationDate,
+                TerminationInitializationDate = i.TerminationInitializationDate,
+                LiquidationDate = i.LiquidationDate,
+
+                TeacherTraining = i.TeacherTraining,
+                Philological = i.Philological,
+
+                InstitutionUuid = i.MainInstitutionUuid,
+
+                SourceLastRefresh = i.LastRefresh,
+                DataSource = i.DataSource,
+
+                CourseLevel = new DictionaryItem(i.LevelCode, i.LevelName),
+                CourseProfile = new DictionaryItem(i.ProfileCode, i.ProfileName),
+                Isced = new DictionaryItem(i.IscedCode, i.IscedName),
+                CourseStatus = new DictionaryItem(i.CurrentStatusCode, i.CurrentStatusName),
+
+                Disciplines = i.Disciplines.Select(d => new Course.DisciplineData(
+                    new DictionaryItem(d.DisciplineCode, d.DisciplineName),
+                    d.DisciplinePercentageShare,
+                    d.DisciplineLeading)
+                ).ToList(),
+
+                CourseInstances = i.CourseInstances.Select(ci => new CourseInstance
+                {
+                    CourseInstanceUuid = ci.CourseInstanceUuid,
+                    Name = ci.CourseName,
+
+                    EducationStartDate = ci.EducationStartDate,
+                    LiquidationDate = ci.LiquidationDate,
+
+                    NumberOfSemesters = ci.NumberOfSemesters,
+                    Ects = ci.Ects,
+
+                    Dual = ci.Dual,
+                    Bridging = ci.Bridging,
+                    CoopWithVocational = ci.CoopWithVocational,
+
+                    CourseForm = new DictionaryItem(ci.FormCode, ci.FormName),
+                    ProfessionalTitle = new DictionaryItem(ci.TitleCode, ci.TitleName),
+                    Language = new DictionaryItem(ci.LanguageCode, ci.LanguageName),
+                    CourseInstanceStatus = new DictionaryItem(ci.StatusCode, ci.StatusName),
+
+                    PhilologicalLanguages = ci.PhilologicalLanguages
+                    .Select(l => new DictionaryItem(l.LanguageCode, l.LanguageName))
+                    .ToList(),
+                }).ToList(),
+            });
+
+            await repository.CreateOrUpdateAsync(items);
+
+            token = response.Pagination.Token;
+            totalCount = response.Pagination.MaxCount;
+            actualCount += items.Count();
+        }
+        while (totalCount != actualCount && !string.IsNullOrWhiteSpace(token));
+    }
+}

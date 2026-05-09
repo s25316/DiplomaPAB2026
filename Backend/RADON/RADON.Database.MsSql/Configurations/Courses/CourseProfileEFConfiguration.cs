@@ -15,10 +15,10 @@ public class CourseProfileEFConfiguration : IEntityTypeConfiguration<CourseProfi
 
         builder
             .Property(p => p.CourseProfileCode)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_50);
         builder
             .Property(p => p.Name)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
 
 
         builder

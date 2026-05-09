@@ -16,20 +16,14 @@ public class CourseEFConfiguration : IEntityTypeConfiguration<Course>
 
         builder
             .Property(p => p.Name)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
 
 
         builder
-            .HasOne(k => k.MainInstitution)
-            .WithMany(k => k.CoursesWithMainInstitution)
-            .HasForeignKey(k => k.MainInstitutionUuid)
-            .HasConstraintName($"{nameof(Institution)}_{nameof(Course)}_MAIN_FK")
-            .OnDelete(DeleteBehavior.Restrict);
-        builder
-            .HasOne(k => k.LeadingInstitution)
-            .WithMany(k => k.CoursesWithLeadingInstitution)
-            .HasForeignKey(k => k.LeadingInstitutionUuid)
-            .HasConstraintName($"{nameof(Institution)}_{nameof(Course)}_LEADING_FK")
+            .HasOne(k => k.Institution)
+            .WithMany(k => k.Courses)
+            .HasForeignKey(k => k.InstitutionUuid)
+            .HasConstraintName($"{nameof(Institution)}_{nameof(Course)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -30,6 +30,7 @@ public class RadonMsSqlDbContext(DbContextOptions options) : RadonDbContext(opti
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration<Error>(new ErrorEFConfiguration());
         modelBuilder.ApplyConfiguration<DataSource>(new DataSourceEFConfiguration());
 
 

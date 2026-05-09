@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RADON.Application.Interfaces.Shared.Dictionaries;
 using RADON.Contracts.Dictionaries;
 using RADON.Contracts.Dictionaries.Responses;
 using RADON.Contracts.Institutions;
 using RADON.Contracts.Institutions.Responses;
 using RADON.Contracts.Shared.Responses;
 using RADON.Courses.Responses;
+using RADON.Database;
 using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
 
 namespace RADON.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ValuesController(IRadonService service) : ControllerBase
+public class ValuesController(IRadonService service, RadonDbContext context) : ControllerBase
 {
     [ProducesResponseType(typeof(Response<InstitutionReport>), 200)]
     [HttpGet("institutions")]
@@ -41,5 +43,13 @@ public class ValuesController(IRadonService service) : ControllerBase
     {
         var response = await service.GetDictionariesAsync(resource, cancellationToken);
         return Ok(response);
+    }
+
+
+    [HttpGet("test")]
+    public async Task<IActionResult> GEt([FromServices] IDisciplineRespository respository, CancellationToken cancellationToken)
+    {
+        var r = await respository.GetAsync(cancellationToken);
+        return Ok(r);
     }
 }

@@ -15,22 +15,22 @@ internal class InstitutionEFConfiguration : IEntityTypeConfiguration<Institution
 
         builder
             .Property(p => p.Regon)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_50);
         builder
             .Property(p => p.Nip)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_50);
         builder
             .Property(p => p.Krs)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_50);
 
         builder
             .Property(p => p.Www)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
         builder
             .Property(p => p.Email)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
         builder
             .Property(p => p.Phone)
-            .HasMaxLength(DefaultValue.LENGTH_100);
+            .HasMaxLength(DefaultValue.LENGTH_450);
     }
 }

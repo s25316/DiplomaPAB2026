@@ -4,15 +4,19 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Quartz;
 using RADON.Application.Interfaces.Courses;
+using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Application.Interfaces.Institutions;
-using RADON.Application.Interfaces.Shared;
+using RADON.Application.Interfaces.Institutions.Dictionaries;
+using RADON.Application.Interfaces.Shared.Dictionaries;
 using RADON.Database;
 using RADON.Database.MsSql;
 using RADON.Infrastructure.Configurations;
 using RADON.Infrastructure.Jobs;
 using RADON.Infrastructure.Repositories.Courses;
+using RADON.Infrastructure.Repositories.Courses.Dictionaries;
 using RADON.Infrastructure.Repositories.Institutions;
-using RADON.Infrastructure.Repositories.Shared;
+using RADON.Infrastructure.Repositories.Institutions.Dictionaries;
+using RADON.Infrastructure.Repositories.Shared.Dictionaries;
 
 namespace RADON.Infrastructure;
 
@@ -33,21 +37,22 @@ public static class Configuration
         services.AddSingleton<IRadonService, RadonService>();
 
         // --- INSTITUTIONS ---
-        services.AddTransient<IInstitutionKindRespository, InstitutionKindRespository>();
-        services.AddTransient<IInstitutionStatusRespository, InstitutionStatusRespository>();
-        services.AddTransient<IUniversityTypeRespository, UniversityTypeRespository>();
-        services.AddTransient<IScientificInstitutionTypeRespository, ScientificInstitutionTypeRespository>();
-        services.AddTransient<IInstitutionRespository, InstitutionRespository>();
+        services.AddTransient<IInstitutionKindRepository, InstitutionKindRepository>();
+        services.AddTransient<IInstitutionStatusRepository, InstitutionStatusRepository>();
+        services.AddTransient<IUniversityTypeRepository, UniversityTypeRepository>();
+        services.AddTransient<IScientificInstitutionTypeRepository, ScientificInstitutionTypeRepository>();
+        services.AddTransient<IInstitutionRepository, InstitutionRepository>();
 
         // --- COURSES ---
-        services.AddTransient<ICourseFormRespository, CourseFormRespository>();
-        services.AddTransient<ICourseInstanceStatusRespository, CourseInstanceStatusRespository>();
-        services.AddTransient<ICourseLevelRespository, CourseLevelRespository>();
-        services.AddTransient<ICourseProfileRespository, CourseProfileRespository>();
-        services.AddTransient<ICourseStatusRespository, CourseStatusRespository>();
-        services.AddTransient<IIscedRespository, IscedRespository>();
-        services.AddTransient<ILanguageRespository, LanguageRespository>();
-        services.AddTransient<IProfessionalTitleRespository, ProfessionalTitleRespository>();
+        services.AddTransient<ICourseFormRepository, CourseFormRepository>();
+        services.AddTransient<ICourseInstanceStatusRepository, CourseInstanceStatusRepository>();
+        services.AddTransient<ICourseLevelRepository, CourseLevelRepository>();
+        services.AddTransient<ICourseProfileRepository, CourseProfileRepository>();
+        services.AddTransient<ICourseStatusRepository, CourseStatusRepository>();
+        services.AddTransient<IIscedRepository, IscedRepository>();
+        services.AddTransient<ILanguageRepository, LanguageRepository>();
+        services.AddTransient<IProfessionalTitleRepository, ProfessionalTitleRepository>();
+        services.AddTransient<ICourseRepository, CourseRepository>();
 
         // --- SHARED ---
         services.AddTransient<IDisciplineRespository, DisciplineRespository>();
@@ -55,97 +60,29 @@ public static class Configuration
 
         services.AddQuartz(q =>
         {
-            // --- INSTITUTIONS ---
-            q.AddJob<UpdateInstitutionKindsJob>(opts
-                => opts.WithIdentity(nameof(UpdateInstitutionKindsJob))
-            );
-            q.AddJob<UpdateInstitutionStatusesJob>(opts
-                => opts.WithIdentity(nameof(UpdateInstitutionStatusesJob))
-            );
-            q.AddJob<UpdateUniversityTypesJob>(opts
-                => opts.WithIdentity(nameof(UpdateUniversityTypesJob))
-            );
-            q.AddJob<UpdateScientificInstitutionTypesJob>(opts
-                => opts.WithIdentity(nameof(UpdateScientificInstitutionTypesJob))
-            );
-            q.AddJob<UpdateInstitutionsJob>(opts
-                => opts.WithIdentity(nameof(UpdateInstitutionsJob))
-            );
+            q.AddJobListener<JobChainerListener>();
+            var configurator = new JobConfigurator(q);
 
-            // --- COURSES ---
-            q.AddJob<UpdateCourseFormJob>(opts
-                => opts.WithIdentity(nameof(UpdateCourseFormJob))
-            );
-            q.AddJob<UpdateCourseInstanceStatusJob>(opts
-                => opts.WithIdentity(nameof(UpdateCourseInstanceStatusJob))
-            );
-            q.AddJob<UpdateCourseLevelJob>(opts
-                => opts.WithIdentity(nameof(UpdateCourseLevelJob))
-            );
-            q.AddJob<UpdateCourseProfileJob>(opts
-                => opts.WithIdentity(nameof(UpdateCourseProfileJob))
-            );
-            q.AddJob<UpdateCourseStatusJob>(opts
-                => opts.WithIdentity(nameof(UpdateCourseStatusJob))
-            );
-            q.AddJob<UpdateLanguageJob>(opts
-                => opts.WithIdentity(nameof(UpdateLanguageJob))
-            );
-            q.AddJob<UpdateProfessionalTitleJob>(opts
-                => opts.WithIdentity(nameof(UpdateProfessionalTitleJob))
-            );
+            // --- INSTITUTION DICTIONARIES ---
+            configurator.AddDictionaryJob<UpdateInstitutionKindJob>();
+            configurator.AddDictionaryJob<UpdateInstitutionStatusJob>();
+            configurator.AddDictionaryJob<UpdateUniversityTypeJob>();
+            configurator.AddDictionaryJob<UpdateScientificInstitutionTypeJob>();
 
-            // --- SHARED ---
-            q.AddJob<UpdateDisciplineJob>(opts
-                => opts.WithIdentity(nameof(UpdateDisciplineJob))
-            );
+            // --- COURSES DICTIONARIES ---
+            configurator.AddDictionaryJob<UpdateCourseFormJob>();
+            configurator.AddDictionaryJob<UpdateCourseInstanceStatusJob>();
+            configurator.AddDictionaryJob<UpdateCourseLevelJob>();
+            configurator.AddDictionaryJob<UpdateCourseProfileJob>();
+            configurator.AddDictionaryJob<UpdateCourseStatusJob>();
+            configurator.AddDictionaryJob<UpdateLanguageJob>();
+            configurator.AddDictionaryJob<UpdateProfessionalTitleJob>();
 
+            // --- SHARED DICTIONARIES ---
+            configurator.AddDictionaryJob<UpdateDisciplineJob>();
 
-            // --- INSTITUTIONS ---
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateInstitutionKindsJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateInstitutionStatusesJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateUniversityTypesJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateScientificInstitutionTypesJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateInstitutionsJob))
-                .StartNow());
-
-
-            // --- COURSES ---
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateCourseFormJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateCourseInstanceStatusJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateCourseLevelJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateCourseProfileJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateCourseStatusJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateLanguageJob))
-                .StartNow());
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateProfessionalTitleJob))
-                .StartNow());
-
-            // --- SHARED ---
-            q.AddTrigger(opts => opts
-                .ForJob(nameof(UpdateDisciplineJob))
-                .StartNow());
+            configurator.AddJob<UpdateCourseJob>();
+            configurator.AddJob<UpdateInstitutionJob>();
         });
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
