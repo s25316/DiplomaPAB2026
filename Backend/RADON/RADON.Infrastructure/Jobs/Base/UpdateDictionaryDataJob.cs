@@ -1,7 +1,7 @@
 ﻿using Quartz;
 using RADON.Application.Interfaces.Base;
 using RADON.Contracts.Dictionaries;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Jobs.Base;
 
@@ -14,7 +14,7 @@ public abstract class UpdateDictionaryDataJob(
     public async Task Execute(IJobExecutionContext context)
     {
         var radonData = await radonService.GetDictionariesAsync(dictionaryResource);
-        var dictionaryItems = radonData.Select(i => new DictionaryItem(i.Code, i.NamePl));
+        var dictionaryItems = radonData.Select(i => new DictionaryItem { Code = i.Code, Name = i.NamePl });
         await repository.CreateOrUpdateAsync(dictionaryItems);
     }
 }

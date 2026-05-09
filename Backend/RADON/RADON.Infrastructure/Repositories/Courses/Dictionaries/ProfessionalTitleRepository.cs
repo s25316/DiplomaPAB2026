@@ -3,7 +3,7 @@ using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Database;
 using RADON.Database.Models.Courses;
 using RADON.Infrastructure.Repositories.Base;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Courses.Dictionaries;
 
@@ -13,5 +13,5 @@ public class ProfessionalTitleRepository(RadonDbContext context) : BaseDictionar
     (entity, name) => entity.Name = name,
     context => context.ProfessionalTitles,
     dictionaryItem => new ProfessionalTitle { ProfessionalTitleCode = dictionaryItem.Code, Name = dictionaryItem.Name },
-    entity => new DictionaryItem(entity.ProfessionalTitleCode, entity.Name)
+    entity => new DictionaryItem { Code = entity.ProfessionalTitleCode, Name = entity.Name }
 ), IProfessionalTitleRepository;

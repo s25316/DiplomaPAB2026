@@ -4,7 +4,7 @@ using RADON.Database;
 using RADON.Database.Models;
 using RADON.Database.Models.Institutions;
 using DatabaseInstitution = RADON.Database.Models.Institutions.Institution;
-using ResponseInstitution = RADON.Models.Responses.Institutions.Institution;
+using ResponseInstitution = RADON.Models.Institutions.Responses.Institution;
 
 namespace RADON.Infrastructure.Repositories.Institutions;
 
@@ -106,9 +106,9 @@ internal class InstitutionRepository(RadonDbContext context) : IInstitutionRepos
     {
         database ??= new DatabaseInstitution { InstitutionUuid = item.InstitutionUuid };
 
-        database.Regon = item.Regon;
-        database.Nip = item.Nip;
-        database.Krs = item.Krs;
+        database.Regon = item.Regon?.To14SCharacters();
+        database.Nip = item.Nip?.ToString();
+        database.Krs = item.Krs?.ToString();
 
         database.StartDate = item.StartDate;
         database.LiquidationStartDate = item.LiquidationStartDate;

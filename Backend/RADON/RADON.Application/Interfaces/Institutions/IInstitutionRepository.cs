@@ -1,4 +1,4 @@
-﻿using RADON.Models.Responses.Institutions;
+﻿using RADON.Models.Institutions.Responses;
 
 namespace RADON.Application.Interfaces.Institutions;
 

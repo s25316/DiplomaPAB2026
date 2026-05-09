@@ -11,9 +11,7 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
-		<ProjectReference Include="..\RADON.Models.Requests\RADON.Models.Requests.csproj" />
-		<ProjectReference Include="..\RADON.Models.Responses\RADON.Models.Responses.csproj" />
+		<ProjectReference Include="..\RADON.Models\RADON.Models.csproj" />
 	</ItemGroup>
 
 	<ItemGroup Label="DependencyInjection">

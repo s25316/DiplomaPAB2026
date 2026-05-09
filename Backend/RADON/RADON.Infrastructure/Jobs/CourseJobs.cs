@@ -3,8 +3,8 @@ using RADON.Application.Interfaces.Courses;
 using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Contracts.Dictionaries;
 using RADON.Infrastructure.Jobs.Base;
-using RADON.Models.Responses.Courses;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Courses.Responses;
+using RADON.Models.Dictionaries.Responses;
 using CourseQueryParameters = RADON.Contracts.Courses.QueryParameters;
 
 namespace RADON.Infrastructure.Jobs;
@@ -88,16 +88,17 @@ public class UpdateCourseJob(
                 SourceLastRefresh = i.LastRefresh,
                 DataSource = i.DataSource,
 
-                CourseLevel = new DictionaryItem(i.LevelCode, i.LevelName),
-                CourseProfile = new DictionaryItem(i.ProfileCode, i.ProfileName),
-                Isced = new DictionaryItem(i.IscedCode, i.IscedName),
-                CourseStatus = new DictionaryItem(i.CurrentStatusCode, i.CurrentStatusName),
+                CourseLevel = new DictionaryItem { Code = i.LevelCode, Name = i.LevelName },
+                CourseProfile = new DictionaryItem { Code = i.ProfileCode, Name = i.ProfileName },
+                Isced = new DictionaryItem { Code = i.IscedCode, Name = i.IscedName },
+                CourseStatus = new DictionaryItem { Code = i.CurrentStatusCode, Name = i.CurrentStatusName },
 
-                Disciplines = i.Disciplines.Select(d => new Course.DisciplineData(
-                    new DictionaryItem(d.DisciplineCode, d.DisciplineName),
-                    d.DisciplinePercentageShare,
-                    d.DisciplineLeading)
-                ).ToList(),
+                Disciplines = i.Disciplines.Select(d => new Course.DisciplineData
+                {
+                    Discipline = new DictionaryItem { Code = d.DisciplineCode, Name = d.DisciplineName },
+                    Percentage = d.DisciplinePercentageShare,
+                    IsLeading = d.DisciplineLeading,
+                }).ToList(),
 
                 CourseInstances = i.CourseInstances.Select(ci => new CourseInstance
                 {
@@ -114,13 +115,13 @@ public class UpdateCourseJob(
                     Bridging = ci.Bridging,
                     CoopWithVocational = ci.CoopWithVocational,
 
-                    CourseForm = new DictionaryItem(ci.FormCode, ci.FormName),
-                    ProfessionalTitle = new DictionaryItem(ci.TitleCode, ci.TitleName),
-                    Language = new DictionaryItem(ci.LanguageCode, ci.LanguageName),
-                    CourseInstanceStatus = new DictionaryItem(ci.StatusCode, ci.StatusName),
+                    CourseForm = new DictionaryItem { Code = ci.FormCode, Name = ci.FormName },
+                    ProfessionalTitle = new DictionaryItem { Code = ci.TitleCode, Name = ci.TitleName },
+                    Language = new DictionaryItem { Code = ci.LanguageCode, Name = ci.LanguageName },
+                    CourseInstanceStatus = new DictionaryItem { Code = ci.StatusCode, Name = ci.StatusName },
 
                     PhilologicalLanguages = ci.PhilologicalLanguages
-                    .Select(l => new DictionaryItem(l.LanguageCode, l.LanguageName))
+                    .Select(l => new DictionaryItem { Code = l.LanguageCode, Name = l.LanguageName })
                     .ToList(),
                 }).ToList(),
             });

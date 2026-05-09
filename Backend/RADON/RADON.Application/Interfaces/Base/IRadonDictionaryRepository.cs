@@ -1,4 +1,4 @@
-﻿using RADON.Models.Responses.Dictionaries;
+﻿using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Application.Interfaces.Base;
 

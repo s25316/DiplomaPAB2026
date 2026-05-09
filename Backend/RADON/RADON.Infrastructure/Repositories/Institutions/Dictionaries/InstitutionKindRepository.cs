@@ -2,7 +2,7 @@
 using RADON.Application.Interfaces.Institutions.Dictionaries;
 using RADON.Database;
 using RADON.Database.Models.Institutions;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Institutions.Dictionaries;
 
@@ -64,6 +64,6 @@ public class InstitutionKindRepository(RadonDbContext context) : IInstitutionKin
     public async Task<IDictionary<string, DictionaryItem>> GetAsync(CancellationToken cancellationToken = default) => await context
         .InstitutionKinds
         .AsNoTracking()
-        .Select(i => new DictionaryItem(i.InstitutionKindCode, i.Name))
+        .Select(i => new DictionaryItem { Code = i.InstitutionKindCode, Name = i.Name })
         .ToDictionaryAsync(k => k.Code, cancellationToken);
 }

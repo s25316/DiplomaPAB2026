@@ -3,7 +3,7 @@ using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Database;
 using RADON.Database.Models.Courses;
 using RADON.Infrastructure.Repositories.Base;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Courses.Dictionaries;
 
@@ -13,5 +13,5 @@ public class CourseStatusRepository(RadonDbContext context) : BaseDictionaryRepo
     (entity, name) => entity.Name = name,
     context => context.CourseStatuses,
     dictionaryItem => new CourseStatus { CourseStatusCode = dictionaryItem.Code, Name = dictionaryItem.Name },
-    entity => new DictionaryItem(entity.CourseStatusCode, entity.Name)
+    entity => new DictionaryItem { Code = entity.CourseStatusCode, Name = entity.Name }
 ), ICourseStatusRepository;

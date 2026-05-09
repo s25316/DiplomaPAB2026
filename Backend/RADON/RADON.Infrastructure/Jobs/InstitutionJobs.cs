@@ -1,13 +1,16 @@
-﻿using Quartz;
+﻿using Base.Models.ValueObjects.Krsy;
+using Base.Models.ValueObjects.Nipy;
+using Base.Models.ValueObjects.Regony;
+using Quartz;
 using RADON.Application.Interfaces.Institutions;
 using RADON.Application.Interfaces.Institutions.Dictionaries;
 using RADON.Contracts.Dictionaries;
 using RADON.Contracts.Institutions;
 using RADON.Contracts.Institutions.Responses;
 using RADON.Infrastructure.Jobs.Base;
-using RADON.Models.Responses.Dictionaries;
-using static RADON.Models.Responses.Institutions.Institution;
-using ResponseInstitution = RADON.Models.Responses.Institutions.Institution;
+using RADON.Models.Dictionaries.Responses;
+using static RADON.Models.Institutions.Responses.Institution;
+using ResponseInstitution = RADON.Models.Institutions.Responses.Institution;
 
 namespace RADON.Infrastructure.Jobs;
 
@@ -59,9 +62,9 @@ public class UpdateInstitutionJob(
         {
             InstitutionUuid = i.InstitutionUuid,
 
-            Regon = i.Regon,
-            Nip = i.Nip,
-            Krs = i.Krs,
+            Regon = string.IsNullOrWhiteSpace(i.Regon) ? null : Regon.Parse(i.Regon),
+            Nip = string.IsNullOrWhiteSpace(i.Nip) ? null : Nip.Parse(i.Nip),
+            Krs = string.IsNullOrWhiteSpace(i.Krs) ? null : Krs.Parse(i.Krs),
 
             StartDate = i.IStartDt,
             LiquidationStartDate = i.ILiqStartDt,
@@ -74,10 +77,29 @@ public class UpdateInstitutionJob(
             SourceLastRefresh = i.LastRefresh,
             DataSource = i.DataSource,
 
-            InstitutionKind = new DictionaryItem(i.IKindCd, i.IKindName),
-            Names = i.Names.Select(n => new NameSnapshot(n.Name, n.DateFrom)).ToList(),
-            Types = i.Types.Select(t => new TypeSnapshot(new DictionaryItem(string.Empty, t.TypeName), t.DateFrom)).ToList(),
-            Statuses = i.Statuses.Select(s => new StatusSnapshot(new DictionaryItem(string.Empty, s.StatusName), s.DateFrom)).ToList(),
+            InstitutionKind = new DictionaryItem
+            {
+                Code = i.IKindCd,
+                Name = i.IKindName
+            },
+
+            Names = i.Names.Select(n => new NameSnapshot
+            {
+                Name = n.Name,
+                Date = n.DateFrom
+            }).ToList(),
+
+            Types = i.Types.Select(t => new TypeSnapshot
+            {
+                Type = new DictionaryItem { Code = string.Empty, Name = t.TypeName },
+                Date = t.DateFrom,
+            }).ToList(),
+
+            Statuses = i.Statuses.Select(s => new StatusSnapshot
+            {
+                Status = new DictionaryItem { Code = string.Empty, Name = s.StatusName },
+                Date = s.DateFrom,
+            }).ToList(),
         });
 
         await repository.CreateOrUpdateAsync(items);

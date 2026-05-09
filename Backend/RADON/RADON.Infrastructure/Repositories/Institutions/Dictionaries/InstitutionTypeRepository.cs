@@ -4,7 +4,7 @@ using RADON.Application.Interfaces.Institutions.Dictionaries;
 using RADON.Database;
 using RADON.Database.Enums;
 using RADON.Database.Models.Institutions;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Institutions.Dictionaries;
 
@@ -56,7 +56,7 @@ public abstract class InstitutionTypeRepository(RadonDbContext context, string c
         .InstitutionTypes
         .AsNoTracking()
         .Where(i => i.ClassificationCode == code)
-        .Select(i => new DictionaryItem(i.InstitutionTypeCode, i.Name))
+        .Select(i => new DictionaryItem { Code = i.InstitutionTypeCode, Name = i.Name })
         .ToDictionaryAsync(k => k.Code, cancellationToken);
 }
 

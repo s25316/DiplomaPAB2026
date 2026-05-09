@@ -1,4 +1,4 @@
-﻿using RADON.Models.Responses.Courses;
+﻿using RADON.Models.Courses.Responses;
 
 namespace RADON.Application.Interfaces.Courses;
 

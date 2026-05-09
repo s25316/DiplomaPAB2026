@@ -4,11 +4,11 @@ using RADON.Database;
 using RADON.Database.Models;
 using RADON.Database.Models.Courses;
 using RADON.Database.Models.Shared;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 using DatabaseCourse = RADON.Database.Models.Courses.Course;
 using DatabaseCourseInstance = RADON.Database.Models.Courses.CourseInstance;
-using ResponseCourse = RADON.Models.Responses.Courses.Course;
-using ResponseCourseInstance = RADON.Models.Responses.Courses.CourseInstance;
+using ResponseCourse = RADON.Models.Courses.Responses.Course;
+using ResponseCourseInstance = RADON.Models.Courses.Responses.CourseInstance;
 
 namespace RADON.Infrastructure.Repositories.Courses;
 

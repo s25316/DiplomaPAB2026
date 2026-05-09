@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RADON.Database;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Base;
 

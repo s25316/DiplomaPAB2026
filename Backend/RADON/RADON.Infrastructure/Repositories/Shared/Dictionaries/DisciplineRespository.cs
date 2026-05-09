@@ -3,7 +3,7 @@ using RADON.Application.Interfaces.Shared.Dictionaries;
 using RADON.Database;
 using RADON.Database.Models.Shared;
 using RADON.Infrastructure.Repositories.Base;
-using RADON.Models.Responses.Dictionaries;
+using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Infrastructure.Repositories.Shared.Dictionaries;
 
@@ -13,5 +13,5 @@ public class DisciplineRespository(RadonDbContext context) : BaseDictionaryRepos
     (entity, name) => entity.Name = name,
     context => context.Disciplines,
     dictionaryItem => new Discipline { DisciplineCode = dictionaryItem.Code, Name = dictionaryItem.Name },
-    entity => new DictionaryItem(entity.DisciplineCode, entity.Name)
+    entity => new DictionaryItem { Code = entity.DisciplineCode, Name = entity.Name }
 ), IDisciplineRespository;
