@@ -1,7 +1,4 @@
-﻿using Base.Models.ValueObjects.Krsy;
-using Base.Models.ValueObjects.Nipy;
-using Base.Models.ValueObjects.Regony;
-using RADON.Models.Dictionaries.Responses;
+﻿using RADON.Models.Dictionaries.Responses;
 
 namespace RADON.Models.Institutions.Responses;
 
@@ -26,25 +23,24 @@ public record Institution
 
     public required Guid InstitutionUuid { get; init; }
 
-    public Regon? Regon { get; init; } = null;
-    public Nip? Nip { get; init; } = null;
-    public Krs? Krs { get; init; } = null;
+    public required string? Regon { get; init; } = null;
+    public required string? Nip { get; init; } = null;
+    public required string? Krs { get; init; } = null;
 
     public required DateOnly StartDate { get; init; }
     public required DateOnly? LiquidationStartDate { get; init; } = null;
     public required DateOnly? LiquidationDate { get; init; } = null;
 
-    public string? Www { get; init; } = null;
-    public string? Email { get; init; } = null;
-    public string? Phone { get; init; } = null;
+    public required string? Www { get; init; } = null;
+    public required string? Email { get; init; } = null;
+    public required string? Phone { get; init; } = null;
 
-    public DateTimeOffset LastRefresh { get; init; }
-    public DateTimeOffset SourceLastRefresh { get; init; }
-    public string DataSource { get; init; } = null!;
+    public required DictionaryItem InstitutionKind { get; init; } = null!;
+    public required ICollection<NameSnapshot> Names { get; init; } = [];
+    public required ICollection<TypeSnapshot> Types { get; init; } = [];
+    public required ICollection<StatusSnapshot> Statuses { get; init; } = [];
 
-
-    public DictionaryItem InstitutionKind { get; init; } = null!;
-    public ICollection<NameSnapshot> Names { get; init; } = [];
-    public ICollection<TypeSnapshot> Types { get; init; } = [];
-    public ICollection<StatusSnapshot> Statuses { get; init; } = [];
+    public required DateTimeOffset LastRefresh { get; init; }
+    public required DateTimeOffset SourceLastRefresh { get; init; }
+    public required string DataSource { get; init; } = null!;
 }

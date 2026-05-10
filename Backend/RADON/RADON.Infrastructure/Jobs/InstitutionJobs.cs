@@ -74,6 +74,7 @@ public class UpdateInstitutionJob(
             Email = i.EMail,
             Phone = i.Phone,
 
+            LastRefresh = i.LastRefresh,
             SourceLastRefresh = i.LastRefresh,
             DataSource = i.DataSource,
 

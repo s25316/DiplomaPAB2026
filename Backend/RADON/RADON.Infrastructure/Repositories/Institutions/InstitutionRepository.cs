@@ -3,14 +3,109 @@ using RADON.Application.Interfaces.Institutions;
 using RADON.Database;
 using RADON.Database.Models;
 using RADON.Database.Models.Institutions;
+using RADON.Infrastructure.QueryBuilders;
+using RADON.Models.Dictionaries.Responses;
+using RADON.Models.Institutions;
+using RADON.Models.Shared;
+using static RADON.Models.Institutions.Responses.Institution;
 using DatabaseInstitution = RADON.Database.Models.Institutions.Institution;
 using ResponseInstitution = RADON.Models.Institutions.Responses.Institution;
 
 namespace RADON.Infrastructure.Repositories.Institutions;
 
-internal class InstitutionRepository(RadonDbContext context) : IInstitutionRepository
+internal class InstitutionRepository(
+    RadonDbContext context,
+    InstitutionQueryBuilder queryBuilder) : IInstitutionRepository
 {
-    public async Task CreateOrUpdateAsync(IEnumerable<ResponseInstitution> items, CancellationToken cancellationToken = default)
+    public async Task<Response<ResponseInstitution>> GetAsync(
+        QueryParameters parameters,
+        CancellationToken cancellationToken = default)
+    {
+        var baseQueryBuilder = queryBuilder
+            .WithInstitutionUuids(parameters.InstitutionUuids)
+            .WithName(parameters.Name)
+            .WithRegon(parameters.Regon)
+            .WithNip(parameters.Nip)
+            .WithKrs(parameters.Krs)
+            .WithKindCodes(parameters.KindCodes)
+            .WithUniversityTypeCodes(parameters.UniversityTypeCodes)
+            .WithScientificInstitutionTypeCodes(parameters.ScientificInstitutionTypeCodes)
+            .WithStatusCodes(parameters.StatusCodes);
+
+        var baseQuery = queryBuilder.Build();
+        var query = baseQueryBuilder
+            .WithOrderBy(parameters.OrderBy, parameters.Order, parameters.Pagination)
+            .Build();
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var dbItems = await query.ToListAsync(cancellationToken);
+
+        return new Response<ResponseInstitution>
+        {
+            Pagination = new ResponsePagination
+            {
+                Page = parameters.Pagination.Page,
+                ItemsPerPage = parameters.Pagination.ItemsPerPage,
+                TotalCount = totalCount,
+            },
+            Items = dbItems.Select(i => new ResponseInstitution
+            {
+                InstitutionUuid = i.InstitutionUuid,
+
+                Regon = i.Regon,
+                Nip = i.Nip,
+                Krs = i.Krs,
+
+                StartDate = i.StartDate,
+                LiquidationStartDate = i.LiquidationStartDate,
+                LiquidationDate = i.LiquidationDate,
+
+                Www = i.Www,
+                Email = i.Email,
+                Phone = i.Phone,
+
+                InstitutionKind = new DictionaryItem
+                {
+                    Code = i.InstitutionKind.InstitutionKindCode,
+                    Name = i.InstitutionKind.Name,
+                },
+
+                Names = i.NameSnapshots.Select(ns => new NameSnapshot
+                {
+                    Name = ns.Name,
+                    Date = ns.Date
+                }).ToList(),
+
+                Types = i.TypeSnapshots.Select(ts => new TypeSnapshot
+                {
+                    Type = new DictionaryItem
+                    {
+                        Code = ts.InstitutionType.InstitutionTypeCode,
+                        Name = ts.InstitutionType.Name,
+                    },
+                    Date = ts.Date
+                }).ToList(),
+
+                Statuses = i.StatusSnapshots.Select(ss => new StatusSnapshot
+                {
+                    Status = new DictionaryItem
+                    {
+                        Code = ss.InstitutionStatus.InstitutionStatusCode,
+                        Name = ss.InstitutionStatus.Name,
+                    },
+                    Date = ss.Date
+                }).ToList(),
+
+                LastRefresh = i.LastRefresh,
+                SourceLastRefresh = i.SourceLastRefresh,
+                DataSource = i.DataSource.Name,
+            }).ToList(),
+        };
+    }
+
+    public async Task CreateOrUpdateAsync(
+        IEnumerable<ResponseInstitution> items,
+        CancellationToken cancellationToken = default)
     {
         if (!items.Any())
             return;
@@ -106,9 +201,9 @@ internal class InstitutionRepository(RadonDbContext context) : IInstitutionRepos
     {
         database ??= new DatabaseInstitution { InstitutionUuid = item.InstitutionUuid };
 
-        database.Regon = item.Regon?.To14SCharacters();
-        database.Nip = item.Nip?.ToString();
-        database.Krs = item.Krs?.ToString();
+        database.Regon = item.Regon;
+        database.Nip = item.Nip;
+        database.Krs = item.Krs;
 
         database.StartDate = item.StartDate;
         database.LiquidationStartDate = item.LiquidationStartDate;

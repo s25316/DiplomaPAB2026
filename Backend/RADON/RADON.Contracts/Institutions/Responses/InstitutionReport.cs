@@ -28,6 +28,7 @@ public sealed class InstitutionReport
     public int? Id { get; init; } = null;
 
 
+    #region KIND
     /// <include file='Response.xml' path='docs/members/member[@name="institution_i_kind_cd"]/summary' />
     [Display(Name = nameof(Response.institution_i_kind_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("iKindCd")]
@@ -37,8 +38,10 @@ public sealed class InstitutionReport
     [Display(Name = nameof(Response.institution_i_kind_name), ResourceType = typeof(Response))]
     [JsonPropertyName("iKindName")]
     public required string IKindName { get; init; }
+    #endregion
 
 
+    #region UNIVERSITY TYPE
     /// <include file='Response.xml' path='docs/members/member[@name="institution_u_type_cd"]/summary' />
     [Display(Name = nameof(Response.institution_u_type_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("uTypeCd")]
@@ -48,8 +51,10 @@ public sealed class InstitutionReport
     [Display(Name = nameof(Response.institution_u_type_name), ResourceType = typeof(Response))]
     [JsonPropertyName("uTypeName")]
     public required string? UTypeName { get; init; } = null;
+    #endregion
 
 
+    #region SCIENTIFIC INSTITUTION TYPE
     /// <include file='Response.xml' path='docs/members/member[@name="institution_si_type_cd"]/summary' />
     [Display(Name = nameof(Response.institution_si_type_cd), ResourceType = typeof(Response))]
     [JsonPropertyName("siTypeCd")]
@@ -59,8 +64,10 @@ public sealed class InstitutionReport
     [Display(Name = nameof(Response.institution_si_type_name), ResourceType = typeof(Response))]
     [JsonPropertyName("siTypeName")]
     public required string? SiTypeName { get; init; } = null;
+    #endregion
 
 
+    #region STATUS
     /// <include file='Response.xml' path='docs/members/member[@name="institution_status"]/summary' />
     [Display(Name = nameof(Response.institution_status), ResourceType = typeof(Response))]
     [JsonPropertyName("status")]
@@ -70,6 +77,7 @@ public sealed class InstitutionReport
     [Display(Name = nameof(Response.institution_status_code), ResourceType = typeof(Response))]
     [JsonPropertyName("statusCode")]
     public required string StatusCode { get; init; }
+    #endregion
 
 
     /// <include file='Response.xml' path='docs/members/member[@name="institution_supervising_institution_id"]/summary' />

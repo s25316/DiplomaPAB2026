@@ -12,6 +12,7 @@ using RADON.Database;
 using RADON.Database.MsSql;
 using RADON.Infrastructure.Configurations;
 using RADON.Infrastructure.Jobs;
+using RADON.Infrastructure.QueryBuilders;
 using RADON.Infrastructure.Repositories.Courses;
 using RADON.Infrastructure.Repositories.Courses.Dictionaries;
 using RADON.Infrastructure.Repositories.Institutions;
@@ -23,6 +24,7 @@ namespace RADON.Infrastructure;
 public static class Configuration
 {
     private const string SECTION_DATABASE = "Database";
+
 
     public static IServiceCollection AddInfrastructureConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
@@ -58,6 +60,10 @@ public static class Configuration
         services.AddTransient<IDisciplineRespository, DisciplineRespository>();
 
 
+        // --- QUERY BUILDERS ---
+        services.AddTransient<InstitutionQueryBuilder>();
+
+
         services.AddQuartz(q =>
         {
             q.AddJobListener<JobChainerListener>();
@@ -84,7 +90,7 @@ public static class Configuration
             configurator.AddJob<UpdateCourseJob>();
             configurator.AddJob<UpdateInstitutionJob>();
         });
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+        //services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         return services;
     }
