@@ -61,6 +61,7 @@ public static class Configuration
 
 
         // --- QUERY BUILDERS ---
+        services.AddTransient<CourseQueryBuilder>();
         services.AddTransient<InstitutionQueryBuilder>();
 
 
@@ -90,7 +91,7 @@ public static class Configuration
             configurator.AddJob<UpdateCourseJob>();
             configurator.AddJob<UpdateInstitutionJob>();
         });
-        //services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
         return services;
     }

@@ -4,23 +4,23 @@ namespace RADON.Models.Courses.Responses;
 
 public sealed class CourseInstance
 {
-    public Guid CourseInstanceUuid { get; init; }
-    public string Name { get; init; } = null!;
+    public required Guid CourseInstanceUuid { get; init; }
+    public required string Name { get; init; } = null!;
 
-    public DateOnly EducationStartDate { get; init; }
-    public DateOnly? LiquidationDate { get; init; } = null;
+    public required DateOnly EducationStartDate { get; init; }
+    public required DateOnly? LiquidationDate { get; init; } = null;
 
-    public int NumberOfSemesters { get; init; }
-    public int Ects { get; init; }
+    public required int NumberOfSemesters { get; init; }
+    public required int Ects { get; init; }
 
-    public bool Dual { get; init; }
-    public bool Bridging { get; init; }
-    public bool CoopWithVocational { get; init; }
+    public required bool IsDual { get; init; }
+    public required bool IsBridging { get; init; }
+    public required bool IsCoopWithVocational { get; init; }
 
-    public DictionaryItem CourseForm { get; init; } = null!;
-    public DictionaryItem ProfessionalTitle { get; init; } = null!;
-    public DictionaryItem Language { get; init; } = null!;
-    public DictionaryItem CourseInstanceStatus { get; init; } = null!;
+    public required DictionaryItem Form { get; init; } = null!;
+    public required DictionaryItem ProfessionalTitle { get; init; } = null!;
+    public required DictionaryItem Language { get; init; } = null!;
+    public required DictionaryItem Status { get; init; } = null!;
 
-    public ICollection<DictionaryItem> PhilologicalLanguages { get; init; } = [];
+    public required ICollection<DictionaryItem> PhilologicalLanguages { get; init; } = [];
 }

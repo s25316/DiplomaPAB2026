@@ -1,8 +1,7 @@
-﻿using RADON.Models.Courses.Responses;
+﻿using RADON.Application.Interfaces.Base;
+using RADON.Models.Courses;
+using RADON.Models.Courses.Responses;
 
 namespace RADON.Application.Interfaces.Courses;
 
-public interface ICourseRepository
-{
-    Task CreateOrUpdateAsync(IEnumerable<Course> items, CancellationToken cancellationToken = default);
-}
+public interface ICourseRepository : IRepository<Course, QueryParameters>;

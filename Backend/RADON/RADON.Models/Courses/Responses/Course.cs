@@ -12,27 +12,27 @@ public sealed class Course
     };
 
 
-    public Guid CourseUuid { get; init; }
-    public string Name { get; init; } = null!;
+    public required Guid CourseUuid { get; init; }
+    public required string Name { get; init; }
 
-    public DateOnly? CreationDate { get; init; }
-    public DateOnly? TerminationInitializationDate { get; init; } = null;
-    public DateOnly? LiquidationDate { get; init; } = null;
+    public required Guid InstitutionUuid { get; init; }
 
-    public bool TeacherTraining { get; init; }
-    public bool Philological { get; init; }
+    public required DateOnly? CreationDate { get; init; }
+    public required DateOnly? TerminationInitializationDate { get; init; } = null;
+    public required DateOnly? LiquidationDate { get; init; } = null;
 
-    public Guid InstitutionUuid { get; init; }
+    public required bool IsTeacherTraining { get; init; }
+    public required bool IsPhilological { get; init; }
 
-    public DictionaryItem CourseLevel { get; init; } = null!;
-    public DictionaryItem CourseProfile { get; init; } = null!;
-    public DictionaryItem Isced { get; init; } = null!;
-    public DictionaryItem CourseStatus { get; init; } = null!;
+    public required DictionaryItem Level { get; init; } = null!;
+    public required DictionaryItem Profile { get; init; } = null!;
+    public required DictionaryItem Isced { get; init; } = null!;
+    public required DictionaryItem Status { get; init; } = null!;
 
-    public ICollection<DisciplineData> Disciplines { get; init; } = [];
-    public ICollection<CourseInstance> CourseInstances { get; init; } = [];
+    public required ICollection<DisciplineData> Disciplines { get; init; } = [];
+    public required ICollection<CourseInstance> CourseInstances { get; init; } = [];
 
-    public DateTimeOffset LastRefresh { get; init; }
-    public DateTimeOffset SourceLastRefresh { get; init; }
-    public string DataSource { get; init; } = null!;
+    public required DateTimeOffset LastRefresh { get; init; }
+    public required DateTimeOffset SourceLastRefresh { get; init; }
+    public required string DataSource { get; init; } = null!;
 }

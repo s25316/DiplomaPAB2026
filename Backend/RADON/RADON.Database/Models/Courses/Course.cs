@@ -12,8 +12,8 @@ public class Course
     public DateOnly? TerminationInitializationDate { get; set; } = null;
     public DateOnly? LiquidationDate { get; set; } = null;
 
-    public bool TeacherTraining { get; set; }
-    public bool Philological { get; set; }
+    public bool IsTeacherTraining { get; set; }
+    public bool IsPhilological { get; set; }
 
     public DateTimeOffset LastRefresh { get; set; }
     public DateTimeOffset SourceLastRefresh { get; set; }

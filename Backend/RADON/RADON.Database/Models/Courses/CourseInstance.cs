@@ -11,9 +11,9 @@ public class CourseInstance
     public int NumberOfSemesters { get; set; }
     public int Ects { get; set; }
 
-    public bool Dual { get; set; }
-    public bool Bridging { get; set; }
-    public bool CoopWithVocational { get; set; }
+    public bool IsDual { get; set; }
+    public bool IsBridging { get; set; }
+    public bool IsCoopWithVocational { get; set; }
 
 
     public Guid CourseUuid { get; init; }

@@ -80,18 +80,19 @@ public class UpdateCourseJob(
                 TerminationInitializationDate = i.TerminationInitializationDate,
                 LiquidationDate = i.LiquidationDate,
 
-                TeacherTraining = i.TeacherTraining,
-                Philological = i.Philological,
+                IsTeacherTraining = i.TeacherTraining,
+                IsPhilological = i.Philological,
 
                 InstitutionUuid = i.MainInstitutionUuid,
 
+                LastRefresh = i.LastRefresh,
                 SourceLastRefresh = i.LastRefresh,
                 DataSource = i.DataSource,
 
-                CourseLevel = new DictionaryItem { Code = i.LevelCode, Name = i.LevelName },
-                CourseProfile = new DictionaryItem { Code = i.ProfileCode, Name = i.ProfileName },
+                Level = new DictionaryItem { Code = i.LevelCode, Name = i.LevelName },
+                Profile = new DictionaryItem { Code = i.ProfileCode, Name = i.ProfileName },
                 Isced = new DictionaryItem { Code = i.IscedCode, Name = i.IscedName },
-                CourseStatus = new DictionaryItem { Code = i.CurrentStatusCode, Name = i.CurrentStatusName },
+                Status = new DictionaryItem { Code = i.CurrentStatusCode, Name = i.CurrentStatusName },
 
                 Disciplines = i.Disciplines.Select(d => new Course.DisciplineData
                 {
@@ -111,14 +112,14 @@ public class UpdateCourseJob(
                     NumberOfSemesters = ci.NumberOfSemesters,
                     Ects = ci.Ects,
 
-                    Dual = ci.Dual,
-                    Bridging = ci.Bridging,
-                    CoopWithVocational = ci.CoopWithVocational,
+                    IsDual = ci.Dual,
+                    IsBridging = ci.Bridging,
+                    IsCoopWithVocational = ci.CoopWithVocational,
 
-                    CourseForm = new DictionaryItem { Code = ci.FormCode, Name = ci.FormName },
+                    Form = new DictionaryItem { Code = ci.FormCode, Name = ci.FormName },
                     ProfessionalTitle = new DictionaryItem { Code = ci.TitleCode, Name = ci.TitleName },
                     Language = new DictionaryItem { Code = ci.LanguageCode, Name = ci.LanguageName },
-                    CourseInstanceStatus = new DictionaryItem { Code = ci.StatusCode, Name = ci.StatusName },
+                    Status = new DictionaryItem { Code = ci.StatusCode, Name = ci.StatusName },
 
                     PhilologicalLanguages = ci.PhilologicalLanguages
                     .Select(l => new DictionaryItem { Code = l.LanguageCode, Name = l.LanguageName })

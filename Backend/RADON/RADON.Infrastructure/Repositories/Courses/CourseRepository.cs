@@ -4,7 +4,10 @@ using RADON.Database;
 using RADON.Database.Models;
 using RADON.Database.Models.Courses;
 using RADON.Database.Models.Shared;
+using RADON.Infrastructure.QueryBuilders;
+using RADON.Models.Courses;
 using RADON.Models.Dictionaries.Responses;
+using RADON.Models.Shared;
 using DatabaseCourse = RADON.Database.Models.Courses.Course;
 using DatabaseCourseInstance = RADON.Database.Models.Courses.CourseInstance;
 using ResponseCourse = RADON.Models.Courses.Responses.Course;
@@ -12,8 +15,158 @@ using ResponseCourseInstance = RADON.Models.Courses.Responses.CourseInstance;
 
 namespace RADON.Infrastructure.Repositories.Courses;
 
-public class CourseRepository(RadonDbContext context) : ICourseRepository
+public class CourseRepository(
+    RadonDbContext context,
+    CourseQueryBuilder queryBuilder) : ICourseRepository
 {
+
+    public async Task<Response<ResponseCourse>> GetAsync(
+        QueryParameters parameters,
+        CancellationToken cancellationToken = default)
+    {
+        var baseQueryBuilder = queryBuilder
+            .WithCourseUuids(parameters.CourseUuids)
+            .WithInstitutionUuids(parameters.InstitutionUuids)
+            .WithName(parameters.Name)
+            .WithIsTeacherTraining(parameters.IsTeacherTraining)
+            .WithIsPhilological(parameters.IsPhilological)
+            .WithLevelCodes(parameters.LevelCodes)
+            .WithProfileCodes(parameters.ProfileCodes)
+            .WithIscedCodes(parameters.IscedCodes)
+            .WithStatusCodes(parameters.StatusCodes)
+            .WithDisciplineCodes(parameters.DisciplineCodes)
+
+            .WithCourseInstanceUuids(parameters.CourseInstanceUuids)
+            .WithIsDual(parameters.IsDual)
+            .WithIsBridging(parameters.IsBridging)
+            .WithIsCoopWithVocational(parameters.IsCoopWithVocational)
+            .WithFormCodes(parameters.FormCodes)
+            .WithProfessionalTitleCodes(parameters.ProfessionalTitleCodes)
+            .WithLanguageCodes(parameters.LanguageCodes)
+            .WithInstanceStatusCodes(parameters.InstanceStatusCodes)
+            .WithPhilologicalLanguageCodes(parameters.PhilologicalLanguageCodes);
+
+
+        var baseQuery = queryBuilder.Build();
+        var query = baseQueryBuilder
+            .WithOrderBy(parameters.OrderBy, parameters.Order, parameters.Pagination)
+            .Build();
+
+        var totalCount = await baseQuery.CountAsync(cancellationToken);
+        var dbItems = await query.ToListAsync(cancellationToken);
+
+        return new Response<ResponseCourse>
+        {
+            Pagination = new ResponsePagination
+            {
+                Page = parameters.Pagination.Page,
+                ItemsPerPage = parameters.Pagination.ItemsPerPage,
+                TotalCount = totalCount,
+            },
+
+            Items = dbItems.Select(i => new ResponseCourse
+            {
+                CourseUuid = i.CourseUuid,
+                Name = i.Name,
+
+                InstitutionUuid = i.InstitutionUuid,
+
+                CreationDate = i.CreationDate,
+                TerminationInitializationDate = i.TerminationInitializationDate,
+                LiquidationDate = i.LiquidationDate,
+
+                IsTeacherTraining = i.IsTeacherTraining,
+                IsPhilological = i.IsPhilological,
+
+                Level = new DictionaryItem
+                {
+                    Code = i.CourseLevel.CourseLevelCode,
+                    Name = i.CourseLevel.Name,
+                },
+
+                Profile = new DictionaryItem
+                {
+                    Code = i.CourseProfile.CourseProfileCode,
+                    Name = i.CourseProfile.Name,
+                },
+
+                Isced = new DictionaryItem
+                {
+                    Code = i.Isced.IscedCode,
+                    Name = i.Isced.Name,
+                },
+
+                Status = new DictionaryItem
+                {
+                    Code = i.CourseStatus.CourseStatusCode,
+                    Name = i.CourseStatus.Name,
+                },
+
+                Disciplines = i.Disciplines.Select(d => new ResponseCourse.DisciplineData
+                {
+                    Discipline = new DictionaryItem
+                    {
+                        Code = d.Discipline.DisciplineCode,
+                        Name = d.Discipline.Name,
+                    },
+                    Percentage = d.PercentageShare,
+                    IsLeading = d.Leading,
+                }).ToList(),
+
+                CourseInstances = i.CourseInstances.Select(ci => new ResponseCourseInstance
+                {
+                    CourseInstanceUuid = ci.CourseInstanceUuid,
+                    Name = ci.Name,
+
+                    EducationStartDate = ci.EducationStartDate,
+                    LiquidationDate = ci.LiquidationDate,
+
+                    NumberOfSemesters = ci.NumberOfSemesters,
+                    Ects = ci.Ects,
+
+                    IsDual = ci.IsDual,
+                    IsBridging = ci.IsBridging,
+                    IsCoopWithVocational = ci.IsCoopWithVocational,
+
+                    Form = new DictionaryItem
+                    {
+                        Code = ci.CourseForm.CourseFormCode,
+                        Name = ci.CourseForm.Name,
+                    },
+
+                    ProfessionalTitle = new DictionaryItem
+                    {
+                        Code = ci.ProfessionalTitle.ProfessionalTitleCode,
+                        Name = ci.ProfessionalTitle.Name,
+                    },
+
+                    Language = new DictionaryItem
+                    {
+                        Code = ci.Language.LanguageCode,
+                        Name = ci.Language.Name,
+                    },
+
+                    Status = new DictionaryItem
+                    {
+                        Code = ci.CourseInstanceStatus.CourseInstanceStatusCode,
+                        Name = ci.CourseInstanceStatus.Name,
+                    },
+
+                    PhilologicalLanguages = ci.PhilologicalLanguages.Select(l => new DictionaryItem
+                    {
+                        Code = l.LanguageCode,
+                        Name = l.Name,
+                    }).ToList(),
+                }).ToList(),
+
+                LastRefresh = i.LastRefresh,
+                SourceLastRefresh = i.SourceLastRefresh,
+                DataSource = i.DataSource.Name,
+
+            }).ToList(),
+        };
+    }
+
     public async Task CreateOrUpdateAsync(IEnumerable<ResponseCourse> items, CancellationToken cancellationToken = default)
     {
         if (!items.Any())
@@ -194,16 +347,16 @@ public class CourseRepository(RadonDbContext context) : ICourseRepository
         database.TerminationInitializationDate = item.TerminationInitializationDate;
         database.LiquidationDate = item.LiquidationDate;
 
-        database.TeacherTraining = item.TeacherTraining;
-        database.Philological = item.Philological;
+        database.IsTeacherTraining = item.IsTeacherTraining;
+        database.IsPhilological = item.IsPhilological;
 
         database.LastRefresh = currentTime;
         database.SourceLastRefresh = item.LastRefresh;
         database.DataSource = dataSourceDictionary[item.DataSource.ToUpperInvariant()];
 
-        database.CourseLevelCode = item.CourseLevel.Code;
-        database.CourseProfileCode = item.CourseProfile.Code;
-        database.CourseStatusCode = item.CourseStatus.Code;
+        database.CourseLevelCode = item.Level.Code;
+        database.CourseProfileCode = item.Profile.Code;
+        database.CourseStatusCode = item.Status.Code;
         database.IscedCode = item.Isced.Code;
 
         database.InstitutionUuid = item.InstitutionUuid;
@@ -309,14 +462,14 @@ public class CourseRepository(RadonDbContext context) : ICourseRepository
         database.NumberOfSemesters = item.NumberOfSemesters;
         database.Ects = item.Ects;
 
-        database.Dual = item.Dual;
-        database.Bridging = item.Bridging;
-        database.CoopWithVocational = item.CoopWithVocational;
+        database.IsDual = item.IsDual;
+        database.IsBridging = item.IsBridging;
+        database.IsCoopWithVocational = item.IsCoopWithVocational;
 
-        database.CourseFormCode = item.CourseForm.Code;
+        database.CourseFormCode = item.Form.Code;
         database.ProfessionalTitleCode = item.ProfessionalTitle.Code;
         database.LanguageCode = item.Language.Code;
-        database.CourseInstanceStatusCode = item.CourseInstanceStatus.Code;
+        database.CourseInstanceStatusCode = item.Status.Code;
 
         var databaseDictionary = database.PhilologicalLanguages.ToDictionary(k => k.LanguageCode);
         var inputDictionary = item.PhilologicalLanguages.ToDictionary(k => k.Code);

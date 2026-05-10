@@ -62,9 +62,9 @@ public class UpdateInstitutionJob(
         {
             InstitutionUuid = i.InstitutionUuid,
 
-            Regon = string.IsNullOrWhiteSpace(i.Regon) ? null : Regon.Parse(i.Regon),
-            Nip = string.IsNullOrWhiteSpace(i.Nip) ? null : Nip.Parse(i.Nip),
-            Krs = string.IsNullOrWhiteSpace(i.Krs) ? null : Krs.Parse(i.Krs),
+            Regon = string.IsNullOrWhiteSpace(i.Regon) ? null : Regon.Parse(i.Regon).To14SCharacters(),
+            Nip = string.IsNullOrWhiteSpace(i.Nip) ? null : Nip.Parse(i.Nip).Value,
+            Krs = string.IsNullOrWhiteSpace(i.Krs) ? null : Krs.Parse(i.Krs).Value,
 
             StartDate = i.IStartDt,
             LiquidationStartDate = i.ILiqStartDt,

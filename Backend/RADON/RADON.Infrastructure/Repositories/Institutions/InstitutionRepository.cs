@@ -48,6 +48,7 @@ internal class InstitutionRepository(
                 ItemsPerPage = parameters.Pagination.ItemsPerPage,
                 TotalCount = totalCount,
             },
+
             Items = dbItems.Select(i => new ResponseInstitution
             {
                 InstitutionUuid = i.InstitutionUuid,
