@@ -41,4 +41,35 @@
 		<ProjectReference Include="..\RADON.Infrastructure\RADON.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<!-- Obsługa pliku zasobów i generowanie klasy C# -->
+		<EmbeddedResource Update="ApiDescription.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>ApiDescription.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+
+		<Compile Update="ApiDescription.Designer.cs">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>ApiDescription.resx</DependentUpon>
+		</Compile>
+
+		<!-- Obsługa szablonu T4 generującego plik XML -->
+		<None Update="ApiDescription.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>ApiDescription.xml</LastGenOutput>
+		</None>
+
+		<None Update="ApiDescription.xml">
+			<AutoGen>True</AutoGen>
+			<DesignTime>True</DesignTime>
+			<DependentUpon>ApiDescription.tt</DependentUpon>
+			<!-- Kluczowe dla Scalara: upewnij się, że XML trafia do folderu bin -->
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<!-- Silnik T4 -->
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
 </Project>

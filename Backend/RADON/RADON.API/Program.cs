@@ -19,10 +19,12 @@ public class Program
         builder.Services.AddProblemDetails();
         builder.Services.AddOpenApi(options =>
         {
-            options.AddOperationTransformer<QueryParametersOpenApiOperation>();
+            options.AddOperationTransformer<QueryParametersOpenApiOperationTransformer>();
+            options.AddOperationTransformer<EndpointsOpenApiOperationTransformer>();
 
             options.AddSchemaTransformer<ResponseTypeOpenApiSchemaTransformer>();
-            options.AddSchemaTransformer<DictionaryResourceEnumSchemaTransformer>();
+            options.AddSchemaTransformer<EnumSchemaTransformer>();
+
         });
 
         var app = builder.Build();

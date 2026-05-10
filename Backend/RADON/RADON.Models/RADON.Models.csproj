@@ -10,6 +10,40 @@
 	
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+	  <ProjectReference Include="..\RADON.Models.Descriptions\RADON.Models.Descriptions.csproj" />
 	</ItemGroup>
 
+
+	<!--COURSES-->
+	<Target Name="Courses\QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Courses\QueryParameter.xml" DestinationFolder="Courses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Courses\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Courses\Response.xml" DestinationFolder="Courses/Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!--DICTIONARIES-->
+	<Target Name="Dictionaries\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Dictionaries\Response.xml" DestinationFolder="Dictionaries/Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!--INSTITUTIONS-->
+	<Target Name="Institutions\QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Institutions\QueryParameter.xml" DestinationFolder="Institutions" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Institutions\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Institutions\Response.xml" DestinationFolder="Institutions/Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+	<!--SHARED-->
+	<Target Name="Shared\QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Shared\QueryParameter.xml" DestinationFolder="Shared" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Shared\Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\RADON.Models.Descriptions\Shared\Response.xml" DestinationFolder="Shared" SkipUnchangedFiles="true" />
+	</Target>
+	
 </Project>

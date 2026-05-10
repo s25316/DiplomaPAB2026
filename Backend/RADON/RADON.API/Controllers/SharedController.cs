@@ -8,6 +8,10 @@ namespace RADON.API.Controllers;
 [ApiController]
 public class SharedController : ControllerBase
 {
+    /// <include file='ApiDescription.xml' path='docs/members/member[@name="GetDisciplines_Summary"]/*' />
+    /// <remarks>
+    /// <include file='ApiDescription.xml' path='docs/members/member[@name="GetDisciplines_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("disciplines")]

@@ -8,7 +8,7 @@ using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
 
 namespace RADON.API.OpenApi;
 
-public class DictionaryResourceEnumSchemaTransformer : IOpenApiSchemaTransformer
+public class EnumSchemaTransformer : IOpenApiSchemaTransformer
 {
     private static readonly ConcurrentDictionary<Type, string> DescriptionCache = new();
     private static readonly ConcurrentDictionary<Type, List<JsonNode>> EnumValuesCache = new();
@@ -23,6 +23,7 @@ public class DictionaryResourceEnumSchemaTransformer : IOpenApiSchemaTransformer
         schema.Type = JsonSchemaType.String;
         schema.Enum = GetEnumValues(type);
 
+        // ONLY FOR DictionaryResource
         if (type == typeof(DictionaryResource))
         {
             schema.Description = GetDictionaryDescription(type);

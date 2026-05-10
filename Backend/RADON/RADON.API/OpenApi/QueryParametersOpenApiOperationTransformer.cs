@@ -6,7 +6,7 @@ using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
 
 namespace RADON.API.OpenApi;
 
-public class QueryParametersOpenApiOperation : IOpenApiOperationTransformer
+public class QueryParametersOpenApiOperationTransformer : IOpenApiOperationTransformer
 {
     public async Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {

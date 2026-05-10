@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GetCourseForms_Description" xml:space="preserve">
+    <value>Pobiera dostępne formy studiów (stacjonarne, niestacjonarne). / Retrieves available course forms (full-time, part-time).</value>
+  </data>
+  <data name="GetCourseForms_Summary" xml:space="preserve">
+    <value>Słownik form kształcenia / Course forms dictionary</value>
+  </data>
+  <data name="GetCourseLevels_Description" xml:space="preserve">
+    <value>Pobiera listę dostępnych poziomów kształcenia (np. studia pierwszego stopnia, jednolite magisterskie). / Retrieves a list of available education levels (e.g., first-cycle, long-cycle).</value>
+  </data>
+  <data name="GetCourseLevels_Summary" xml:space="preserve">
+    <value>Słownik poziomów kształcenia / Course levels dictionary</value>
+  </data>
+  <data name="GetCourseProfiles_Description" xml:space="preserve">
+    <value>Pobiera listę dostępnych profilów kształcenia (ogólnoakademicki, praktyczny). / Retrieves a list of available course profiles (general academic, practical).</value>
+  </data>
+  <data name="GetCourseProfiles_Summary" xml:space="preserve">
+    <value>Słownik profilów kształcenia / Course profiles dictionary</value>
+  </data>
+  <data name="GetCourses_Description" xml:space="preserve">
+    <value>Zwraca listę kierunków studiów wraz z ich uruchomieniami, przefiltrowaną według zadanych kryteriów. / Returns a list of courses with their instances, filtered by given criteria.</value>
+  </data>
+  <data name="GetCourses_Summary" xml:space="preserve">
+    <value>Pobieranie listy kierunków studiów / Get list of courses</value>
+  </data>
+  <data name="GetCourseStatuses_Description" xml:space="preserve">
+    <value>Pobiera listę statusów prawnych kierunków studiów. / Retrieves the list of legal statuses for courses.</value>
+  </data>
+  <data name="GetInstanceStatuses_Summary" xml:space="preserve">
+    <value>Słownik statusów uruchomień / Course instance statuses dictionary</value>
+  </data>
+  <data name="GetIsceds_Description" xml:space="preserve">
+    <value>Pobiera kody i nazwy klasyfikacji ISCED-F (międzynarodowa klasyfikacja kierunków kształcenia). / Retrieves ISCED-F classification codes and names.</value>
+  </data>
+  <data name="GetIsceds_Summary" xml:space="preserve">
+    <value>Słownik klasyfikacji ISCED / ISCED classification dictionary</value>
+  </data>
+  <data name="GetLanguages_Description" xml:space="preserve">
+    <value>Pobiera listę języków, w których prowadzone jest kształcenie. / Retrieves the list of languages in which education is conducted.</value>
+  </data>
+  <data name="GetLanguages_Summary" xml:space="preserve">
+    <value>Słownik języków wykładowych / Education languages dictionary</value>
+  </data>
+  <data name="GetProfessionalTitles_Description" xml:space="preserve">
+    <value>Słownik tytułów zawodowych / Professional titles dictionary</value>
+  </data>
+  <data name="GetProfessionalTitles_Summary" xml:space="preserve">
+    <value>Pobiera listę tytułów zawodowych nadawanych absolwentom (licencjat, magister, inżynier). / Retrieves the list of professional titles awarded to graduates.</value>
+  </data>
+  <data name="GetCourseStatuses_Summary" xml:space="preserve">
+    <value>Słownik statusów kierunków / Course statuses dictionary</value>
+  </data>
+  <data name="GetInstanceStatuses_Description" xml:space="preserve">
+    <value>Pobiera listę statusów dla konkretnych edycji (uruchomień) studiów. / Retrieves the list of statuses for specific course instances.</value>
+  </data>
+  <data name="GetInstitutions_Summary" xml:space="preserve">
+    <value>Pobieranie listy instytucji / Get list of institutions</value>
+  </data>
+  <data name="GetInstitutions_Description" xml:space="preserve">
+    <value>Zwraca szczegółową listę instytucji (uczelni, instytutów) wraz z historią zmian nazw i statusów, przefiltrowaną według parametrów. / Returns a detailed list of institutions (universities, institutes) with historical snapshots, filtered by parameters.</value>
+  </data>
+  <data name="GetInstitutionKinds_Summary" xml:space="preserve">
+    <value>Słownik rodzajów instytucji / Institution kinds dictionary</value>
+  </data>
+  <data name="GetInstitutionKinds_Description" xml:space="preserve">
+    <value>Pobiera listę ogólnych rodzajów instytucji (np. uczelnia, instytut PAN, instytut badawczy). / Retrieves the list of general institution kinds (e.g., university, PAS institute, research institute).</value>
+  </data>
+  <data name="GetScientificInstitutionTypes_Summary" xml:space="preserve">
+    <value>Słownik typów instytucji naukowych / Scientific institution types dictionary</value>
+  </data>
+  <data name="GetScientificInstitutionTypes_Description" xml:space="preserve">
+    <value>Pobiera klasyfikację typów dla instytucji o profilu naukowym. / Retrieves the classification of types for scientific institutions.</value>
+  </data>
+  <data name="GetUniversityTypes_Summary" xml:space="preserve">
+    <value>Słownik typów uczelni / University types dictionary</value>
+  </data>
+  <data name="GetUniversityTypes_Description" xml:space="preserve">
+    <value>Pobiera listę typów uczelni (np. publiczna, niepubliczna, kościelna). / Retrieves the list of university types (e.g., public, non-public, ecclesiastical).</value>
+  </data>
+  <data name="GetInstitutionStatuses_Summary" xml:space="preserve">
+    <value>Słownik statusów instytucji / Institution statuses dictionary</value>
+  </data>
+  <data name="GetInstitutionStatuses_Description" xml:space="preserve">
+    <value>Pobiera listę statusów określających stan prawny instytucji (np. aktywna, zlikwidowana). / Retrieves the list of statuses defining the legal state of the institution.</value>
+  </data>
+  <data name="GetDisciplines_Summary" xml:space="preserve">
+    <value>Słownik dyscyplin naukowych i artystycznych. / Dictionary of scientific and artistic disciplines.</value>
+  </data>
+  <data name="GetDisciplines_Description" xml:space="preserve">
+    <value>Pobiera pełną listę dyscyplin naukowych oraz artystycznych zgodnie z obowiązującą klasyfikacją. Słownik ten jest wspólny dla wielu modułów systemu (np. kierunków studiów i osiągnięć naukowych). / Retrieves a complete list of scientific and artistic disciplines according to the current classification. This dictionary is shared across multiple system modules.</value>
+  </data>
+</root>

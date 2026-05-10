@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Course" xml:space="preserve">
+    <value>Klasa ta reprezentuje szczegółowe dane o kierunku studiów, obejmujące identyfikatory, ramy czasowe prowadzenia kształcenia, klasyfikacje (poziom, profil, ISCED) oraz przypisane dyscypliny naukowe i konkretne uruchomienia. / The class represents detailed information about a field of study, including identifiers, education timeframes, classifications (level, profile, ISCED), assigned scientific disciplines, and specific course instances.</value>
+  </data>
+  <data name="CourseInstance" xml:space="preserve">
+    <value>Klasa przechowuje szczegółowe informacje o konkretnym uruchomieniu kierunku studiów. Zawiera dane o formie kształcenia, czasie trwania, języku oraz uzyskanych tytułach zawodowych, odzwierciedlając strukturę danych przechowywaną w lokalnej bazie na podstawie systemu POL-on. / The class stores detailed information about a specific course instance. It includes data on the form of education, duration, language, and professional titles, reflecting the data structure stored in the local database based on the POL-on system.</value>
+  </data>
+  <data name="CourseInstance_CourseInstanceUuid" xml:space="preserve">
+    <value>Identyfikator uruchomienia - uuid z POL-on 2.0. / Course instance identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="CourseInstance_Ects" xml:space="preserve">
+    <value>Liczba punktów ECTS wymagana do uzyskania kwalifikacji. / ECTS points required for qualification.</value>
+  </data>
+  <data name="CourseInstance_EducationStartDate" xml:space="preserve">
+    <value>Data rozpoczęcia kształcenia (uruchomienia). / Beginning of education date.</value>
+  </data>
+  <data name="CourseInstance_Form" xml:space="preserve">
+    <value>Forma kształcenia (np. stacjonarne) – element słownikowy. / Course form (e.g., full-time) – dictionary item.</value>
+  </data>
+  <data name="CourseInstance_IsBridging" xml:space="preserve">
+    <value>Znacznik, czy są to studia pomostowe. / Bridging course marker.</value>
+  </data>
+  <data name="CourseInstance_IsCoopWithVocational" xml:space="preserve">
+    <value>Czy studia prowadzone we współpracy z organizacją zawodową? / Cooperation with vocational marker.</value>
+  </data>
+  <data name="CourseInstance_IsDual" xml:space="preserve">
+    <value>Znacznik, czy są to studia dualne. / Dual course marker.</value>
+  </data>
+  <data name="CourseInstance_Language" xml:space="preserve">
+    <value>Główny język kształcenia – element słownikowy. / Main language of education – dictionary item.</value>
+  </data>
+  <data name="CourseInstance_LiquidationDate" xml:space="preserve">
+    <value>Data likwidacji uruchomienia (jeśli dotyczy). / Course instance liquidation date.</value>
+  </data>
+  <data name="CourseInstance_Name" xml:space="preserve">
+    <value>Nazwa kierunku w ramach tego uruchomienia. / Course name within this instance.</value>
+  </data>
+  <data name="CourseInstance_NumberOfSemesters" xml:space="preserve">
+    <value>Liczba semestrów przewidziana w programie. / Number of semesters.</value>
+  </data>
+  <data name="CourseInstance_PhilologicalLanguages" xml:space="preserve">
+    <value>Kolekcja języków w przypadku filologii obcych. / Collection of philological languages.</value>
+  </data>
+  <data name="CourseInstance_ProfessionalTitle" xml:space="preserve">
+    <value>Tytuł zawodowy nadawany absolwentom – element słownikowy. / Professional title granted to graduates – dictionary item.</value>
+  </data>
+  <data name="CourseInstance_Status" xml:space="preserve">
+    <value>Status uruchomienia (np. aktywne) – element słownikowy. / Course instance status – dictionary item.</value>
+  </data>
+  <data name="Course_CourseInstances" xml:space="preserve">
+    <value>Kolekcja konkretnych uruchomień (edycji) danego kierunku. / Collection of specific instances (editions) of the course.</value>
+  </data>
+  <data name="Course_CourseUuid" xml:space="preserve">
+    <value>Identyfikator kierunku - uuid z systemu POL-on 2.0. / Course identifier - POL-on 2 system uuid.</value>
+  </data>
+  <data name="Course_CreationDate" xml:space="preserve">
+    <value>Data rozpoczęcia prowadzenia studiów na kierunku. / Education start date.</value>
+  </data>
+  <data name="Course_DataSource" xml:space="preserve">
+    <value>Informacja o źródle pochodzenia danych. / Information about data source.</value>
+  </data>
+  <data name="Course_Disciplines" xml:space="preserve">
+    <value>Lista dyscyplin przypisanych do kierunku wraz z ich udziałem. / List of disciplines assigned to the course with their shares.</value>
+  </data>
+  <data name="Course_InstitutionUuid" xml:space="preserve">
+    <value>Identyfikator instytucji prowadzącej studia. / Leading institution identifier - uuid.</value>
+  </data>
+  <data name="Course_Isced" xml:space="preserve">
+    <value>Klasyfikacja ISCED dla kierunku. / ISCED classification.</value>
+  </data>
+  <data name="Course_IsPhilological" xml:space="preserve">
+    <value>Czy studia dotyczą filologii obcej? / Philological course marker.</value>
+  </data>
+  <data name="Course_IsTeacherTraining" xml:space="preserve">
+    <value>Czy studia przygotowują do zawodu nauczyciela? / Teacher training marker.</value>
+  </data>
+  <data name="Course_LastRefresh" xml:space="preserve">
+    <value>Czas ostatniego odświeżania danych w lokalnej bazie. / Last refresh time in the local database.</value>
+  </data>
+  <data name="Course_Level" xml:space="preserve">
+    <value>Poziom kształcenia (np. studia pierwszego stopnia). / Course level.</value>
+  </data>
+  <data name="Course_LiquidationDate" xml:space="preserve">
+    <value>Data likwidacji kierunku (jeśli dotyczy). / Course liquidation date.</value>
+  </data>
+  <data name="Course_Name" xml:space="preserve">
+    <value>Nazwa kierunku studiów. / Course name.</value>
+  </data>
+  <data name="Course_Profile" xml:space="preserve">
+    <value>Profil kształcenia (np. ogólnoakademicki). / Course profile.</value>
+  </data>
+  <data name="Course_SourceLastRefresh" xml:space="preserve">
+    <value>Czas ostatniego odświeżania danych w systemie źródłowym. / Last refresh time in the source system.</value>
+  </data>
+  <data name="Course_Status" xml:space="preserve">
+    <value>Aktualny status kierunku studiów. / Current course status.</value>
+  </data>
+  <data name="Course_TerminationInitializationDate" xml:space="preserve">
+    <value>Data początku wygaszania kierunku (jeśli dotyczy). / Course termination initialization date.</value>
+  </data>
+  <data name="DisciplineData" xml:space="preserve">
+    <value>Dane o dyscyplinie naukowej kierunku / Course discipline data.</value>
+  </data>
+  <data name="DisciplineData_Discipline" xml:space="preserve">
+    <value>Dyscyplina naukowa, w której uzyskiwane są efekty uczenia się. / Scientific discipline in which learning outcomes are achieved.</value>
+  </data>
+  <data name="DisciplineData_IsLeading" xml:space="preserve">
+    <value>Znacznik określający, czy dana dyscyplina jest dyscypliną wiodącą. / Marker indicating whether the discipline is the leading one.</value>
+  </data>
+  <data name="DisciplineData_Percentage" xml:space="preserve">
+    <value>Udział procentowy dyscypliny w programie studiów. / Discipline percentage share in the study program.</value>
+  </data>
+</root>

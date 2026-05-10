@@ -10,6 +10,7 @@
     <Project Path="RADON.API/RADON.API.csproj" />
     <Project Path="RADON.Application/RADON.Application.csproj" Id="4b8c59ae-d04f-45ac-80b7-87f8fdd53e73" />
     <Project Path="RADON.Infrastructure/RADON.Infrastructure.csproj" Id="0304df23-297c-41f5-a5ab-0ce92f0b4add" />
+    <Project Path="RADON.Models.Descriptions/RADON.Models.Descriptions.csproj" Id="0d419c3d-7619-466d-bc93-beb66da499d9" />
     <Project Path="RADON.Models/RADON.Models.csproj" Id="f2f61e06-eb1f-43fc-acde-120e9f0736f3" />
   </Folder>
   <Folder Name="/Plugin/">

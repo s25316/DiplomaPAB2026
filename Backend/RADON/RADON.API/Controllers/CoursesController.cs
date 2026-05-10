@@ -12,10 +12,14 @@ namespace RADON.API.Controllers;
 [ApiController]
 public class CoursesController : ControllerBase
 {
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourses_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourses_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(Response<Course>), 200)]
     [ProducesResponseType(500)]
     [HttpGet()]
-    public async Task<IActionResult> GetInstitutionKindsAsync(
+    public async Task<IActionResult> GetCoursesAsync(
         [FromServices] ICourseRepository repository,
         [FromQuery] QueryParameters queryParameters,
         CancellationToken cancellationToken)
@@ -24,7 +28,10 @@ public class CoursesController : ControllerBase
         return Ok(response);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseLevels_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseLevels_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("levels")]
@@ -36,7 +43,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseProfiles_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseProfiles_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("profiles")]
@@ -48,7 +58,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetIsceds_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetIsceds_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("isceds")]
@@ -60,7 +73,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseStatuses_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseStatuses_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("statuses")]
@@ -72,7 +88,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstanceStatuses_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstanceStatuses_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("instances/statuses")]
@@ -84,6 +103,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseForms_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseForms_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("instances/forms")]
@@ -95,7 +118,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetLanguages_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetLanguages_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("instances/languages")]
@@ -107,7 +133,10 @@ public class CoursesController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetProfessionalTitles_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetProfessionalTitles_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("instances/titles")]

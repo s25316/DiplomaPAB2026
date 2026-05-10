@@ -12,10 +12,14 @@ namespace RADON.API.Controllers;
 [ApiController]
 public class InstitutionsController : ControllerBase
 {
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutions_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutions_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(Response<Institution>), 200)]
     [ProducesResponseType(500)]
     [HttpGet()]
-    public async Task<IActionResult> GetInstitutionKindsAsync(
+    public async Task<IActionResult> GetInstitutionsAsync(
         [FromServices] IInstitutionRepository repository,
         [FromQuery] QueryParameters queryParameters,
         CancellationToken cancellationToken)
@@ -24,7 +28,10 @@ public class InstitutionsController : ControllerBase
         return Ok(response);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionKinds_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionKinds_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("kinds")]
@@ -36,7 +43,10 @@ public class InstitutionsController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionStatuses_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionStatuses_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("statuses")]
@@ -48,7 +58,10 @@ public class InstitutionsController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetScientificInstitutionTypes_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetScientificInstitutionTypes_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("scientificInstitutionTypes")]
@@ -60,7 +73,10 @@ public class InstitutionsController : ControllerBase
         return Ok(items);
     }
 
-
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetUniversityTypes_Summary"]/*' />
+    /// <remarks>
+    /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetUniversityTypes_Description"]/summary' />
+    /// </remarks>
     [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
     [ProducesResponseType(500)]
     [HttpGet("universityTypes")]
