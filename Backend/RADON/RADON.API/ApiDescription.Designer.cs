@@ -277,7 +277,7 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Słownik tytułów zawodowych / Professional titles dictionary.
+        ///   Looks up a localized string similar to Pobiera listę tytułów zawodowych nadawanych absolwentom (licencjat, magister, inżynier). / Retrieves the list of professional titles awarded to graduates..
         /// </summary>
         public static string GetProfessionalTitles_Description {
             get {
@@ -286,7 +286,7 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pobiera listę tytułów zawodowych nadawanych absolwentom (licencjat, magister, inżynier). / Retrieves the list of professional titles awarded to graduates..
+        ///   Looks up a localized string similar to Słownik tytułów zawodowych / Professional titles dictionary.
         /// </summary>
         public static string GetProfessionalTitles_Summary {
             get {

@@ -47,8 +47,8 @@ public class Program
             .AddTypeExtension<CoursesQuery>()
             .AddTypeExtension<InstitutionsQuery>()
             .AddTypeExtension<SharedQuery>()
-            .TryAddTypeInterceptor<DisplayAttributeInterceptor>()
-            .TryAddTypeInterceptor<DisplayAttributeOutputInterceptor>()
+            .TryAddTypeInterceptor<DisplayFieldsInterceptor>()
+            .TryAddTypeInterceptor<DisplayQueryInterceptor>()
             .BindRuntimeType<Regon, RegonScalar>()
             .BindRuntimeType<Nip, NipScalar>()
             .BindRuntimeType<Krs, KrsScalar>();

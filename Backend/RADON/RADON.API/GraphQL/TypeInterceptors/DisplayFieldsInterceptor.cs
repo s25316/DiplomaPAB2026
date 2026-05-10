@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace RADON.API.GraphQL.TypeInterceptors;
 
-public class DisplayAttributeInterceptor : TypeInterceptor
+public class DisplayFieldsInterceptor : TypeInterceptor
 {
     public override void OnBeforeCompleteName(
         ITypeCompletionContext completionContext,

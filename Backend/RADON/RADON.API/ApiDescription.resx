@@ -160,10 +160,10 @@
     <value>Słownik języków wykładowych / Education languages dictionary</value>
   </data>
   <data name="GetProfessionalTitles_Description" xml:space="preserve">
-    <value>Słownik tytułów zawodowych / Professional titles dictionary</value>
+    <value>Pobiera listę tytułów zawodowych nadawanych absolwentom (licencjat, magister, inżynier). / Retrieves the list of professional titles awarded to graduates.</value>
   </data>
   <data name="GetProfessionalTitles_Summary" xml:space="preserve">
-    <value>Pobiera listę tytułów zawodowych nadawanych absolwentom (licencjat, magister, inżynier). / Retrieves the list of professional titles awarded to graduates.</value>
+    <value>Słownik tytułów zawodowych / Professional titles dictionary</value>
   </data>
   <data name="GetCourseStatuses_Summary" xml:space="preserve">
     <value>Słownik statusów kierunków / Course statuses dictionary</value>
