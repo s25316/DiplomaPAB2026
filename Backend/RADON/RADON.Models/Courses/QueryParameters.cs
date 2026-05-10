@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HotChocolate;
+using Microsoft.AspNetCore.Mvc;
 using RADON.Models.Shared;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,8 +9,10 @@ namespace RADON.Models.Courses;
 
 /// <include file='QueryParameter.xml' path='docs/members/member[@name="QueryParameters"]/summary' />
 [Display(Name = nameof(QueryParameter.QueryParameters), ResourceType = typeof(QueryParameter))]
+[GraphQLName("CourseQueryParameters")]
 public sealed class QueryParameters : BaseQueryParameters
 {
+    [GraphQLName("CourseQueryParametersOrderBy")]
     public enum QueryParametersOrderBy
     {
         Name = 1,

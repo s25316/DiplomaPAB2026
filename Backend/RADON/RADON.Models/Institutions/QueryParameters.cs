@@ -1,6 +1,7 @@
 ﻿using Base.Models.ValueObjects.Krsy;
 using Base.Models.ValueObjects.Nipy;
 using Base.Models.ValueObjects.Regony;
+using HotChocolate;
 using Microsoft.AspNetCore.Mvc;
 using RADON.Models.Shared;
 using System.ComponentModel;
@@ -11,8 +12,10 @@ namespace RADON.Models.Institutions;
 
 /// <include file='QueryParameter.xml' path='docs/members/member[@name="QueryParameters"]/summary' />
 [Display(Name = nameof(QueryParameter.QueryParameters), ResourceType = typeof(QueryParameter))]
+[GraphQLName("InstitutionQueryParameters")]
 public sealed class QueryParameters : BaseQueryParameters
 {
+    [GraphQLName("InstitutionQueryParametersOrderBy")]
     public enum QueryParametersOrderBy
     {
         Name = 1,
