@@ -4,6 +4,7 @@ using Base.Models.ValueObjects.Nipy;
 using Base.Models.ValueObjects.Regony;
 using FluentValidation;
 using HotChocolate.Types;
+using RADON.API.ExceptionHandlers;
 using RADON.API.GraphQL;
 using RADON.API.GraphQL.TypeInterceptors;
 using RADON.API.OpenApi;
@@ -21,10 +22,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddLogging();
-
         builder.Services.AddApplicationConfiguration();
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);
+
+        builder.Services.AddLogging();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
 
         builder.Services.AddFluentValidationAutoValidation();
         builder.Services.AddValidatorsFromAssemblyContaining<PaginationValidator>();
@@ -41,7 +44,6 @@ public class Program
 
         });
 
-
         builder.Services
             .AddGraphQLServer()
             .AddFluentValidation()
@@ -55,6 +57,7 @@ public class Program
             .BindRuntimeType<Regon, RegonScalar>()
             .BindRuntimeType<Nip, NipScalar>()
             .BindRuntimeType<Krs, KrsScalar>();
+
 
         var app = builder.Build();
         app.UseExceptionHandler();

@@ -39,7 +39,7 @@ public static class Configuration
         });
 
         services.AddSingleton<IRadonService, RadonService>();
-        services.AddTransient<IErrorLogger, ErrorLogger>();
+        services.AddScoped<IErrorLogger, ErrorLogger>();
 
         // --- INSTITUTIONS ---
         services.AddTransient<IInstitutionKindRepository, InstitutionKindRepository>();

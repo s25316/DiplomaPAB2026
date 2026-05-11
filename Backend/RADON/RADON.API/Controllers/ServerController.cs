@@ -13,8 +13,5 @@ public class ServerController : ControllerBase
     /// </remarks>
     [ProducesResponseType(typeof(ServerTimeResponse), StatusCodes.Status200OK)]
     [HttpGet("time")]
-    public IActionResult GetCurrentTime()
-    {
-        return Ok(new ServerTimeResponse());
-    }
+    public IActionResult GetCurrentTime() => Ok(new ServerTimeResponse());
 }
