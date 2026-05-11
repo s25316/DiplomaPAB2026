@@ -117,31 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ResponseT" xml:space="preserve">
-    <value>Uniwersalny kontener dla odpowiedzi API zwracających listy obiektów. / A universal container for API responses returning lists of objects.</value>
+  <data name="IncorrectFormat_Title" xml:space="preserve">
+    <value>Niepoprawne dane wejściowe.</value>
   </data>
-  <data name="ResponsePagination" xml:space="preserve">
-    <value>Klasa przechowująca informacje o stanie stronicowania danych. / Class storing information about the data pagination state.</value>
+  <data name="InternalServerErrort_Detail" xml:space="preserve">
+    <value>Błąd wewnętrzny serwera.</value>
   </data>
-  <data name="ResponsePagination_ItemsPerPage" xml:space="preserve">
-    <value>Liczba elementów przypadająca na jedną stronę (rozmiar strony). / Number of items per page (page size).</value>
+  <data name="InternalServerErrort_Title" xml:space="preserve">
+    <value>Wystąpił nieoczekiwany błąd. Kod błędu: 500.</value>
   </data>
-  <data name="ResponsePagination_Page" xml:space="preserve">
-    <value>Numer bieżącej strony (indeksowany zazwyczaj od 1). / The current page number (usually indexed from 1).</value>
-  </data>
-  <data name="ResponsePagination_TotalCount" xml:space="preserve">
-    <value>Całkowita liczba wszystkich elementów w bazie danych spełniających kryteria wyszukiwania. / Total number of all items in the database that meet the search criteria.</value>
-  </data>
-  <data name="Response_Items" xml:space="preserve">
-    <value>Lista obiektów wynikowych. Jeśli nie znaleziono rekordów, zwracana jest pusta lista. / A list of result objects. If no records are found, an empty list is returned.</value>
-  </data>
-  <data name="Response_Pagination" xml:space="preserve">
-    <value>Obiekt zawierający szczegóły dotyczące stronicowania. / An object containing pagination details.</value>
-  </data>
-  <data name="ServerTimeResponse" xml:space="preserve">
-    <value>Informacja o bieżącym czasie systemowym serwera. Używana do synchronizacji czasu między klientem a serwerem. / Information about the current system time of the server. Used for time synchronization between the client and the server.</value>
-  </data>
-  <data name="ServerTimeResponse_CurrentDateTime" xml:space="preserve">
-    <value>Bieżąca data i godzina serwera wraz z przesunięciem czasowym (ISO 8601). / Current server date and time with time zone offset (ISO 8601).</value>
+  <data name="InvalidDatat_Title" xml:space="preserve">
+    <value>Niepoprawny format danych.</value>
   </data>
 </root>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RADON.Models.Descriptions.Shared {
+namespace RADON.API {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace RADON.Models.Descriptions.Shared {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class QueryParameter {
+    public class ApiErrorDescription {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal QueryParameter() {
+        internal ApiErrorDescription() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace RADON.Models.Descriptions.Shared {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RADON.Models.Descriptions.Shared.QueryParameter", typeof(QueryParameter).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("RADON.API.ApiErrorDescription", typeof(ApiErrorDescription).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,38 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Podstawowa klasa, po której powinny dziedziczyć wszystkie szczegółowe klasy parametrów wyszukiwania w systemie. Zapewnia ona ujednolicony mechanizm stronicowania dla każdego zapytania. / The base class that all detailed search parameter classes in the system should inherit from. It provides a unified pagination mechanism for every query..
+        ///   Looks up a localized string similar to Niepoprawne dane wejściowe..
         /// </summary>
-        public static string BaseQueryParameters {
+        public static string IncorrectFormat_Title {
             get {
-                return ResourceManager.GetString("BaseQueryParameters", resourceCulture);
+                return ResourceManager.GetString("IncorrectFormat_Title", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Obiekt zawierający konfigurację stronicowania. / An object containing pagination configuration..
+        ///   Looks up a localized string similar to Błąd wewnętrzny serwera..
         /// </summary>
-        public static string BaseQueryParameters_Pagination {
+        public static string InternalServerErrort_Detail {
             get {
-                return ResourceManager.GetString("BaseQueryParameters_Pagination", resourceCulture);
+                return ResourceManager.GetString("InternalServerErrort_Detail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Klasa odpowiedzialna za parametryzację mechanizmu stronicowania po stronie żądania. / Class responsible for parameterizing the pagination mechanism on the request side..
+        ///   Looks up a localized string similar to Wystąpił nieoczekiwany błąd. Kod błędu: 500..
         /// </summary>
-        public static string QueryParametersPagination {
+        public static string InternalServerErrort_Title {
             get {
-                return ResourceManager.GetString("QueryParametersPagination", resourceCulture);
+                return ResourceManager.GetString("InternalServerErrort_Title", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Określa, ile rekordów ma zostać zwróconych w ramach jednej strony. / Specifies how many records should be returned within a single page..
+        ///   Looks up a localized string similar to Niepoprawny format danych..
         /// </summary>
-        public static string QueryParametersPagination_ItemsPerPage {
+        public static string InvalidDatat_Title {
             get {
-                return ResourceManager.GetString("QueryParametersPagination_ItemsPerPage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Numer strony, o którą prosi klient. Minimalna wartość to 1. / The page number requested by the client. Minimum value is 1..
-        /// </summary>
-        public static string QueryParametersPagination_Page {
-            get {
-                return ResourceManager.GetString("QueryParametersPagination_Page", resourceCulture);
+                return ResourceManager.GetString("InvalidDatat_Title", resourceCulture);
             }
         }
     }

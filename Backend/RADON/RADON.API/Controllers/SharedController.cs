@@ -12,14 +12,14 @@ public class SharedController : ControllerBase
     /// <remarks>
     /// <include file='ApiDescription.xml' path='docs/members/member[@name="GetDisciplines_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("disciplines")]
     public async Task<IActionResult> GetDisciplinesAsync(
         [FromServices] IDisciplineRespository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 }

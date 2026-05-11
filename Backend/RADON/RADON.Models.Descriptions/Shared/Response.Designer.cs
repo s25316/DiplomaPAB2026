@@ -61,7 +61,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lista obiektów wynikowych. Jeśli nie znaleziono rekordów, zwracana jest pusta lista..
+        ///   Looks up a localized string similar to Lista obiektów wynikowych. Jeśli nie znaleziono rekordów, zwracana jest pusta lista. / A list of result objects. If no records are found, an empty list is returned..
         /// </summary>
         public static string Response_Items {
             get {
@@ -70,7 +70,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Obiekt zawierający szczegóły dotyczące stronicowania.
+        ///   Looks up a localized string similar to Obiekt zawierający szczegóły dotyczące stronicowania. / An object containing pagination details..
         /// </summary>
         public static string Response_Pagination {
             get {
@@ -79,7 +79,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Klasa przechowująca informacje o stanie stronicowania danych..
+        ///   Looks up a localized string similar to Klasa przechowująca informacje o stanie stronicowania danych. / Class storing information about the data pagination state..
         /// </summary>
         public static string ResponsePagination {
             get {
@@ -88,7 +88,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Numer bieżącej strony (indeksowany zazwyczaj od 1)..
+        ///   Looks up a localized string similar to Liczba elementów przypadająca na jedną stronę (rozmiar strony). / Number of items per page (page size)..
         /// </summary>
         public static string ResponsePagination_ItemsPerPage {
             get {
@@ -97,7 +97,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Liczba elementów przypadająca na jedną stronę (rozmiar strony)..
+        ///   Looks up a localized string similar to Numer bieżącej strony (indeksowany zazwyczaj od 1). / The current page number (usually indexed from 1)..
         /// </summary>
         public static string ResponsePagination_Page {
             get {
@@ -106,7 +106,7 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Całkowita liczba wszystkich elementów w bazie danych spełniających kryteria wyszukiwania..
+        ///   Looks up a localized string similar to Całkowita liczba wszystkich elementów w bazie danych spełniających kryteria wyszukiwania. / Total number of all items in the database that meet the search criteria..
         /// </summary>
         public static string ResponsePagination_TotalCount {
             get {
@@ -115,11 +115,29 @@ namespace RADON.Models.Descriptions.Shared {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Uniwersalny kontener dla odpowiedzi API zwracających listy obiektów..
+        ///   Looks up a localized string similar to Uniwersalny kontener dla odpowiedzi API zwracających listy obiektów. / A universal container for API responses returning lists of objects..
         /// </summary>
         public static string ResponseT {
             get {
                 return ResourceManager.GetString("ResponseT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Informacja o bieżącym czasie systemowym serwera. Używana do synchronizacji czasu między klientem a serwerem. / Information about the current system time of the server. Used for time synchronization between the client and the server..
+        /// </summary>
+        public static string ServerTimeResponse {
+            get {
+                return ResourceManager.GetString("ServerTimeResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bieżąca data i godzina serwera wraz z przesunięciem czasowym (ISO 8601). / Current server date and time with time zone offset (ISO 8601)..
+        /// </summary>
+        public static string ServerTimeResponse_CurrentDateTime {
+            get {
+                return ResourceManager.GetString("ServerTimeResponse_CurrentDateTime", resourceCulture);
             }
         }
     }

@@ -5,5 +5,8 @@
     <EmbeddedResource Update="Courses\Response.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Dictionaries\Response.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

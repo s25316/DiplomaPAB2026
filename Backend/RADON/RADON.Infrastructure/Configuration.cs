@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Quartz;
+using RADON.Application.Interfaces;
 using RADON.Application.Interfaces.Courses;
 using RADON.Application.Interfaces.Courses.Dictionaries;
 using RADON.Application.Interfaces.Institutions;
@@ -11,6 +12,7 @@ using RADON.Application.Interfaces.Shared.Dictionaries;
 using RADON.Database;
 using RADON.Database.MsSql;
 using RADON.Infrastructure.Configurations;
+using RADON.Infrastructure.ErrorLoggers;
 using RADON.Infrastructure.Jobs;
 using RADON.Infrastructure.QueryBuilders;
 using RADON.Infrastructure.Repositories.Courses;
@@ -37,6 +39,7 @@ public static class Configuration
         });
 
         services.AddSingleton<IRadonService, RadonService>();
+        services.AddTransient<IErrorLogger, ErrorLogger>();
 
         // --- INSTITUTIONS ---
         services.AddTransient<IInstitutionKindRepository, InstitutionKindRepository>();

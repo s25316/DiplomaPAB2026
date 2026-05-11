@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Base/">
+    <Project Path="../Base/Base.Exceptions/Base.Exceptions.csproj" />
     <Project Path="../Base/Base.Models/Base.Models.csproj" />
   </Folder>
   <Folder Name="/Database/">

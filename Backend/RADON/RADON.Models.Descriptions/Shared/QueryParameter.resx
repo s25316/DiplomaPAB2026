@@ -118,18 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BaseQueryParameters" xml:space="preserve">
-    <value>Podstawowa klasa, po której powinny dziedziczyć wszystkie szczegółowe klasy parametrów wyszukiwania w systemie. Zapewnia ona ujednolicony mechanizm stronicowania dla każdego zapytania.</value>
+    <value>Podstawowa klasa, po której powinny dziedziczyć wszystkie szczegółowe klasy parametrów wyszukiwania w systemie. Zapewnia ona ujednolicony mechanizm stronicowania dla każdego zapytania. / The base class that all detailed search parameter classes in the system should inherit from. It provides a unified pagination mechanism for every query.</value>
   </data>
   <data name="BaseQueryParameters_Pagination" xml:space="preserve">
-    <value>Obiekt zawierający konfigurację stronicowania.</value>
+    <value>Obiekt zawierający konfigurację stronicowania. / An object containing pagination configuration.</value>
   </data>
   <data name="QueryParametersPagination" xml:space="preserve">
-    <value>Klasa odpowiedzialna za parametryzację mechanizmu stronicowania po stronie żądania.</value>
+    <value>Klasa odpowiedzialna za parametryzację mechanizmu stronicowania po stronie żądania. / Class responsible for parameterizing the pagination mechanism on the request side.</value>
   </data>
   <data name="QueryParametersPagination_ItemsPerPage" xml:space="preserve">
-    <value>Numer strony, o którą prosi klient. Minimalna wartość to 1.</value>
+    <value>Określa, ile rekordów ma zostać zwróconych w ramach jednej strony. / Specifies how many records should be returned within a single page.</value>
   </data>
   <data name="QueryParametersPagination_Page" xml:space="preserve">
-    <value>Określa, ile rekordów ma zostać zwróconych w ramach jednej strony.</value>
+    <value>Numer strony, o którą prosi klient. Minimalna wartość to 1. / The page number requested by the client. Minimum value is 1.</value>
   </data>
 </root>

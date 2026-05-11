@@ -21,6 +21,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddLogging();
+
         builder.Services.AddApplicationConfiguration();
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);
 
@@ -47,6 +49,7 @@ public class Program
             .AddTypeExtension<CoursesQuery>()
             .AddTypeExtension<InstitutionsQuery>()
             .AddTypeExtension<SharedQuery>()
+            .AddTypeExtension<ServerQuery>()
             .TryAddTypeInterceptor<DisplayFieldsInterceptor>()
             .TryAddTypeInterceptor<DisplayQueryInterceptor>()
             .BindRuntimeType<Regon, RegonScalar>()

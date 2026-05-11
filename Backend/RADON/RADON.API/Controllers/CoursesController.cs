@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RADON.Application.Interfaces.Courses;
 using RADON.Application.Interfaces.Courses.Dictionaries;
-using RADON.Contracts.Shared.Responses;
 using RADON.Models.Courses;
 using RADON.Models.Courses.Responses;
 using RADON.Models.Dictionaries.Responses;
+using RADON.Models.Shared;
 
 namespace RADON.API.Controllers;
 
@@ -16,8 +16,9 @@ public class CoursesController : ControllerBase
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourses_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(Response<Course>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(Response<Course>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet()]
     public async Task<IActionResult> GetCoursesAsync(
         [FromServices] ICourseRepository repository,
@@ -32,119 +33,119 @@ public class CoursesController : ControllerBase
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseLevels_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("levels")]
     public async Task<IActionResult> GetCourseLevelsAsync(
         [FromServices] ICourseLevelRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseProfiles_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseProfiles_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("profiles")]
     public async Task<IActionResult> GetCourseProfilesAsync(
         [FromServices] ICourseProfileRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetIsceds_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetIsceds_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("isceds")]
     public async Task<IActionResult> GetIscedsAsync(
         [FromServices] IIscedRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseStatuses_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseStatuses_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("statuses")]
     public async Task<IActionResult> GetCourseStatusesAsync(
         [FromServices] ICourseStatusRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstanceStatuses_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstanceStatuses_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("instances/statuses")]
     public async Task<IActionResult> GetInstanceStatusesAsync(
         [FromServices] ICourseInstanceStatusRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseForms_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetCourseForms_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("instances/forms")]
     public async Task<IActionResult> GetCourseFormsAsync(
         [FromServices] ICourseFormRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetLanguages_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetLanguages_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("instances/languages")]
     public async Task<IActionResult> GetLanguagesAsync(
         [FromServices] ILanguageRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetProfessionalTitles_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetProfessionalTitles_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("instances/titles")]
     public async Task<IActionResult> GetProfessionalTitlesAsync(
         [FromServices] IProfessionalTitleRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 }

@@ -16,8 +16,9 @@ public class InstitutionsController : ControllerBase
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutions_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(Response<Institution>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(Response<Institution>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet()]
     public async Task<IActionResult> GetInstitutionsAsync(
         [FromServices] IInstitutionRepository repository,
@@ -32,59 +33,59 @@ public class InstitutionsController : ControllerBase
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionKinds_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("kinds")]
     public async Task<IActionResult> GetInstitutionKindsAsync(
         [FromServices] IInstitutionKindRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionStatuses_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetInstitutionStatuses_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("statuses")]
     public async Task<IActionResult> GetInstitutionStatusesAsync(
         [FromServices] IInstitutionStatusRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetScientificInstitutionTypes_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetScientificInstitutionTypes_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("scientificInstitutionTypes")]
     public async Task<IActionResult> GetScientificInstitutionTypesAsync(
         [FromServices] IScientificInstitutionTypeRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetUniversityTypes_Summary"]/*' />
     /// <remarks>
     /// <include file='RadonApiDescription.xml' path='docs/members/member[@name="GetUniversityTypes_Description"]/summary' />
     /// </remarks>
-    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), 200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(typeof(IEnumerable<DictionaryItem>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("universityTypes")]
     public async Task<IActionResult> GetUniversityTypesAsync(
         [FromServices] IUniversityTypeRepository repository,
         CancellationToken cancellationToken)
     {
         var items = await repository.GetAsync(cancellationToken);
-        return Ok(items);
+        return Ok(items.Values);
     }
 }

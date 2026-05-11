@@ -47,11 +47,21 @@
 			<Generator>PublicResXFileCodeGenerator</Generator>
 			<LastGenOutput>ApiDescription.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+		<EmbeddedResource Update="ApiErrorDescription.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>ApiErrorDescription.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
 
 		<Compile Update="ApiDescription.Designer.cs">
 			<AutoGen>True</AutoGen>
 			<DesignTime>True</DesignTime>
 			<DependentUpon>ApiDescription.resx</DependentUpon>
+		</Compile>
+
+		<Compile Update="ApiErrorDescription.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>ApiErrorDescription.resx</DependentUpon>
 		</Compile>
 
 		<!-- Obsługa szablonu T4 generującego plik XML -->

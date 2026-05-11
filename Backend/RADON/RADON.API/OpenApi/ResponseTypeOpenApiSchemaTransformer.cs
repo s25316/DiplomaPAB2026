@@ -15,6 +15,16 @@ public class ResponseTypeOpenApiSchemaTransformer : IOpenApiSchemaTransformer
         if (schema.Properties == null)
             return;
 
+        var classDisplayAttr = type.GetCustomAttribute<DisplayAttribute>();
+        var classDescAttr = type.GetCustomAttribute<DescriptionAttribute>();
+
+        string? classDescription = classDisplayAttr?.GetName() ?? classDescAttr?.Description;
+
+        if (!string.IsNullOrEmpty(classDescription))
+        {
+            schema.Description = classDescription;
+        }
+
         foreach (var property in type.GetProperties())
         {
             var displayAttr = property.GetCustomAttribute<DisplayAttribute>();
