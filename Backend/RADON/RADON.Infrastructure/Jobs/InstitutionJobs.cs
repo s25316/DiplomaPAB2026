@@ -2,6 +2,7 @@
 using Base.Models.ValueObjects.Nipy;
 using Base.Models.ValueObjects.Regony;
 using Quartz;
+using RADON.Application.Interfaces;
 using RADON.Application.Interfaces.Institutions;
 using RADON.Application.Interfaces.Institutions.Dictionaries;
 using RADON.Contracts.Dictionaries;
@@ -17,92 +18,105 @@ namespace RADON.Infrastructure.Jobs;
 [DisallowConcurrentExecution]
 public class UpdateInstitutionKindJob(
     IInstitutionKindRepository repository,
-    IRadonService radonService
-) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.InstitutionKinds);
+    IRadonService radonService,
+    IErrorLogger errorLogger
+) : UpdateDictionaryDataJob(repository, radonService, errorLogger, DictionaryResource.InstitutionKinds);
 
 [DisallowConcurrentExecution]
 public class UpdateInstitutionStatusJob(
     IInstitutionStatusRepository repository,
-    IRadonService radonService
-) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.InstitutionStatuses);
+    IRadonService radonService,
+    IErrorLogger errorLogger
+) : UpdateDictionaryDataJob(repository, radonService, errorLogger, DictionaryResource.InstitutionStatuses);
 
 [DisallowConcurrentExecution]
 public class UpdateUniversityTypeJob(
     IUniversityTypeRepository repository,
-    IRadonService radonService
-) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.InstitutionUniversityTypes);
+    IRadonService radonService,
+    IErrorLogger errorLogger
+) : UpdateDictionaryDataJob(repository, radonService, errorLogger, DictionaryResource.InstitutionUniversityTypes);
 
 [DisallowConcurrentExecution]
 public class UpdateScientificInstitutionTypeJob(
     IScientificInstitutionTypeRepository repository,
-    IRadonService radonService
-) : UpdateDictionaryDataJob(repository, radonService, DictionaryResource.InstitutionScientificInstitutionTypes);
+    IRadonService radonService,
+    IErrorLogger errorLogger
+) : UpdateDictionaryDataJob(repository, radonService, errorLogger, DictionaryResource.InstitutionScientificInstitutionTypes);
 
 
 [DisallowConcurrentExecution]
 public class UpdateInstitutionJob(
     IInstitutionRepository repository,
-    IRadonService radonService) : IJob
+    IRadonService radonService,
+    IErrorLogger errorLogger) : IJob
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        var radonInstitutions = new List<InstitutionReport>();
-        int allItemsCount;
-        string? token = null;
-
-        do
+        try
         {
-            var response = await radonService.GetInstitutionsAsync(new QueryParameters() { Token = token });
-            allItemsCount = response.Pagination.MaxCount;
-            radonInstitutions.AddRange(response.Results);
-            token = response.Pagination.Token;
-        } while (radonInstitutions.Count != allItemsCount || !string.IsNullOrWhiteSpace(token));
 
-        var items = radonInstitutions.Select(i => new ResponseInstitution
+            var radonInstitutions = new List<InstitutionReport>();
+            int allItemsCount;
+            string? token = null;
+
+            do
+            {
+                var response = await radonService.GetInstitutionsAsync(new QueryParameters() { Token = token });
+                allItemsCount = response.Pagination.MaxCount;
+                radonInstitutions.AddRange(response.Results);
+                token = response.Pagination.Token;
+            } while (radonInstitutions.Count != allItemsCount || !string.IsNullOrWhiteSpace(token));
+
+            var items = radonInstitutions.Select(i => new ResponseInstitution
+            {
+                InstitutionUuid = i.InstitutionUuid,
+
+                Regon = string.IsNullOrWhiteSpace(i.Regon) ? null : Regon.Parse(i.Regon).To14SCharacters(),
+                Nip = string.IsNullOrWhiteSpace(i.Nip) ? null : Nip.Parse(i.Nip).Value,
+                Krs = string.IsNullOrWhiteSpace(i.Krs) ? null : Krs.Parse(i.Krs).Value,
+
+                StartDate = i.IStartDt,
+                LiquidationStartDate = i.ILiqStartDt,
+                LiquidationDate = i.ILiqDt,
+
+                Www = i.Www,
+                Email = i.EMail,
+                Phone = i.Phone,
+
+                LastRefresh = i.LastRefresh,
+                SourceLastRefresh = i.LastRefresh,
+                DataSource = i.DataSource,
+
+                InstitutionKind = new DictionaryItem
+                {
+                    Code = i.IKindCd,
+                    Name = i.IKindName
+                },
+
+                Names = i.Names.Select(n => new NameSnapshot
+                {
+                    Name = n.Name,
+                    Date = n.DateFrom
+                }).ToList(),
+
+                Types = i.Types.Select(t => new TypeSnapshot
+                {
+                    Type = new DictionaryItem { Code = string.Empty, Name = t.TypeName },
+                    Date = t.DateFrom,
+                }).ToList(),
+
+                Statuses = i.Statuses.Select(s => new StatusSnapshot
+                {
+                    Status = new DictionaryItem { Code = string.Empty, Name = s.StatusName },
+                    Date = s.DateFrom,
+                }).ToList(),
+            });
+
+            await repository.CreateOrUpdateAsync(items);
+        }
+        catch (Exception ex)
         {
-            InstitutionUuid = i.InstitutionUuid,
-
-            Regon = string.IsNullOrWhiteSpace(i.Regon) ? null : Regon.Parse(i.Regon).To14SCharacters(),
-            Nip = string.IsNullOrWhiteSpace(i.Nip) ? null : Nip.Parse(i.Nip).Value,
-            Krs = string.IsNullOrWhiteSpace(i.Krs) ? null : Krs.Parse(i.Krs).Value,
-
-            StartDate = i.IStartDt,
-            LiquidationStartDate = i.ILiqStartDt,
-            LiquidationDate = i.ILiqDt,
-
-            Www = i.Www,
-            Email = i.EMail,
-            Phone = i.Phone,
-
-            LastRefresh = i.LastRefresh,
-            SourceLastRefresh = i.LastRefresh,
-            DataSource = i.DataSource,
-
-            InstitutionKind = new DictionaryItem
-            {
-                Code = i.IKindCd,
-                Name = i.IKindName
-            },
-
-            Names = i.Names.Select(n => new NameSnapshot
-            {
-                Name = n.Name,
-                Date = n.DateFrom
-            }).ToList(),
-
-            Types = i.Types.Select(t => new TypeSnapshot
-            {
-                Type = new DictionaryItem { Code = string.Empty, Name = t.TypeName },
-                Date = t.DateFrom,
-            }).ToList(),
-
-            Statuses = i.Statuses.Select(s => new StatusSnapshot
-            {
-                Status = new DictionaryItem { Code = string.Empty, Name = s.StatusName },
-                Date = s.DateFrom,
-            }).ToList(),
-        });
-
-        await repository.CreateOrUpdateAsync(items);
+            await errorLogger.LogErrorAsync(ex);
+        }
     }
 }

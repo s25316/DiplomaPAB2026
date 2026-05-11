@@ -6,11 +6,8 @@ using static Base.Exceptions.ResourceException;
 
 namespace RADON.API.ExceptionHandlers;
 
-public class GlobalExceptionHandler(ILoggerFactory loggerFactory) : IExceptionHandler
+public class GlobalExceptionHandler : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> logger = loggerFactory.CreateLogger<GlobalExceptionHandler>();
-
-
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
         if (exception is OperationCanceledException or TaskCanceledException)
@@ -53,7 +50,6 @@ public class GlobalExceptionHandler(ILoggerFactory loggerFactory) : IExceptionHa
                 problemDetails.Title = ApiErrorDescription.InternalServerErrort_Title;
                 problemDetails.Detail = ApiErrorDescription.InternalServerErrort_Detail;
 
-                logger.LogError(exception, "BŁĄD 500: {Message}. Instance: {Path}", exception.Message, httpContext.Request.Path);
                 var errorLogger = httpContext.RequestServices.GetRequiredService<IErrorLogger>();
                 await errorLogger.LogErrorAsync(exception, traceIdentifier, cancellationToken);
                 break;

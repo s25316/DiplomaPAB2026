@@ -1,10 +1,13 @@
-﻿using RADON.Application.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using RADON.Application.Interfaces;
 using RADON.Database;
 using RADON.Database.Models;
 
 namespace RADON.Infrastructure.ErrorLoggers;
 
-public class ErrorLogger(RadonDbContext context) : IErrorLogger
+public class ErrorLogger(
+    ILoggerFactory loggerFactory,
+    RadonDbContext context) : IErrorLogger
 {
     public async Task LogErrorAsync(
         Exception exception,
@@ -21,5 +24,7 @@ public class ErrorLogger(RadonDbContext context) : IErrorLogger
         };
         await context.AddAsync(databaseError, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        var logger = loggerFactory.CreateLogger<Error>();
+        logger.LogError(exception, exception.Message);
     }
 }
