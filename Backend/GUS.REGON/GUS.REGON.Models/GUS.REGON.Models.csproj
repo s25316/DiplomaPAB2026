@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+	  <ProjectReference Include="..\GUS.REGON.Models.Descriptions\GUS.REGON.Models.Descriptions.csproj" />
+	</ItemGroup>
+
+	<Target Name="QueryParameter" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\GUS.REGON.Models.Descriptions\QueryParameter.xml" DestinationFolder=".\" SkipUnchangedFiles="true" />
+	</Target>
+
+	<Target Name="Response" BeforeTargets="BeforeBuild">
+		<Copy SourceFiles="..\GUS.REGON.Models.Descriptions\Response.xml" DestinationFolder="Responses" SkipUnchangedFiles="true" />
+	</Target>
+
+</Project>

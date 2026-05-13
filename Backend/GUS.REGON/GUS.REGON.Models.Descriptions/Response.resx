@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DictionaryItem" xml:space="preserve">
+    <value>Uniwersalna klasa reprezentująca element słownikowy systemu REGON. Składa się z unikalnego identyfikatora (kodu) oraz odpowiadającej mu nazwy opisowej, zgodnie z klasyfikacjami GUS. / A universal class representing a dictionary item of the REGON system. It consists of a unique identifier (code) and a corresponding descriptive name, according to GUS classifications.</value>
+  </data>
+  <data name="DictionaryItem_Code" xml:space="preserve">
+    <value>Klucz słownikowy (kod) identyfikujący daną pozycję w konkretnej klasyfikacji (np. '62.01.Z' dla PKD lub '14' dla województwa mazowieckiego). / Dictionary key (code) identifying a given position in a specific classification (e.g., '62.01.Z' for PKD or '14' for the Masovian Voivodeship).</value>
+  </data>
+  <data name="DictionaryItem_Nazwa" xml:space="preserve">
+    <value>Pełna nazwa opisowa przypisana do danego kodu w rejestrach urzędowych. / Full descriptive name assigned to a given code in official registers.</value>
+  </data>
+  <data name="Full" xml:space="preserve">
+    <value>Klasa reprezentująca pełny raport z systemu REGON dla danego podmiotu. Agreguje dane o statusie odpowiedzi, szczegółowe informacje o instytucji oraz klasyfikację PKD. / The class representing a full REGON report for a given entity. It aggregates data on response status, detailed institution information, and PKD classification.</value>
+  </data>
+  <data name="Full_HasValue" xml:space="preserve">
+    <value>Właściwość pomocnicza (techniczna) określająca, czy raport zawiera kompletne dane merytoryczne. Zwraca 'true' tylko dla statusu 'Istnieje', co gwarantuje dostępność obiektów Institution oraz Pkd. / A technical helper property determining if the report contains complete substantive data. Returns 'true' only for the 'Exists' status, guaranteeing the availability of Institution and Pkd objects.</value>
+  </data>
+  <data name="Full_Institution" xml:space="preserve">
+    <value>Szczegółowe dane identyfikacyjne i adresowe podmiotu (np. nazwa, NIP, adres siedziby). Pole niepuste tylko w przypadku odnalezienia aktywnych danych. / Detailed identification and address data of the entity (e.g., name, NIP, registered office address). Field is non-null only when active data is found.</value>
+  </data>
+  <data name="Full_Pkd" xml:space="preserve">
+    <value>Zestawienie kodów Polskiej Klasyfikacji Działalności przypisanych do podmiotu w rejestrze urzędowym. / A list of Polish Classification of Activities (PKD) codes assigned to the entity in the official register.</value>
+  </data>
+  <data name="Full_Status" xml:space="preserve">
+    <value>Status wyniku zapytania do bazy BIR (Baza Internetowa REGON). Informuje, czy podmiot został odnaleziony, czy wystąpił brak uprawnień lub inne zdarzenie systemowe. / The status of the BIR database (REGON Internet Database) query result. Informs whether the entity was found, if there was a lack of permissions, or another system event.</value>
+  </data>
+  <data name="Institution" xml:space="preserve">
+    <value>Klasa zawierająca szczegółowe dane instytucjonalne podmiotu gospodarki narodowej, obejmujące informacje adresowe oraz kluczowe daty dotyczące cyklu życia jednostki w rejestrze REGON. / The class containing detailed institutional data of a national economy entity, including address information and key dates regarding the entity's life cycle in the REGON register.</value>
+  </data>
+  <data name="Institution_Address" xml:space="preserve">
+    <value>Dane o siedzibie podmiotu lub miejscu prowadzenia działalności. Struktura oparta jest na hierarchicznym podziale terytorialnym kraju (TERYT). / Data about the entity's registered office or place of business. The structure is based on the hierarchical territorial division of the country (TERYT).</value>
+  </data>
+  <data name="Institution_Address_Gmina" xml:space="preserve">
+    <value>Jednostka podziału terytorialnego stopnia gminnego. / Municipality-level territorial division unit.</value>
+  </data>
+  <data name="Institution_Address_KodPocztowy" xml:space="preserve">
+    <value>Kod pocztowy przypisany do adresu siedziby. / Postcode assigned to the registered office address.</value>
+  </data>
+  <data name="Institution_Address_Kraj" xml:space="preserve">
+    <value>Kod i nazwa kraju siedziby podmiotu. / Code and name of the country of the entity's registered office.</value>
+  </data>
+  <data name="Institution_Address_Miejscowosc" xml:space="preserve">
+    <value>Nazwa miejscowości siedziby podmiotu zgodna z rejestrem TERYT. / Name of the entity's seat locality according to the TERYT register.</value>
+  </data>
+  <data name="Institution_Address_MiejscowoscPoczty" xml:space="preserve">
+    <value>Nazwa miejscowości, w której znajduje się urząd pocztowy właściwy dla adresu. / Name of the town where the post office appropriate for the address is located.</value>
+  </data>
+  <data name="Institution_Address_NietypoweMiejsceLokalizacji" xml:space="preserve">
+    <value>Dodatkowy opis lokalizacji dla miejsc niestandardowych (np. "skrytka pocztowa", "peron"). / Additional location description for non-standard places (e.g., "PO box", "platform").</value>
+  </data>
+  <data name="Institution_Address_NumerLokalu" xml:space="preserve">
+    <value>Numer lokalu mieszkalnego lub użytkowego w obrębie nieruchomości. / Apartment or business premises number within the real estate.</value>
+  </data>
+  <data name="Institution_Address_NumerNieruchomosci" xml:space="preserve">
+    <value>Numer porządkowy nieruchomości (budynku). / Real estate (building) reference number.</value>
+  </data>
+  <data name="Institution_Address_Powiat" xml:space="preserve">
+    <value>Jednostka podziału terytorialnego stopnia powiatowego. / County-level territorial division unit.</value>
+  </data>
+  <data name="Institution_Address_Ulica" xml:space="preserve">
+    <value>Nazwa ulicy (jeśli występuje w danej miejscowości) wraz z kodem z katalogu ulic ULIC. / Street name (if applicable) with a code from the ULIC street catalogue.</value>
+  </data>
+  <data name="Institution_Address_Wojewodztwo" xml:space="preserve">
+    <value>Jednostka podziału terytorialnego stopnia wojewódzkiego. / Voivodeship-level territorial division unit.</value>
+  </data>
+  <data name="Institution_Adres" xml:space="preserve">
+    <value>Struktura danych adresowych określająca fizyczną lokalizację siedziby podmiotu. Obejmuje pełną hierarchię terytorialną (kraj, województwo, powiat, gmina, miejscowość) oraz szczegółowe dane punktu adresowego (ulica, numer nieruchomości i lokalu) zgodnie z rejestrem TERYT. / Address data structure specifying the physical location of the entity's registered office. It includes the full territorial hierarchy (country, voivodeship, county, municipality, locality) and detailed address point data (street, property, and apartment number) according to the TERYT register.</value>
+  </data>
+  <data name="Institution_Dates" xml:space="preserve">
+    <value>Zbiór dat dokumentujących historię rejestrową podmiotu, od momentu powstania do ewentualnego skreślenia z rejestru. / A set of dates documenting the entity's registration history, from the moment of formation to possible removal from the register.</value>
+  </data>
+  <data name="Institution_Dates_DataPowstania" xml:space="preserve">
+    <value>Data faktycznego powstania podmiotu (np. data podpisania aktu notarialnego). / The date of the entity's actual formation.</value>
+  </data>
+  <data name="Institution_Dates_DataRozpoczecia" xml:space="preserve">
+    <value>Data rozpoczęcia działalności gospodarczej lub statutowej. / The date of commencement of economic or statutory activity.</value>
+  </data>
+  <data name="Institution_Dates_DataSkreslenia" xml:space="preserve">
+    <value>Data wykreślenia podmiotu z krajowego rejestru urzędowego REGON. / The date of removal of the entity from the REGON national official register.</value>
+  </data>
+  <data name="Institution_Dates_DataWpisu" xml:space="preserve">
+    <value>Data dokonania wpisu podmiotu do rejestru REGON. / The date the entity was entered into the REGON register.</value>
+  </data>
+  <data name="Institution_Dates_DataWpisuDoRejestruEwidencji" xml:space="preserve">
+    <value>Data wpisu do rejestru macierzystego (np. KRS, CEIDG lub innego rejestru branżowego). / The date of entry in the parent register (e.g., KRS, CEIDG, or another industry register).</value>
+  </data>
+  <data name="Institution_Dates_DataWznowienia" xml:space="preserve">
+    <value>Data powrotu do aktywnego wykonywania działalności po okresie zawieszenia. / The date of resumption of active activity after a period of suspension.</value>
+  </data>
+  <data name="Institution_Dates_DataZakonczenia" xml:space="preserve">
+    <value>Data faktycznego zakończenia działalności przez podmiot. / The date of actual termination of activity by the entity.</value>
+  </data>
+  <data name="Institution_Dates_DataZawieszenia" xml:space="preserve">
+    <value>Data czasowego zaprzestania wykonywania działalności. / The date of temporary suspension of activity.</value>
+  </data>
+  <data name="Institution_Dates_DataZmiany" xml:space="preserve">
+    <value>Data ostatniej istotnej aktualizacji danych podmiotu w rejestrze. / The date of the last significant update of the entity's data in the register.</value>
+  </data>
+  <data name="Institution_Daty" xml:space="preserve">
+    <value>Zestaw kluczowych dat dotyczących cyklu życia podmiotu w rejestrach państwowych. / A set of key dates regarding the entity's life cycle in state registers.</value>
+  </data>
+  <data name="Institution_Dzialalnosci" xml:space="preserve">
+    <value>Opisowe zestawienie rodzajów działalności lub dodatkowe informacje o profilu jednostki. / Descriptive summary of activities or additional information about the entity's profile.</value>
+  </data>
+  <data name="Institution_FormaFinansowania" xml:space="preserve">
+    <value>Określenie sposobu finansowania działalności podmiotu (np. jednostka budżetowa, samofinansowanie). / Specification of the entity's financing method (e.g., budgetary unit).</value>
+  </data>
+  <data name="Institution_FormaWlasnosci" xml:space="preserve">
+    <value>Struktura własnościowa podmiotu (np. własność prywatna krajowa, własność skarbu państwa, własność zagraniczna). / The ownership structure of the entity (e.g., domestic private ownership, state treasury ownership).</value>
+  </data>
+  <data name="Institution_Nazwa" xml:space="preserve">
+    <value>Pełna nazwa podmiotu gospodarki narodowej zarejestrowana w systemie REGON. / Full name of the national economy entity registered in the REGON system.</value>
+  </data>
+  <data name="Institution_NazwaSkrocona" xml:space="preserve">
+    <value>Skrócona nazwa podmiotu (jeśli została zgłoszona i występuje w rejestrze). / Shortened name of the entity (if provided and present in the register).</value>
+  </data>
+  <data name="Institution_NumerwRejestrzeEwidencji" xml:space="preserve">
+    <value>Numer, pod którym podmiot widnieje w swoim rejestrze macierzystym (np. numer KRS dla spółek, numer w ewidencji szkół, itp.). / The number under which the entity is listed in its primary register (e.g., KRS number for companies).</value>
+  </data>
+  <data name="Institution_OrganRejestrowy" xml:space="preserve">
+    <value>Słownikowy opis organu, który dokonał wpisu podmiotu do rejestru macierzystego (np. Sąd Rejonowy, Ministerstwo). / Dictionary description of the body that entered the entity into the primary register.</value>
+  </data>
+  <data name="Institution_OrganZalozycielski" xml:space="preserve">
+    <value>Podmiot lub organ, który utworzył daną jednostkę (często występuje przy jednostkach budżetowych lub publicznych). / The entity or body that created the unit.</value>
+  </data>
+  <data name="Institution_PodstawowaFormaPrawna" xml:space="preserve">
+    <value>Główna kategoryzacja prawna podmiotu (np. osoba prawna, jednostka organizacyjna niemająca osobowości prawnej). / The main legal categorization of the entity.</value>
+  </data>
+  <data name="Institution_Regon" xml:space="preserve">
+    <value>Numer identyfikacyjny REGON (Krajowy Rejestr Urzędowy Podmiotów Gospodarki Narodowej). W zależności od typu jednostki może być 9-cyfrowy lub 14-cyfrowy (dla jednostek lokalnych). / REGON identification number. Depending on the entity type, it can be 9 or 14 digits long.</value>
+  </data>
+  <data name="Institution_RodzajRejestru" xml:space="preserve">
+    <value>Typ rejestru lub ewidencji, w której podmiot jest zarejestrowany poza systemem REGON. / Type of register or record in which the entity is registered outside the REGON system.</value>
+  </data>
+  <data name="Institution_SzczegolnaFormaPrawna" xml:space="preserve">
+    <value>Uszczegółowienie formy prawnej (np. spółka z ograniczoną odpowiedzialnością, fundacja, stowarzyszenie). / Specific legal form (e.g., limited liability company, foundation).</value>
+  </data>
+  <data name="Pkd" xml:space="preserve">
+    <value>Klasa reprezentuje zestawienie rodzajów działalności jednostki według Polskiej Klasyfikacji Działalności (PKD). Zawiera listę wpisów określających przeważający oraz poboczne kody działalności zarejestrowane w rejestrze REGON. / The class represents a set of entity activity types according to the Polish Classification of Activities (PKD). It includes a list of entries specifying the primary and secondary activity codes registered in the REGON register.</value>
+  </data>
+  <data name="Pkd_Item" xml:space="preserve">
+    <value>Klasa opisująca pojedynczy wpis w rejestrze działalności. Przechowuje informacje o konkretnym kodzie PKD oraz informację, czy stanowi on przeważający rodzaj działalności. / A class describing a single entry in the activity register. It stores information about a specific PKD code and whether it constitutes the predominant type of activity.</value>
+  </data>
+  <data name="Pkd_Items" xml:space="preserve">
+    <value>Kolekcja poszczególnych wpisów klasyfikacji PKD przypisanych do podmiotu. / Collection of individual PKD classification entries assigned to the entity.</value>
+  </data>
+  <data name="Pkd_Item_IsMain" xml:space="preserve">
+    <value>Znacznik określający przeważający rodzaj działalności. Wartość 'true' oznacza działalność przeważającą (kod główny), wartość 'false' oznacza działalność pozostałą. / Marker specifying the predominant type of activity. A value of 'true' indicates the predominant activity (main code), a value of 'false' indicates other activities.</value>
+  </data>
+  <data name="Pkd_Item_Pkd" xml:space="preserve">
+    <value>Szczegółowy kod PKD wraz z opisem (element słownikowy). Odpowiada wartościom z oficjalnego słownika Głównego Urzędu Statystycznego. / Detailed PKD code with a description (dictionary item). Corresponds to the values from the official dictionary of the Statistics Poland (GUS).</value>
+  </data>
+  <data name="Status_BrakUprawnien" xml:space="preserve">
+    <value>Brak uprawnień do raportu. </value>
+  </data>
+  <data name="Status_Istneje" xml:space="preserve">
+    <value>Znaleziono podmioty. </value>
+  </data>
+  <data name="Status_NieIstneje" xml:space="preserve">
+    <value>Nie znaleziono podmiotów. </value>
+  </data>
+</root>

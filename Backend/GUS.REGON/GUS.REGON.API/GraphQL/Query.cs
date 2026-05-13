@@ -1,16 +1,16 @@
 ﻿using GUS.REGON.Application.Interfaces;
-using GUS.REGON.Models.Requests;
+using GUS.REGON.Models;
+using GUS.REGON.Models.Responses;
 using HotChocolate;
-using RegonResult = GUS.REGON.Models.Responses.Result;
 
 namespace GUS.REGON.API.GraphQL;
 
 public class Query
 {
     [GraphQLName("getReports")]
-    public async Task<IEnumerable<RegonResult>> GetWojewodztwaAsync(
+    public async Task<IEnumerable<Report.Full>> GetWojewodztwaAsync(
         [Service] IReportRepository reportRepository,
-        InputParameters parameters,
+        QueryParameters parameters,
         CancellationToken cancellationToken
     ) => await reportRepository.GetAsync(parameters, cancellationToken);
 }

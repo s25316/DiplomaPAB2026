@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Update="QueryParameter.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>QueryParameter.resx</DependentUpon>
+        </Compile>
+        <Compile Update="Response.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Response.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="QueryParameter.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>QueryParameter.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+	  <EmbeddedResource Update="Response.resx">
+		  <Generator>PublicResXFileCodeGenerator</Generator>
+		  <LastGenOutput>Response.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="QueryParameter.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>QueryParameter.xml</LastGenOutput>
+    </None>
+    <None Update="QueryParameter.xml">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>QueryParameter.tt</DependentUpon>
+    </None>
+    <None Update="Response.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Response.xml</LastGenOutput>
+    </None>
+	  <None Update="Response.xml">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Response.tt</DependentUpon>
+	  </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>

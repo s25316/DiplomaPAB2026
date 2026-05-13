@@ -5,6 +5,7 @@
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>da5dfafd-040a-4ac7-948a-8079b11c9a39</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>

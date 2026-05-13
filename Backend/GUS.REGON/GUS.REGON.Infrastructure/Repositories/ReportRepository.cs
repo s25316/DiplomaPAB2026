@@ -1,14 +1,8 @@
-﻿//Ignore Spelling: Regon
-using Base.Models.ValueObjects.Regony;
-using GUS.REGON.Application.Interfaces;
+﻿using GUS.REGON.Application.Interfaces;
 using GUS.REGON.Database;
-using GUS.REGON.Database.Models;
 using GUS.REGON.Infrastructure.Configurations;
 using GUS.REGON.Infrastructure.Interfaces;
-using GUS.REGON.Infrastructure.QueryBuilders;
-using GUS.REGON.Models.Requests;
-using GUS.REGON.Models.Responses;
-using Microsoft.EntityFrameworkCore;
+using GUS.REGON.Models;
 using Microsoft.Extensions.Options;
 using ResponseReport = GUS.REGON.Models.Responses.Report;
 
@@ -20,6 +14,13 @@ public class ReportRepository(
     IQueryRepository queryRepository
 ) : IReportRepository
 {
+
+    public Task<IEnumerable<ResponseReport.Full>> GetAsync(QueryParameters parameters, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    /*
     public async Task<IEnumerable<Result>> GetAsync(InputParameters parameters, CancellationToken cancellationToken)
     {
         if (!parameters.Regons.Any())
@@ -181,5 +182,5 @@ public class ReportRepository(
                 Adres = address,
             },
         };
-    }
+    }*/
 }

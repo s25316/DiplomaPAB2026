@@ -61,6 +61,7 @@ public class RegonService : IDisposable, IAsyncDisposable
 
         services.AddSingleton<DaneSzukajOperation>();
         services.AddSingleton<RaportJednostkiOperation>();
+        services.AddSingleton<RaportPkdOperation>();
 
         // Add Strategies
         services.AddSingleton<RaportJednostkiStrategy>();
@@ -145,6 +146,44 @@ public class RegonService : IDisposable, IAsyncDisposable
             }
 
             var mappedResult = result.Value.First().MapToAdapted();
+            return RegonResult.Success(mappedResult);
+        }
+        finally
+        {
+            semaphore.Release();
+        }
+    }
+
+    public async Task<RegonResult<IEnumerable<RaportPkd>>> GetPkdJednostkiAsync(
+        Regon regon,
+        TypJednostki typ,
+        CancellationToken cancellationToken = default)
+    {
+        ObjectDisposedException.ThrowIf(disposed, this);
+
+        try
+        {
+            await semaphore.WaitAsync(cancellationToken);
+
+            var paportJednostkiOperation = provider.GetRequiredService<RaportPkdOperation>();
+            var raportPkdStarategy = provider.GetRequiredService<RaportPkdStarategy>();
+            var request = provider.GetRequiredService<Request.DanePobierzPelnyRaport>();
+
+            var reportResult = raportPkdStarategy.GetReport(typ);
+            if (reportResult.IsFailure)
+            {
+                return RegonResult.Failed<IEnumerable<RaportPkd>>(KomunikatKod.NieZnalezionoPodmiotów);
+            }
+
+            var requestEnvelope = request.Generate(regon, reportResult.Value.Value);
+            var result = await paportJednostkiOperation.ExecuteAsync(requestEnvelope, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return RegonResult.Failed<IEnumerable<RaportPkd>>(result.KomunikatKod, result.StatusUslugi);
+            }
+
+            var mappedResult = result.Value.Select(i => i.MapToAdapted());
             return RegonResult.Success(mappedResult);
         }
         finally

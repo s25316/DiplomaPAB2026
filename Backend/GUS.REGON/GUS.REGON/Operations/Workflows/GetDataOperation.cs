@@ -106,3 +106,16 @@ internal class RaportJednostkiOperation(
     private const string NAME = nameof(RaportJednostkiOperation);
     public override string Name => NAME;
 }
+
+internal class RaportPkdOperation(
+    IHttpClientFactory clientFactory,
+    ISessionManager sessionManager,
+    KomunikatKodOperation komunikatKodOperation
+) : GetDataOperation<RegonResponse.RaportPkd>(
+    clientFactory,
+    sessionManager,
+    komunikatKodOperation)
+{
+    private const string NAME = nameof(RaportJednostkiOperation);
+    public override string Name => NAME;
+}

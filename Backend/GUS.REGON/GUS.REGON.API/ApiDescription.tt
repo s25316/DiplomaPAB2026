@@ -1,0 +1,25 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Xml" #>
+<#@ import namespace="System.Xml" #>
+<#@ output extension=".xml" #>
+<docs>
+  <members>
+<#
+    // Ścieżka do Twojego pliku zasobów
+    string resxPath = Host.ResolvePath("ApiDescription.resx");
+    XmlDocument doc = new XmlDocument();
+    doc.Load(resxPath);
+
+    foreach (XmlNode node in doc.SelectNodes("//data"))
+    {
+        string name = node.Attributes["name"].Value;
+        string value = node.SelectSingleNode("value").InnerText;
+#>
+    <member name="<#= name #>">
+      <summary><#= value #></summary>
+    </member>
+<#
+    }
+#>
+  </members>
+</docs>

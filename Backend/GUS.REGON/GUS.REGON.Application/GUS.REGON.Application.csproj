@@ -17,8 +17,7 @@
 
 
 	<ItemGroup>
-	  <ProjectReference Include="..\GUS.REGON.Models.Requests\GUS.REGON.Models.Requests.csproj" />
-	  <ProjectReference Include="..\GUS.REGON.Models.Responses\GUS.REGON.Models.Responses.csproj" />
+	  <ProjectReference Include="..\GUS.REGON.Models\GUS.REGON.Models.csproj" />
 	</ItemGroup>
 	
 </Project>

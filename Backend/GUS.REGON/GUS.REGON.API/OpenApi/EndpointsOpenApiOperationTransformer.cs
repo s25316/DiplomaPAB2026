@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
-namespace RADON.API.OpenApi;
+namespace GUS.REGON.API.OpenApi;
 
 public class EndpointsOpenApiOperationTransformer : IOpenApiOperationTransformer
 {
     private const string API_DESCRIPTION_XML = "ApiDescription.xml";
-
 
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {

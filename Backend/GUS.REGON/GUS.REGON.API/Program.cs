@@ -1,6 +1,7 @@
 using AppAny.HotChocolate.FluentValidation;
 using Base.Models.ValueObjects.Regony;
 using GUS.REGON.API.GraphQL;
+using GUS.REGON.API.OpenApi;
 using GUS.REGON.Application;
 using GUS.REGON.Infrastructure;
 using Scalar.AspNetCore;
@@ -18,7 +19,14 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddProblemDetails();
-        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddOperationTransformer<QueryParametersOpenApiOperationTransformer>();
+            options.AddOperationTransformer<EndpointsOpenApiOperationTransformer>();
+
+            options.AddSchemaTransformer<ResponseTypeOpenApiSchemaTransformer>();
+            options.AddSchemaTransformer<EnumSchemaTransformer>();
+        });
 
         builder.Services
             .AddGraphQLServer()

@@ -40,6 +40,37 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\GUS.REGON.Infrastructure\GUS.REGON.Infrastructure.csproj" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <None Update="ApiDescription.tt">
+	    <Generator>TextTemplatingFileGenerator</Generator>
+	    <LastGenOutput>ApiDescription.xml</LastGenOutput>
+	  </None>
+	  <None Update="ApiDescription.xml">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ApiDescription.tt</DependentUpon>
+	  </None>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Compile Update="ApiDescription.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ApiDescription.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <EmbeddedResource Update="ApiDescription.resx">
+	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ApiDescription.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
 
 
 </Project>

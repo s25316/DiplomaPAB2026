@@ -13,6 +13,7 @@ public class EnumSchemaTransformer : IOpenApiSchemaTransformer
     private static readonly ConcurrentDictionary<Type, string> DescriptionCache = new();
     private static readonly ConcurrentDictionary<Type, List<JsonNode>> EnumValuesCache = new();
 
+
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         var type = context.JsonTypeInfo.Type;

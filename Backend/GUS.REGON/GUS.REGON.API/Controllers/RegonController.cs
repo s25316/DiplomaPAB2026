@@ -1,17 +1,21 @@
-﻿using GUS.REGON.Application.Interfaces;
-using GUS.REGON.Models.Requests;
+﻿using GUS.REGON.Models;
+using GUS.REGON.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GUS.REGON.API.Controllers;
 
 [Route("api")]
 [ApiController]
-public class RegonController(IReportRepository reportRepository) : ControllerBase
+public class RegonController : ControllerBase
 {
-    [HttpGet("reports")]
-    public async Task<IActionResult> GetAsync([FromQuery] InputParameters parameters, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(IEnumerable<Report.Full>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [HttpGet("institutions")]
+    public async Task<IActionResult> GetAsync(
+        [FromServices] RegonService regonService,
+        [FromQuery] QueryParameters parameters, CancellationToken cancellationToken)
     {
-        var items = await reportRepository.GetAsync(parameters, cancellationToken);
-        return Ok(items);
+        return Ok();
     }
 }
