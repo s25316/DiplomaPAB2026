@@ -50,6 +50,8 @@
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
 	    <DependentUpon>ApiDescription.tt</DependentUpon>
+		<!-- Kluczowe dla Scalara: upewnij się, że XML trafia do folderu bin -->
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 	

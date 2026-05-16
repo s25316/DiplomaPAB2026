@@ -25,6 +25,7 @@ public class ResponseTypeOpenApiSchemaTransformer : IOpenApiSchemaTransformer
             schema.Description = classDescription;
         }
 
+
         foreach (var property in type.GetProperties())
         {
             var displayAttr = property.GetCustomAttribute<DisplayAttribute>();
@@ -33,15 +34,17 @@ public class ResponseTypeOpenApiSchemaTransformer : IOpenApiSchemaTransformer
 
             string? descriptionText = displayAttr?.GetName() ?? descAttr?.Description;
 
-            if (!string.IsNullOrEmpty(descriptionText))
-            {
-                var jsonPropertyName = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
-                                       ?? JsonPropertyName(property.Name);
+            if (string.IsNullOrEmpty(descriptionText))
+                continue;
 
-                if (schema.Properties.TryGetValue(jsonPropertyName, out var openApiProperty))
-                {
-                    openApiProperty.Description = descriptionText;
-                }
+            var jsonPropertyName = property
+                .GetCustomAttribute<JsonPropertyNameAttribute>()?
+                .Name
+                ?? JsonPropertyName(property.Name);
+
+            if (schema.Properties.TryGetValue(jsonPropertyName, out var openApiProperty))
+            {
+                openApiProperty.Description = descriptionText;
             }
         }
     }

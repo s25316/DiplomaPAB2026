@@ -267,6 +267,12 @@
   <data name="Pkd_Item_Pkd" xml:space="preserve">
     <value>Szczegółowy kod PKD wraz z opisem (element słownikowy). Odpowiada wartościom z oficjalnego słownika Głównego Urzędu Statystycznego. / Detailed PKD code with a description (dictionary item). Corresponds to the values from the official dictionary of the Statistics Poland (GUS).</value>
   </data>
+  <data name="ServerTimeResponse" xml:space="preserve">
+    <value>Informacja o bieżącym czasie systemowym serwera. Używana do synchronizacji czasu między klientem a serwerem. / Information about the current system time of the server. Used for time synchronization between the client and the server.</value>
+  </data>
+  <data name="ServerTimeResponse_CurrentDateTime" xml:space="preserve">
+    <value>Bieżąca data i godzina serwera wraz z przesunięciem czasowym (ISO 8601). / Current server date and time with time zone offset (ISO 8601).</value>
+  </data>
   <data name="Status_BrakUprawnien" xml:space="preserve">
     <value>Brak uprawnień do raportu. </value>
   </data>

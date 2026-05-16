@@ -511,6 +511,24 @@ namespace GUS.REGON.Models.Descriptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Informacja o bieżącym czasie systemowym serwera. Używana do synchronizacji czasu między klientem a serwerem. / Information about the current system time of the server. Used for time synchronization between the client and the server..
+        /// </summary>
+        public static string ServerTimeResponse {
+            get {
+                return ResourceManager.GetString("ServerTimeResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bieżąca data i godzina serwera wraz z przesunięciem czasowym (ISO 8601). / Current server date and time with time zone offset (ISO 8601)..
+        /// </summary>
+        public static string ServerTimeResponse_CurrentDateTime {
+            get {
+                return ResourceManager.GetString("ServerTimeResponse_CurrentDateTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Brak uprawnień do raportu. .
         /// </summary>
         public static string Status_BrakUprawnien {

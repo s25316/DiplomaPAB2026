@@ -59,5 +59,41 @@ namespace GUS.REGON.API {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zwraca bieżący czas systemowy serwera w formacie ISO 8601, uwzględniając strefę czasową. Może być wykorzystany do synchronizacji operacji czasowych między klientem a systemem. / Returns the current system time of the server in ISO 8601 format, including the time zone offset. It can be used to synchronize time-sensitive operations between the client and the system..
+        /// </summary>
+        public static string GetCurrentTime_Description {
+            get {
+                return ResourceManager.GetString("GetCurrentTime_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pobiera aktualną datę i godzinę serwera. / Retrieves the current server date and time..
+        /// </summary>
+        public static string GetCurrentTime_Summary {
+            get {
+                return ResourceManager.GetString("GetCurrentTime_Summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a.
+        /// </summary>
+        public static string GetInstitutions_Description {
+            get {
+                return ResourceManager.GetString("GetInstitutions_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a.
+        /// </summary>
+        public static string GetInstitutions_Summary {
+            get {
+                return ResourceManager.GetString("GetInstitutions_Summary", resourceCulture);
+            }
+        }
     }
 }

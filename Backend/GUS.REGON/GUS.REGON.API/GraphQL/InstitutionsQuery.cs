@@ -2,12 +2,16 @@
 using GUS.REGON.Models;
 using GUS.REGON.Models.Responses;
 using HotChocolate;
+using HotChocolate.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace GUS.REGON.API.GraphQL;
 
-public class Query
+[ExtendObjectType(OperationTypeNames.Query)]
+public class InstitutionsQuery
 {
-    [GraphQLName("getReports")]
+    [Display(Name = nameof(ApiDescription.GetInstitutions_Summary), ResourceType = typeof(ApiDescription))]
+    [GraphQLName("getInstitutions")]
     public async Task<IEnumerable<Report.Full>> GetWojewodztwaAsync(
         [Service] IReportRepository reportRepository,
         QueryParameters parameters,

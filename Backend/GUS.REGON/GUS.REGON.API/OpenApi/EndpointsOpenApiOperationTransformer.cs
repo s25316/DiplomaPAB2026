@@ -7,6 +7,7 @@ public class EndpointsOpenApiOperationTransformer : IOpenApiOperationTransformer
 {
     private const string API_DESCRIPTION_XML = "ApiDescription.xml";
 
+
     public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         var xmlPath = Path.Combine(AppContext.BaseDirectory, API_DESCRIPTION_XML);

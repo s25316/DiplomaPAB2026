@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Reflection;
 using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
 
-
 namespace GUS.REGON.API.OpenApi;
 
 public class QueryParametersOpenApiOperationTransformer : IOpenApiOperationTransformer
@@ -20,22 +19,22 @@ public class QueryParametersOpenApiOperationTransformer : IOpenApiOperationTrans
                 .FirstOrDefault(p => string.Equals(p.Name, apiParam.Name, StringComparison.OrdinalIgnoreCase));
 
             var containerType = propMetadata?.ModelMetadata?.ContainerType;
-            if (containerType != null)
-            {
-                var prop = containerType.GetProperty(propMetadata!.ModelMetadata.PropertyName!);
-                if (prop != null)
-                {
-                    var displayAttr = prop.GetCustomAttribute<DisplayAttribute>();
-                    var descAttr = prop.GetCustomAttribute<DescriptionAttribute>();
+            if (containerType is null)
+                continue;
 
-                    string? description = displayAttr?.GetName() ?? descAttr?.Description;
+            var prop = containerType.GetProperty(propMetadata!.ModelMetadata.PropertyName!);
+            if (prop is null)
+                continue;
 
-                    if (!string.IsNullOrEmpty(description))
-                    {
-                        apiParam.Description = description;
-                    }
-                }
-            }
+            var displayAttr = prop.GetCustomAttribute<DisplayAttribute>();
+            var descAttr = prop.GetCustomAttribute<DescriptionAttribute>();
+
+            string? description = displayAttr?.GetName() ?? descAttr?.Description;
+
+            if (string.IsNullOrEmpty(description))
+                continue;
+
+            apiParam.Description = description;
         }
     }
 }

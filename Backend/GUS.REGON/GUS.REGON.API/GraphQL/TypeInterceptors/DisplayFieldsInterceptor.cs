@@ -3,7 +3,7 @@ using HotChocolate.Types.Descriptors.Definitions;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace RADON.API.GraphQL.TypeInterceptors;
+namespace GUS.REGON.API.GraphQL.TypeInterceptors;
 
 public class DisplayFieldsInterceptor : TypeInterceptor
 {

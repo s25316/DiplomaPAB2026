@@ -4,6 +4,7 @@ using GUS.REGON.API.GraphQL;
 using GUS.REGON.API.OpenApi;
 using GUS.REGON.Application;
 using GUS.REGON.Infrastructure;
+using HotChocolate.Types;
 using Scalar.AspNetCore;
 
 namespace GUS.REGON.API;
@@ -31,7 +32,9 @@ public class Program
         builder.Services
             .AddGraphQLServer()
             .AddFluentValidation()
-            .AddQueryType<Query>()
+            .AddQueryType(d => d.Name(OperationTypeNames.Query))
+            .AddTypeExtension<InstitutionsQuery>()
+            .AddTypeExtension<ServerQuery>()
             .BindRuntimeType<Regon, RegonScalar>();
 
         var app = builder.Build();
