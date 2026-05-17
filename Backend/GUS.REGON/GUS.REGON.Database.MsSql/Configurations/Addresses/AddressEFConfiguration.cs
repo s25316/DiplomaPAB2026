@@ -31,10 +31,10 @@ public class AddressEFConfiguration : IEntityTypeConfiguration<Address>
 
 
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithOne(k => k.Address)
             .HasForeignKey(k => k.AddressId)
-            .HasConstraintName($"{nameof(Report)}_{nameof(Address)}_FK")
+            .HasConstraintName($"{nameof(Institution)}_{nameof(Address)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

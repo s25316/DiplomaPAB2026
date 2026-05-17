@@ -2,8 +2,8 @@
 
 public class OrganZalozycielski
 {
-    public string OrganZalozycielskiId { get; set; } = null!;
+    public string OrganZalozycielskiCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<Report> Reports { get; set; } = [];
+    public virtual ICollection<Institution> Institutions { get; set; } = [];
 }

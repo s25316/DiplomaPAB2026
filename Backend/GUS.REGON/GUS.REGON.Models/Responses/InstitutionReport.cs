@@ -156,5 +156,9 @@ public sealed partial class Report
         /// <include file='Response.xml' path='docs/members/member[@name="Institution_FormaWlasnosci"]/summary' />
         [Display(Name = nameof(Response.Institution_FormaWlasnosci), ResourceType = typeof(Response))]
         public required DictionaryItem? FormaWlasnosci { get; init; } = null;
+
+        /// <include file='Response.xml' path='docs/members/member[@name="Institution_TypJednostki"]/summary' />
+        [Display(Name = nameof(Response.Institution_TypJednostki), ResourceType = typeof(Response))]
+        public required DictionaryItem TypJednostki { get; init; }
     }
 }

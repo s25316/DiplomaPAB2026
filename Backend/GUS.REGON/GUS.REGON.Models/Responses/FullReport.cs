@@ -17,6 +17,9 @@ public sealed partial class Report
         [JsonIgnore]
         public bool HasValue => Status == Status.Istneje;
 
+        /// <include file='Response.xml' path='docs/members/member[@name="Institution_Regon"]/summary' />
+        [Display(Name = nameof(Response.Institution_Regon), ResourceType = typeof(Response))]
+        public required string Regon { get; init; }
 
         /// <include file='Response.xml' path='docs/members/member[@name="Full_Status"]/summary' />
         [Display(Name = nameof(Response.Full_Status), ResourceType = typeof(Response))]

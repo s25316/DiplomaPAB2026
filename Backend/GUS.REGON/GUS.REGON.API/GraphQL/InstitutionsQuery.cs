@@ -13,8 +13,8 @@ public class InstitutionsQuery
     [Display(Name = nameof(ApiDescription.GetInstitutions_Summary), ResourceType = typeof(ApiDescription))]
     [GraphQLName("getInstitutions")]
     public async Task<IEnumerable<Report.Full>> GetWojewodztwaAsync(
-        [Service] IReportRepository reportRepository,
+        [Service] IRequestRepository repository,
         QueryParameters parameters,
         CancellationToken cancellationToken
-    ) => await reportRepository.GetAsync(parameters, cancellationToken);
+    ) => await repository.GetAsync(parameters, cancellationToken);
 }

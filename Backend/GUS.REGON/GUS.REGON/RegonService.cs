@@ -18,7 +18,30 @@ using Microsoft.Extensions.Logging;
 
 namespace GUS.REGON;
 
-public class RegonService : IDisposable, IAsyncDisposable
+public interface IRegonService : IDisposable, IAsyncDisposable
+{
+    Task<RegonResult<IEnumerable<DaneSzukaj>>> GetDaneSzukajAsync(
+        Regon regon,
+        CancellationToken cancellationToken = default);
+
+    Task<RegonResult<RaportJednostki>> GetRaportJednostkiAsync(
+        Regon regon,
+        TypJednostki typ,
+        int? silosId,
+        CancellationToken cancellationToken = default);
+
+    Task<RegonResult<IEnumerable<RaportPkd>>> GetPkdJednostkiAsync(
+        Regon regon,
+        TypJednostki typ,
+        CancellationToken cancellationToken = default);
+
+    Task<string> GetKomunikatUslugiAsync(CancellationToken cancellationToken = default);
+    Task<StatusUslugi> GetStatusUslugiAsync(CancellationToken cancellationToken = default);
+    Task<RegonBaseResult<StatusSesji>> GetStatusSesjiAsync(CancellationToken cancellationToken = default);
+    Task<RegonBaseResult<DateOnly>> GetStanDanychAsync(CancellationToken cancellationToken = default);
+}
+
+public class RegonService : IRegonService
 {
     private readonly ILogger<RegonService> logger;
     private readonly IServiceProvider provider;

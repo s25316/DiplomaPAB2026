@@ -466,6 +466,15 @@ namespace GUS.REGON.Models.Descriptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Klasyfikacja słownikowa określająca typ strukturalny jednostki w rejestrze REGON (np. jednostka prawna, jednostka lokalna). Pozwala na identyfikację stopnia samodzielności i roli podmiotu w strukturze gospodarczej kraju. / Dictionary classification specifying the structural type of the entity in the REGON register (e.g., legal entity, local unit). It allows for identification of the autonomy degree and the entity&apos;s role in the country&apos;s economic structure..
+        /// </summary>
+        public static string Institution_TypJednostki {
+            get {
+                return ResourceManager.GetString("Institution_TypJednostki", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Klasa reprezentuje zestawienie rodzajów działalności jednostki według Polskiej Klasyfikacji Działalności (PKD). Zawiera listę wpisów określających przeważający oraz poboczne kody działalności zarejestrowane w rejestrze REGON. / The class represents a set of entity activity types according to the Polish Classification of Activities (PKD). It includes a list of entries specifying the primary and secondary activity codes registered in the REGON register..
         /// </summary>
         public static string Pkd {

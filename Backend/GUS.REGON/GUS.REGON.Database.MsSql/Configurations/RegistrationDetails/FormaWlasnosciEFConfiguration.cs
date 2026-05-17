@@ -11,7 +11,7 @@ public class FormaWlasnosciEFConfiguration : IEntityTypeConfiguration<FormaWlasn
     {
         builder.ToTable(nameof(FormaWlasnosci));
         builder
-            .HasKey(k => k.FormaWlasnosciId)
+            .HasKey(k => k.FormaWlasnosciCode)
             .HasName($"{nameof(FormaWlasnosci)}_PK");
         builder
             .Property(p => p.Name)
@@ -19,10 +19,10 @@ public class FormaWlasnosciEFConfiguration : IEntityTypeConfiguration<FormaWlasn
 
 
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithOne(k => k.FormaWlasnosci)
-            .HasForeignKey(k => k.FormaWlasnosciId)
-            .HasConstraintName($"{nameof(Report)}_{nameof(FormaWlasnosci)}_FK")
+            .HasForeignKey(k => k.FormaWlasnosciCode)
+            .HasConstraintName($"{nameof(Institution)}_{nameof(FormaWlasnosci)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

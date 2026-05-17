@@ -33,14 +33,14 @@ public class GlobalExceptionHandler : IExceptionHandler
             case InvalidData invalidDataException:
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 problemDetails.Status = (int)HttpStatusCode.BadRequest;
-                problemDetails.Title = ApiErrorDescription.InvalidDatat_Title;
+                problemDetails.Title = ApiErrorDescription.InvalidData_Title;
                 problemDetails.Detail = invalidDataException.Message;
                 break;
 
             case IncorrectFormat incorrectFormatException:
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 problemDetails.Status = (int)HttpStatusCode.BadRequest;
-                problemDetails.Title = ApiErrorDescription.InvalidDatat_Title;
+                problemDetails.Title = ApiErrorDescription.InvalidData_Title;
                 problemDetails.Detail = incorrectFormatException.Message;
                 break;
 

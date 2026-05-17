@@ -2,8 +2,8 @@
 
 public class SzczegolnaFormaPrawna
 {
-    public string SzczegolnaFormaPrawnaId { get; set; } = null!;
+    public string SzczegolnaFormaPrawnaCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<Report> Reports { get; set; } = [];
+    public virtual ICollection<Institution> Institutions { get; set; } = [];
 }

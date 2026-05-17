@@ -5,5 +5,5 @@ public class Website
     public Guid WebsiteId { get; set; }
     public required string Value { get; set; } = null!;
 
-    public virtual ICollection<Report> Reports { get; set; } = [];
+    public virtual ICollection<Institution> Institutions { get; set; } = [];
 }

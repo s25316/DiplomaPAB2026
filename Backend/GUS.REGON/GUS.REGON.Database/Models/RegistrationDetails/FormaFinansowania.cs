@@ -2,8 +2,8 @@
 
 public class FormaFinansowania
 {
-    public string FormaFinansowaniaId { get; set; } = null!;
+    public string FormaFinansowaniaCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
-    public virtual ICollection<Report> Reports { get; set; } = [];
+    public virtual ICollection<Institution> Institutions { get; set; } = [];
 }

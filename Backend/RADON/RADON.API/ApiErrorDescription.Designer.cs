@@ -61,7 +61,7 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Niepoprawne dane wejściowe..
+        ///   Looks up a localized string similar to Niepoprawne dane wejściowe. / Incorrect input data..
         /// </summary>
         public static string IncorrectFormat_Title {
             get {
@@ -70,7 +70,7 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Błąd wewnętrzny serwera..
+        ///   Looks up a localized string similar to Błąd wewnętrzny serwera. / Internal server error..
         /// </summary>
         public static string InternalServerErrort_Detail {
             get {
@@ -79,7 +79,7 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wystąpił nieoczekiwany błąd. Kod błędu: 500..
+        ///   Looks up a localized string similar to Wystąpił nieoczekiwany błąd. Kod błędu: 500. / An unexpected error occurred. Error code: 500..
         /// </summary>
         public static string InternalServerErrort_Title {
             get {
@@ -88,11 +88,11 @@ namespace RADON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Niepoprawny format danych..
+        ///   Looks up a localized string similar to Niepoprawny format danych. / Invalid data format..
         /// </summary>
-        public static string InvalidDatat_Title {
+        public static string InvalidData_Title {
             get {
-                return ResourceManager.GetString("InvalidDatat_Title", resourceCulture);
+                return ResourceManager.GetString("InvalidData_Title", resourceCulture);
             }
         }
     }

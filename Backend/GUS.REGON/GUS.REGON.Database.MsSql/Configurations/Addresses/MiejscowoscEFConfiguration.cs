@@ -10,7 +10,7 @@ public class MiejscowoscEFConfiguration : IEntityTypeConfiguration<Miejscowosc>
     {
         builder.ToTable(nameof(Miejscowosc));
         builder
-            .HasKey(k => k.MiejscowoscId)
+            .HasKey(k => k.MiejscowoscCode)
             .HasName($"{nameof(Miejscowosc)}_PK");
         builder
             .Property(p => p.Name)
@@ -20,7 +20,7 @@ public class MiejscowoscEFConfiguration : IEntityTypeConfiguration<Miejscowosc>
         builder
             .HasMany(k => k.Addresses)
             .WithOne(k => k.Miejscowosc)
-            .HasForeignKey(k => k.MiejscowoscId)
+            .HasForeignKey(k => k.MiejscowoscCode)
             .HasConstraintName($"{nameof(Address)}_{nameof(Miejscowosc)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

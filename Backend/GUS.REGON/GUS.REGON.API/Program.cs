@@ -1,5 +1,6 @@
 using AppAny.HotChocolate.FluentValidation;
 using Base.Models.ValueObjects.Regony;
+using GUS.REGON.API.ExceptionHandlers;
 using GUS.REGON.API.GraphQL;
 using GUS.REGON.API.OpenApi;
 using GUS.REGON.Application;
@@ -14,6 +15,9 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddLogging();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
         builder.Services.AddApplicationConfiguration();
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);

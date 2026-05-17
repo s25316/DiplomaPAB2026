@@ -10,7 +10,7 @@ internal class GminaEFConfiguration : IEntityTypeConfiguration<Gmina>
     {
         builder.ToTable(nameof(Gmina));
         builder
-            .HasKey(k => k.GminaId)
+            .HasKey(k => k.GminaCode)
             .HasName($"{nameof(Gmina)}_PK");
         builder
             .Property(p => p.Name)
@@ -20,7 +20,7 @@ internal class GminaEFConfiguration : IEntityTypeConfiguration<Gmina>
         builder
             .HasMany(k => k.Addresses)
             .WithOne(k => k.Gmina)
-            .HasForeignKey(k => k.GminaId)
+            .HasForeignKey(k => k.GminaCode)
             .HasConstraintName($"{nameof(Address)}_{nameof(Gmina)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

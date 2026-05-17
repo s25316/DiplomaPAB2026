@@ -79,7 +79,7 @@ namespace GUS.REGON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a.
+        ///   Looks up a localized string similar to Endpoint umożliwia przeszukiwanie i pobieranie danych o instytucjach zarejestrowanych w systemie. Zwracany raport (`Report.Full`) zawiera podstawowe dane identyfikacyjne oraz adresowe instytucji (z pominięciem danych kontaktowych, takich jak numer telefonu czy adres e-mail) oraz pełny wykaz przypisanych do podmiotu kodów Polskiej Klasyfikacji Działalności (PKD), włączając w to przeważający rodzaj działalności. / The endpoint allows searching and retrieving data on institutions registered in the system. The  [rest of string was truncated]&quot;;.
         /// </summary>
         public static string GetInstitutions_Description {
             get {
@@ -88,7 +88,7 @@ namespace GUS.REGON.API {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to a.
+        ///   Looks up a localized string similar to Pobiera listę raportów dla instytucji gospodarki narodowej wraz z ich pełną klasyfikacją PKD, na podstawie przekazanych kryteriów filtrowania. / Retrieves a list of reports for national economy institutions along with their full PKD classification, based on the provided filtering criteria..
         /// </summary>
         public static string GetInstitutions_Summary {
             get {

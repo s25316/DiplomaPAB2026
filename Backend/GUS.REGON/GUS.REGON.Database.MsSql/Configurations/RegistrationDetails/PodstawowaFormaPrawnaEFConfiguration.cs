@@ -11,7 +11,7 @@ public class PodstawowaFormaPrawnaEFConfiguration : IEntityTypeConfiguration<Pod
     {
         builder.ToTable(nameof(PodstawowaFormaPrawna));
         builder
-            .HasKey(k => k.PodstawowaFormaPrawnaId)
+            .HasKey(k => k.PodstawowaFormaPrawnaCode)
             .HasName($"{nameof(PodstawowaFormaPrawna)}_PK");
         builder
             .Property(p => p.Name)
@@ -19,10 +19,10 @@ public class PodstawowaFormaPrawnaEFConfiguration : IEntityTypeConfiguration<Pod
 
 
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithOne(k => k.PodstawowaFormaPrawna)
-            .HasForeignKey(k => k.PodstawowaFormaPrawnaId)
-            .HasConstraintName($"{nameof(Report)}_{nameof(PodstawowaFormaPrawna)}_FK")
+            .HasForeignKey(k => k.PodstawowaFormaPrawnaCode)
+            .HasConstraintName($"{nameof(Institution)}_{nameof(PodstawowaFormaPrawna)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

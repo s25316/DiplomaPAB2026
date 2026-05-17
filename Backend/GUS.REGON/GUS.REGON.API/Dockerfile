@@ -1,29 +1,46 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+# ==========================================
+# Etap 1: Środowisko uruchomieniowe (Runtime)
+# ==========================================
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# ==========================================
+# Etap 2: Kompilacja i budowanie (Build)
+# ==========================================
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["GUS.REGON.API/GUS.REGON.API.csproj", "GUS.REGON.API/"]
-RUN dotnet restore "./GUS.REGON.API/GUS.REGON.API.csproj"
-COPY . .
-WORKDIR "/src/GUS.REGON.API"
-RUN dotnet build "./GUS.REGON.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Kopiowanie plików definicji pakietów (jeśli używasz Central Package Management)
+COPY ["Directory.Packages.props", "./"]
+
+# Kopiowanie pliku projektu z zachowaniem struktury folderów
+COPY ["GUS.REGON/GUS.REGON.API/GUS.REGON.API.csproj", "GUS.REGON/GUS.REGON.API/"]
+
+# Przywracanie zależności (Nuget restore)
+RUN dotnet restore "GUS.REGON/GUS.REGON.API/GUS.REGON.API.csproj"
+
+# Kopiowanie całej reszty kodu źródłowego
+COPY . .
+
+# Zmiana katalogu na folder projektu i budowanie aplikacji
+WORKDIR "/src/GUS.REGON/GUS.REGON.API"
+RUN dotnet build "GUS.REGON.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# ==========================================
+# Etap 3: Publikacja aplikacji (Publish)
+# ==========================================
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./GUS.REGON.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Publikujemy projekt z bieżącego WORKDIR (czyli kropka ".")
+RUN dotnet publish . -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# ==========================================
+# Etap 4: Obraz końcowy (Final production)
+# ==========================================
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

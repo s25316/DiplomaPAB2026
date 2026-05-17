@@ -21,17 +21,17 @@ public class PhoneNumberEFConfiguration : IEntityTypeConfiguration<PhoneNumber>
             .HasMaxLength(int.MaxValue);
 
 
-        var tableName = $"{nameof(Report)}{nameof(PhoneNumber)}";
+        var tableName = $"{nameof(Institution)}{nameof(PhoneNumber)}";
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithMany(k => k.PhoneNumbers)
             .UsingEntity<Dictionary<string, object>>(
                 tableName,
                 l => l
-                .HasOne<Report>()
+                .HasOne<Institution>()
                 .WithMany()
-                .HasForeignKey($"{nameof(Report.Regon)}")
-                .HasConstraintName($"{tableName}_{nameof(Report)}_FK")
+                .HasForeignKey($"{nameof(Institution.Regon)}")
+                .HasConstraintName($"{tableName}_{nameof(Institution)}_FK")
                 .OnDelete(DeleteBehavior.Cascade),
                 r => r
                 .HasOne<PhoneNumber>()

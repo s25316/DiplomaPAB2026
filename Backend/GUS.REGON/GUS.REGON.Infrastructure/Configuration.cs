@@ -4,7 +4,8 @@ using GUS.REGON.Database;
 using GUS.REGON.Database.MsSql;
 using GUS.REGON.Extensions;
 using GUS.REGON.Infrastructure.Configurations;
-using GUS.REGON.Infrastructure.Interfaces;
+using GUS.REGON.Infrastructure.ErrorLoggers;
+using GUS.REGON.Infrastructure.QueryBuilders;
 using GUS.REGON.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,10 +37,11 @@ public static class Configuration
             c.UseSqlServer(connectionString);
         });
 
+        services.AddTransient<IErrorLogger, ErrorLogger>();
+        services.AddTransient<IRequestRepository, RequestRepository>();
 
-        services.AddTransient<IReportRepository, ReportRepository>();
-        services.AddTransient<IAddressRepository, AddressRepository>();
-        services.AddTransient<IQueryRepository, QueryRepository>();
+        // --- QUERY BUILDERS ---
+        services.AddTransient<RequestQueryBuilder>();
 
         return services;
     }

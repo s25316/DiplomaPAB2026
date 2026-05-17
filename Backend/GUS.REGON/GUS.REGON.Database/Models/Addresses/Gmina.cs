@@ -2,7 +2,7 @@
 
 public class Gmina
 {
-    public string GminaId { get; set; } = null!;
+    public string GminaCode { get; set; } = null!;
     public string Name { get; set; } = null!;
 
     public virtual ICollection<Address> Addresses { get; set; } = [];

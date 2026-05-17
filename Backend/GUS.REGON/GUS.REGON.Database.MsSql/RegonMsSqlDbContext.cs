@@ -1,10 +1,12 @@
 ﻿using GUS.REGON.Database.Models;
 using GUS.REGON.Database.Models.Addresses;
 using GUS.REGON.Database.Models.Contacts;
+using GUS.REGON.Database.Models.Pkds;
 using GUS.REGON.Database.Models.RegistrationDetails;
 using GUS.REGON.Database.MsSql.Configurations;
 using GUS.REGON.Database.MsSql.Configurations.Addresses;
 using GUS.REGON.Database.MsSql.Configurations.Contacts;
+using GUS.REGON.Database.MsSql.Configurations.Pkds;
 using GUS.REGON.Database.MsSql.Configurations.RegistrationDetails;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,7 @@ dotnet tool install --global dotnet-ef
 
 dotnet add GUS.REGON.Database.MsSql package Microsoft.EntityFrameworkCore.Design
 
-dotnet ef migrations add Hand `
+dotnet ef migrations add First `
   --project GUS.REGON.Database.MsSql `
   --startup-project GUS.REGON.API `
   --context RegonMsSqlDbContext `
@@ -35,8 +37,10 @@ public class RegonMsSqlDbContext(DbContextOptions options) : RegonDbContext(opti
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration<Query>(new QueryEFConfiguration());
-        modelBuilder.ApplyConfiguration<Report>(new ReportEFConfiguration());
+        modelBuilder.ApplyConfiguration<Error>(new ErrorEFConfiguration());
+        modelBuilder.ApplyConfiguration<Request>(new RequestEFConfiguration());
+        modelBuilder.ApplyConfiguration<RequestStatus>(new RequestStatusEFConfiguration());
+        modelBuilder.ApplyConfiguration<Institution>(new InstitutionEFConfiguration());
         modelBuilder.ApplyConfiguration<TypJednostki>(new TypJednostkiEFConfiguration());
 
         modelBuilder.ApplyConfiguration<Address>(new AddressEFConfiguration());
@@ -59,6 +63,9 @@ public class RegonMsSqlDbContext(DbContextOptions options) : RegonDbContext(opti
         modelBuilder.ApplyConfiguration<PhoneNumber>(new PhoneNumberEFConfiguration());
         modelBuilder.ApplyConfiguration<Website>(new WebsiteEFConfiguration());
         modelBuilder.ApplyConfiguration<Email>(new EmailEFConfiguration());
+
+        modelBuilder.ApplyConfiguration<Pkd>(new PkdEFConfiguration());
+        modelBuilder.ApplyConfiguration<InstitutionPkd>(new InstitutionPkdEFConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

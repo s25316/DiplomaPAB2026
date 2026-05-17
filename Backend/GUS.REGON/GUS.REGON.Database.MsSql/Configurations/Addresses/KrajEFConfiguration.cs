@@ -10,7 +10,7 @@ public class KrajEFConfiguration : IEntityTypeConfiguration<Kraj>
     {
         builder.ToTable(nameof(Kraj));
         builder
-            .HasKey(k => k.KrajId)
+            .HasKey(k => k.KrajCode)
             .HasName($"{nameof(Kraj)}_PK");
         builder
             .Property(p => p.Name)
@@ -20,7 +20,7 @@ public class KrajEFConfiguration : IEntityTypeConfiguration<Kraj>
         builder
             .HasMany(k => k.Addresses)
             .WithOne(k => k.Kraj)
-            .HasForeignKey(k => k.KrajId)
+            .HasForeignKey(k => k.KrajCode)
             .HasConstraintName($"{nameof(Address)}_{nameof(Kraj)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }

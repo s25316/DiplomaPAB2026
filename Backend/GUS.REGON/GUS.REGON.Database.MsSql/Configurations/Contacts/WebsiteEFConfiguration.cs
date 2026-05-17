@@ -21,17 +21,17 @@ public class WebsiteEFConfiguration : IEntityTypeConfiguration<Website>
             .HasMaxLength(int.MaxValue);
 
 
-        var tableName = $"{nameof(Report)}{nameof(Website)}";
+        var tableName = $"{nameof(Institution)}{nameof(Website)}";
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithMany(k => k.Websites)
             .UsingEntity<Dictionary<string, object>>(
                 tableName,
                 l => l
-                .HasOne<Report>()
+                .HasOne<Institution>()
                 .WithMany()
-                .HasForeignKey($"{nameof(Report.Regon)}")
-                .HasConstraintName($"{tableName}_{nameof(Report)}_FK")
+                .HasForeignKey($"{nameof(Institution.Regon)}")
+                .HasConstraintName($"{tableName}_{nameof(Institution)}_FK")
                 .OnDelete(DeleteBehavior.Cascade),
                 r => r
                 .HasOne<Website>()

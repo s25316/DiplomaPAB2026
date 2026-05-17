@@ -252,6 +252,9 @@
   <data name="Institution_SzczegolnaFormaPrawna" xml:space="preserve">
     <value>Uszczegółowienie formy prawnej (np. spółka z ograniczoną odpowiedzialnością, fundacja, stowarzyszenie). / Specific legal form (e.g., limited liability company, foundation).</value>
   </data>
+  <data name="Institution_TypJednostki" xml:space="preserve">
+    <value>Klasyfikacja słownikowa określająca typ strukturalny jednostki w rejestrze REGON (np. jednostka prawna, jednostka lokalna). Pozwala na identyfikację stopnia samodzielności i roli podmiotu w strukturze gospodarczej kraju. / Dictionary classification specifying the structural type of the entity in the REGON register (e.g., legal entity, local unit). It allows for identification of the autonomy degree and the entity's role in the country's economic structure.</value>
+  </data>
   <data name="Pkd" xml:space="preserve">
     <value>Klasa reprezentuje zestawienie rodzajów działalności jednostki według Polskiej Klasyfikacji Działalności (PKD). Zawiera listę wpisów określających przeważający oraz poboczne kody działalności zarejestrowane w rejestrze REGON. / The class represents a set of entity activity types according to the Polish Classification of Activities (PKD). It includes a list of entries specifying the primary and secondary activity codes registered in the REGON register.</value>
   </data>

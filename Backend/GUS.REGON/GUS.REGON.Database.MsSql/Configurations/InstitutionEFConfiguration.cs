@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GUS.REGON.Database.MsSql.Configurations;
 
-public class ReportEFConfiguration : IEntityTypeConfiguration<Report>
+public class InstitutionEFConfiguration : IEntityTypeConfiguration<Institution>
 {
-    public void Configure(EntityTypeBuilder<Report> builder)
+    public void Configure(EntityTypeBuilder<Institution> builder)
     {
-        builder.ToTable(nameof(Report));
+        builder.ToTable(nameof(Institution));
         builder
             .HasKey(k => k.Regon)
-            .HasName($"{nameof(Report)}_PK");
+            .HasName($"{nameof(Institution)}_PK");
         builder
             .Property(p => p.Nazwa)
             .HasMaxLength(int.MaxValue);
@@ -21,10 +21,10 @@ public class ReportEFConfiguration : IEntityTypeConfiguration<Report>
 
 
         builder
-            .HasOne(k => k.Query)
-            .WithOne(k => k.Report)
-            .HasForeignKey<Report>(k => k.Regon)
-            .HasConstraintName($"{nameof(Query)}_{nameof(Report)}_FK")
+            .HasOne(k => k.Request)
+            .WithOne(k => k.Institution)
+            .HasForeignKey<Institution>(k => k.Regon)
+            .HasConstraintName($"{nameof(Request)}_{nameof(Institution)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

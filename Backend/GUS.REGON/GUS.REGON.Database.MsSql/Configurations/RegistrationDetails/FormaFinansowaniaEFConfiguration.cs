@@ -11,7 +11,7 @@ public class FormaFinansowaniaEFConfiguration : IEntityTypeConfiguration<FormaFi
     {
         builder.ToTable(nameof(FormaFinansowania));
         builder
-            .HasKey(k => k.FormaFinansowaniaId)
+            .HasKey(k => k.FormaFinansowaniaCode)
             .HasName($"{nameof(FormaFinansowania)}_PK");
         builder
             .Property(p => p.Name)
@@ -19,10 +19,10 @@ public class FormaFinansowaniaEFConfiguration : IEntityTypeConfiguration<FormaFi
 
 
         builder
-            .HasMany(k => k.Reports)
+            .HasMany(k => k.Institutions)
             .WithOne(k => k.FormaFinansowania)
-            .HasForeignKey(k => k.FormaFinansowaniaId)
-            .HasConstraintName($"{nameof(Report)}_{nameof(FormaFinansowania)}_FK")
+            .HasForeignKey(k => k.FormaFinansowaniaCode)
+            .HasConstraintName($"{nameof(Institution)}_{nameof(FormaFinansowania)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

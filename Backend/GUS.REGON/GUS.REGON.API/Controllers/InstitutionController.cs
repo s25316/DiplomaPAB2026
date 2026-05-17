@@ -1,4 +1,5 @@
-﻿using GUS.REGON.Models;
+﻿using GUS.REGON.Application.Interfaces;
+using GUS.REGON.Models;
 using GUS.REGON.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,11 @@ public class InstitutionController : ControllerBase
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [HttpGet("institutions")]
     public async Task<IActionResult> GetInstitutionsAsync(
-        [FromServices] RegonService regonService,
-        [FromQuery] QueryParameters parameters, CancellationToken cancellationToken)
+        [FromServices] IRequestRepository repository,
+        [FromQuery] QueryParameters parameters,
+        CancellationToken cancellationToken)
     {
-        return Ok();
+        var requests = await repository.GetAsync(parameters, cancellationToken);
+        return Ok(requests);
     }
 }

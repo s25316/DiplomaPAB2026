@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Response = GUS.REGON.Models.Descriptions.Response;
 
 namespace GUS.REGON.Models.Responses;
 
 public sealed partial class Report
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Status
     {
         /// <include file='Response.xml' path='docs/members/member[@name="Status_Istneje"]/summary' />
