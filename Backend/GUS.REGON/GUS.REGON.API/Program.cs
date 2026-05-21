@@ -41,8 +41,16 @@ public class Program
             .AddTypeExtension<ServerQuery>()
             .BindRuntimeType<Regon, RegonScalar>();
 
-        var app = builder.Build();
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(p => p
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+        });
 
+        var app = builder.Build();
+        app.UseCors();
         app.UseExceptionHandler();
 
         app.MapGraphQL();
