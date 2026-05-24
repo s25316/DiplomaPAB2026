@@ -20,6 +20,14 @@ public sealed record Regon
         Value = value;
     }
 
+    public bool Equals(Regon? other)
+    {
+        if (other is null)
+            return false;
+
+        return this.GetHashCode() == other.GetHashCode();
+    }
+    public override int GetHashCode() => To14SCharacters().GetHashCode();
 
     public static implicit operator Regon(string value) => Parse(value);
     public static implicit operator string(Regon value) => value.Value;

@@ -1,84 +1,29 @@
+using Diploma.API.Configurators;
+using Microsoft.Extensions.Caching.Memory;
 using Scalar.AspNetCore;
-using Yarp.ReverseProxy.Configuration;
+using System.Net.Mime;
 
 namespace Diploma.API;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
+        var configurator = new OpenApiDocumentConfigurator()
+            .Add("radon", new Uri("http://localhost:8081"))
+            .Add("regon", new Uri("http://localhost:8082"));
+
         var builder = WebApplication.CreateBuilder(args);
 
-        // 1. POPRAWIONA KONFIGURACJA TRAS YARP
-        // Używamy catch-all w Match i przekazujemy przechwyconą końcówkę prosto do struktury /api/{remainder}
-        var routes = new[]
-        {
-            new RouteConfig
-            {
-                RouteId = "service1-route",
-                ClusterId = "service1-cluster",
-                // Zmieniamy wzorzec na standardowy catch-all
-                Match = new RouteMatch { Path = "/api/service1/{**catch-all}" },
-                Transforms = new[]
-                {
-                    new Dictionary<string, string>
-                    {
-                        // Wycinamy "/api/service1", zachowując oryginalne ukośniki w reszcie ścieżki
-                        { "PathRemovePrefix", "/api/service1" }
-                    },
-                    new Dictionary<string, string>
-                    {
-                        // Doklejamy na początku czysty przedrostek "/api", jeśli mikroserwis go wymaga
-                        { "PathPrefix", "/api" }
-                    }
-                }
-            },
-
-            new RouteConfig
-            {
-                RouteId = "service2-route",
-                ClusterId = "service2-cluster",
-                Match = new RouteMatch { Path = "/api/service2/{**catch-all}" },
-                Transforms = new[]
-                {
-                    new Dictionary<string, string>
-                    {
-                        { "PathRemovePrefix", "/api/service2" }
-                    },
-                    new Dictionary<string, string>
-                    {
-                        { "PathPrefix", "/api" }
-                    }
-                }
-            }
-        };
-
-        var clusters = new[]
-        {
-            new ClusterConfig
-            {
-                ClusterId = "service1-cluster",
-                Destinations = new Dictionary<string, DestinationConfig>
-                {
-                    { "destination1", new DestinationConfig { Address = "http://localhost:8081" } }
-                }
-            },
-            new ClusterConfig
-            {
-                ClusterId = "service2-cluster",
-                Destinations = new Dictionary<string, DestinationConfig>
-                {
-                    { "destination2", new DestinationConfig { Address = "http://localhost:8082" } }
-                }
-            }
-        };
-
-        builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
-        builder.Services.AddControllers();
         builder.Services.AddHttpClient();
+        builder.Services.AddMemoryCache();
         builder.Services.AddProblemDetails();
 
-        builder.Services.AddOpenApi("v1");
+        builder.Services.AddReverseProxy().LoadFromMemory(configurator.RouteConfigs, configurator.ClusterConfigs);
+        builder.Services.AddControllers();
+
+        builder.Services.AddOpenApi();
+        builder.Services.AddOpenApi("gateway");
 
         builder.Services.AddCors(options =>
         {
@@ -89,80 +34,49 @@ public class Program
         });
 
         var app = builder.Build();
-        app.UseCors();
-        app.UseExceptionHandler();
 
-        app.MapGet("test", () =>
+        app.MapGet("api/test", () =>
         {
             return Results.Ok();
         });
 
-        // [KOD GENEROWANIA /openapi/v1.json ZOSTAJE BEZ ZMIAN - JEST POPRAWNY]
-        app.MapGet("/openapi/v1.json", async (IHttpClientFactory factory) =>
+
+        app.MapGet("/openapi/gateway.json", async (IMemoryCache cache, HttpContext context) =>
         {
-            var client = factory.CreateClient();
+            var request = context.Request;
+            var baseHostUrl = $"{request.Scheme}://{request.Host}";
 
-            var json1 = await client.GetStringAsync("http://localhost:8081/openapi/v1.json");
-            var json2 = await client.GetStringAsync("http://localhost:8082/openapi/v1.json");
+            string cacheKey = $"openapi-gateway-{baseHostUrl.ToLowerInvariant()}";
 
-            var doc1 = System.Text.Json.Nodes.JsonNode.Parse(json1)!;
-            var doc2 = System.Text.Json.Nodes.JsonNode.Parse(json2)!;
-
-            string BuildGatewayPath(string servicePrefix, string originalPath)
+            string jsonResponse = cache.GetOrCreate(cacheKey, entry =>
             {
-                var cleanPath = originalPath.StartsWith("/api")
-                    ? originalPath.Substring(4)
-                    : originalPath;
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                entry.Priority = CacheItemPriority.High;
+                var document = configurator.Build(new Uri(baseHostUrl));
+                return document.ToJsonString();
+            }) ?? throw new InvalidOperationException($"{nameof(IMemoryCache)} not returns json.");
 
-                return $"/api/{servicePrefix}/{cleanPath.TrimStart('/')}";
-            }
+            return Results.Content(jsonResponse, MediaTypeNames.Application.Json);
+        }).ExcludeFromDescription();
 
-            var paths1 = doc1["paths"]?.AsObject();
-            if (paths1 != null)
-            {
-                var clonedPaths1 = new System.Text.Json.Nodes.JsonObject();
-                foreach (var property in paths1.ToList())
-                {
-                    paths1.Remove(property.Key);
-                    var gatewayPath = BuildGatewayPath("service1", property.Key);
-                    clonedPaths1[gatewayPath] = property.Value;
-                }
-                doc1["paths"] = clonedPaths1;
-            }
-
-            var paths2 = doc2["paths"]?.AsObject();
-            var mainPaths = doc1["paths"]?.AsObject();
-
-            if (paths2 != null && mainPaths != null)
-            {
-                foreach (var property in paths2.ToList())
-                {
-                    paths2.Remove(property.Key);
-                    var gatewayPath = BuildGatewayPath("service2", property.Key);
-                    mainPaths[gatewayPath] = property.Value;
-                }
-            }
-
-            doc1["servers"] = new System.Text.Json.Nodes.JsonArray(
-                new System.Text.Json.Nodes.JsonObject { ["url"] = "http://localhost:5092" }
-            );
-
-            return Results.Content(doc1.ToJsonString(), "application/json");
-        });
+        app.UseCors();
+        app.UseExceptionHandler();
 
         app.MapOpenApi();
 
-        app.MapScalarApiReference(options =>
+        app.MapScalarApiReference();
+        app.MapScalarApiReference("/scalar/gateway", options =>
         {
-            options.WithTitle("Główny API Gateway")
-                   .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+            options
+                .WithTitle("API Gateway")
+                .WithOpenApiRoutePattern("/openapi/gateway.json")
+                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
         });
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
 
-        // KRYTYCZNA POPRAWKA: Mapujemy middleware YARP, aby zaczął przetwarzać nieobsłużone ścieżki /api/...
         app.MapReverseProxy();
 
         app.Run();

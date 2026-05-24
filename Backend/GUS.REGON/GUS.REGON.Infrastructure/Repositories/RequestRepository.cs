@@ -96,6 +96,9 @@ public class RequestRepository(
         {
             var regonReport = regonResultsDictionary[regon];
             var databaseRequest = await CreateOrUpdateRequestAsync(regonReport, null, today, cancellationToken);
+
+            if (databaseRequest.Institution is not null)
+                await context.Institutions.AddAsync(databaseRequest.Institution);
             await context.Requests.AddAsync(databaseRequest, cancellationToken);
         }
 
@@ -508,7 +511,6 @@ public class RequestRepository(
         else
             database.Institution.Address = await CreateOrUpdateAddressAsync(report.Jednostki.Adres, database.Institution.Address, cancellationToken);
 
-        await context.Institutions.AddAsync(database.Institution);
         return database;
     }
 
