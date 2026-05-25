@@ -1,4 +1,7 @@
+using Base.Models.ValueObjects.Regony;
 using Diploma.API.Configurators;
+using Diploma.API.GraphQL;
+using HotChocolate.Types;
 using Microsoft.Extensions.Caching.Memory;
 using Scalar.AspNetCore;
 using System.Net.Mime;
@@ -7,7 +10,7 @@ namespace Diploma.API;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var configurator = new OpenApiDocumentConfigurator()
             .Add("radon", new Uri("http://localhost:8081"))
@@ -32,6 +35,13 @@ public class Program
                 .AllowAnyMethod()
                 .AllowAnyHeader());
         });
+
+
+        builder.Services
+            .AddGraphQLServer()
+            .AddQueryType(d => d.Name(OperationTypeNames.Query))
+            .AddTypeExtension<ServerQuery>()
+            .BindRuntimeType<Regon, RegonScalar>();
 
         var app = builder.Build();
 
@@ -62,8 +72,8 @@ public class Program
         app.UseCors();
         app.UseExceptionHandler();
 
+        app.MapGraphQL();
         app.MapOpenApi();
-
         app.MapScalarApiReference();
         app.MapScalarApiReference("/scalar/gateway", options =>
         {

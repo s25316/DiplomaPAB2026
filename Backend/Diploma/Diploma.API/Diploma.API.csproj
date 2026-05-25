@@ -20,5 +20,9 @@
   <ItemGroup>
     <PackageReference Include="Yarp.ReverseProxy" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+  </ItemGroup>
 
 </Project>
