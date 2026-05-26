@@ -55,7 +55,9 @@ public class Program
             .TryAddTypeInterceptor<DisplayQueryInterceptor>()
             .BindRuntimeType<Regon, RegonScalar>()
             .BindRuntimeType<Nip, NipScalar>()
-            .BindRuntimeType<Krs, KrsScalar>();
+            .BindRuntimeType<Krs, KrsScalar>()
+            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
+            .DisableIntrospection(false);
 
         builder.Services.AddCors(options =>
         {

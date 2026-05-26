@@ -39,7 +39,9 @@ public class Program
             .AddQueryType(d => d.Name(OperationTypeNames.Query))
             .AddTypeExtension<InstitutionsQuery>()
             .AddTypeExtension<ServerQuery>()
-            .BindRuntimeType<Regon, RegonScalar>();
+            .BindRuntimeType<Regon, RegonScalar>()
+            .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
+            .DisableIntrospection(false);
 
         builder.Services.AddCors(options =>
         {

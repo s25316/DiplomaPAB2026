@@ -5,6 +5,8 @@ using HotChocolate.Types;
 using Microsoft.Extensions.Caching.Memory;
 using Scalar.AspNetCore;
 using System.Net.Mime;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Transforms;
 
 namespace Diploma.API;
 
@@ -12,6 +14,53 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        // 2. Definicja YARP w kodzie C# z filtrowaniem po metodzie HTTP (POST)
+        var routes = new[]
+        {
+            new RouteConfig
+            {
+                RouteId = "s1-data-route",
+                ClusterId = "s1-cluster",
+                Match = new RouteMatch
+                {
+                    Path = "/graphql/s1",
+                    Methods = new[] { "POST" } // Przechwytuje TYLKO zapytania o dane/introspekcjê
+                }
+            }.WithTransformPathSet(new PathString("/graphql")), // <- POPRAWKA: Pewne i czyste nadpisanie œcie¿ki dla backendu
+
+            new RouteConfig
+            {
+                RouteId = "s2-data-route",
+                ClusterId = "s2-cluster",
+                Match = new RouteMatch
+                {
+                    Path = "/graphql/s2",
+                    Methods = new[] { "POST" }
+                }
+            }.WithTransformPathSet(new PathString("/graphql")) // <- POPRAWKA: Pewne i czyste nadpisanie œcie¿ki dla backendu
+        };
+
+        var clusters = new[]
+        {
+            new ClusterConfig
+            {
+                ClusterId = "s1-cluster",
+                Destinations = new Dictionary<string, DestinationConfig>
+                {
+                    { "s1-backend", new DestinationConfig { Address = "http://localhost:8081" } }
+                }
+            },
+            new ClusterConfig
+            {
+                ClusterId = "s2-cluster",
+                Destinations = new Dictionary<string, DestinationConfig>
+                {
+                    { "s2-backend", new DestinationConfig { Address = "http://localhost:8082" } }
+                }
+            }
+        };
+
+
         var configurator = new OpenApiDocumentConfigurator()
             .Add("radon", new Uri("http://localhost:8081"))
             .Add("regon", new Uri("http://localhost:8082"));
@@ -22,7 +71,9 @@ public class Program
         builder.Services.AddMemoryCache();
         builder.Services.AddProblemDetails();
 
-        builder.Services.AddReverseProxy().LoadFromMemory(configurator.RouteConfigs, configurator.ClusterConfigs);
+        builder.Services.AddReverseProxy().LoadFromMemory(
+            configurator.RouteConfigs.Concat(routes).ToList(),
+            configurator.ClusterConfigs.Concat(clusters).ToList());
         builder.Services.AddControllers();
 
         builder.Services.AddOpenApi();
@@ -73,6 +124,9 @@ public class Program
         app.UseExceptionHandler();
 
         app.MapGraphQL();
+        app.MapNitroApp("/graphql/s1", relativeRequestPath: "/graphql/s1");
+        app.MapNitroApp("/graphql/s2", relativeRequestPath: "/graphql/s2");
+
         app.MapOpenApi();
         app.MapScalarApiReference();
         app.MapScalarApiReference("/scalar/gateway", options =>
