@@ -2,6 +2,7 @@ using AppAny.HotChocolate.FluentValidation;
 using Base.Models.ValueObjects.Regony;
 using GUS.REGON.API.ExceptionHandlers;
 using GUS.REGON.API.GraphQL;
+using GUS.REGON.API.GraphQL.TypeInterceptors;
 using GUS.REGON.API.OpenApi;
 using GUS.REGON.Application;
 using GUS.REGON.Infrastructure;
@@ -40,6 +41,8 @@ public class Program
             .AddTypeExtension<InstitutionsQuery>()
             .AddTypeExtension<ServerQuery>()
             .BindRuntimeType<Regon, RegonScalar>()
+            .TryAddTypeInterceptor<DisplayFieldsInterceptor>()
+            .TryAddTypeInterceptor<DisplayQueryInterceptor>()
             .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = true)
             .DisableIntrospection(false);
 
