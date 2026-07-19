@@ -1,4 +1,18 @@
 <Solution>
-  <Project Path="../Base/Base.Models/Base.Models.csproj" />
-  <Project Path="Diploma.API/Diploma.API.csproj" />
+  <Folder Name="/Base/">
+    <Project Path="../Base/Base.Exceptions/Base.Exceptions.csproj" />
+    <Project Path="../Base/Base.Models/Base.Models.csproj" />
+  </Folder>
+  <Folder Name="/Database/">
+    <Project Path="Diploma.Database.MsSql/Diploma.Database.MsSql.csproj" Id="4a971cae-ce94-43ea-88d5-d4e314ec0d79" />
+    <Project Path="Diploma.Database/Diploma.Database.csproj" Id="fa1054eb-82a3-4db2-b6e9-b3f5df4cdc19" />
+  </Folder>
+  <Folder Name="/Layers/">
+    <Project Path="Diploma.API/Diploma.API.csproj" />
+    <Project Path="Diploma.Application/Diploma.Application.csproj" Id="111523e8-3456-4d00-992f-823f67b19848" />
+    <Project Path="Diploma.Domain/Diploma.Domain.csproj" Id="e450125d-cb9b-4343-b28b-31ff0dd149cf" />
+    <Project Path="Diploma.Infrastructure/Diploma.Infrastructure.csproj" Id="fa0ef67d-6412-4887-8fc1-733a8098a3df" />
+    <Project Path="Diploma.Models/Diploma.Models.csproj" Id="b3a4de4e-23e2-4735-9c00-5cadb94271fe" />
+    <Project Path="Diploma.Shared/Diploma.Shared.csproj" Id="85b94525-c9ce-4606-953e-9694cf842d18" />
+  </Folder>
 </Solution>

@@ -48,13 +48,8 @@ public class GatewayConfigurator
 
     private readonly List<GatewayConfiguration> configurations = [];
 
-    public IReadOnlyList<RouteConfig> RouteConfigs => configurations
-        .Select(i => i.RouteConfig)
-        .ToList();
-
-    public IReadOnlyList<ClusterConfig> ClusterConfigs => configurations
-        .Select(i => i.ClusterConfig)
-        .ToList();
+    public IEnumerable<RouteConfig> RouteConfigs => configurations.Select(i => i.RouteConfig);
+    public IEnumerable<ClusterConfig> ClusterConfigs => configurations.Select(i => i.ClusterConfig);
 
     public IEnumerable<GatewayOpenApiConfiguration> OpenApiConfigurations => configurations
         .OfType<GatewayConfiguration.Rest>()

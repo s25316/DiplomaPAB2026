@@ -8,6 +8,17 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
+	<ItemGroup Label="EntityFrameworkCore">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+	
 	<ItemGroup Label="Docker">
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
 	</ItemGroup>
@@ -23,6 +34,7 @@
 	
   <ItemGroup>
     <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
+    <ProjectReference Include="..\Diploma.Infrastructure\Diploma.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

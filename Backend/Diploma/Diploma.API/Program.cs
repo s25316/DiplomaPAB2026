@@ -1,8 +1,12 @@
 ﻿using Base.Models.ValueObjects.Regony;
 using Diploma.API.Configurators;
+using Diploma.API.Extensions;
 using Diploma.API.GraphQL;
+using Diploma.Application;
+using Diploma.Infrastructure;
 using HotChocolate.Types;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using System.Net.Mime;
 
@@ -18,12 +22,20 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddReverseProxy()
-            .LoadFromMemory(configurator.RouteConfigs, configurator.ClusterConfigs);
-
+        builder.Services.AddLogging();
         builder.Services.AddHttpClient();
         builder.Services.AddMemoryCache();
         builder.Services.AddProblemDetails();
+
+
+        builder.Services.AddInfrastructureConfiguration(builder.Configuration);
+        builder.Services.AddApplicationConfiguration();
+        builder.Services.AddJwtAuthorization(builder);
+
+
+        builder.Services.AddReverseProxy().LoadFromMemory(
+            configurator.RouteConfigs.ToList(),
+            configurator.ClusterConfigs.ToList());
 
         builder.Services.AddControllers();
 
@@ -38,14 +50,67 @@ public class Program
                 .AllowAnyHeader());
         });
 
-
         builder.Services
             .AddGraphQLServer()
             .AddQueryType(d => d.Name(OperationTypeNames.Query))
             .AddTypeExtension<ServerQuery>()
             .BindRuntimeType<Regon, RegonScalar>();
 
+        builder.Services.AddOpenApi(options =>
+        {
+            options.AddDocumentTransformer((document, context, cancellationToken) =>
+            {
+                document.Components ??= new();
+                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+                document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header
+                });
+
+                return Task.CompletedTask;
+            });
+        });
+
+
         var app = builder.Build();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler();
+        }
+
+        app.UseCors();
+
+        app.MapGraphQL();
+        foreach (var prefix in configurator.GraphQlPathPrefixes)
+        {
+            app.MapNitroApp(prefix, relativeRequestPath: prefix);
+        }
+
+        app.MapOpenApi();
+        app.MapScalarApiReference();
+        app.MapScalarApiReference("/scalar/gateway", options =>
+        {
+            options
+                .WithTitle("API Gateway")
+                .WithOpenApiRoutePattern("/openapi/gateway.json")
+                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+        });
+
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+
+        app.MapReverseProxy();
+
 
         app.MapGet("api/test", () =>
         {
@@ -74,31 +139,6 @@ public class Program
             return Results.Content(jsonResponse, MediaTypeNames.Application.Json);
         }).ExcludeFromDescription();
 
-        app.UseCors();
-        app.UseExceptionHandler();
-
-
-        app.MapGraphQL();
-        foreach (var prefix in configurator.GraphQlPathPrefixes)
-        {
-            app.MapNitroApp(prefix, relativeRequestPath: prefix);
-        }
-
-        app.MapOpenApi();
-        app.MapScalarApiReference();
-        app.MapScalarApiReference("/scalar/gateway", options =>
-        {
-            options
-                .WithTitle("API Gateway")
-                .WithOpenApiRoutePattern("/openapi/gateway.json")
-                .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
-        });
-
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
-
-        app.MapReverseProxy();
 
         app.Run();
     }
