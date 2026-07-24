@@ -1,100 +1,16 @@
 ﻿using Diploma.API.Extensions;
 using Diploma.Application.Persons.Authentication.UseCases;
-using Diploma.Application.Persons.Lifecycle.UseCases;
-using Diploma.Application.Persons.Profile.UseCases;
 using Diploma.Models.Persons.Authentication;
-using Diploma.Models.Persons.Lifecycle;
-using Diploma.Models.Persons.Profile;
-using HotChocolate.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Diploma.API.Controllers;
+namespace Diploma.API.Controllers.PersonProfile;
 
 [Route("api/person/profile")]
 [ApiController]
-public class PersonProfileController(IMediator mediator) : ControllerBase
+public class PersonProfileAuthenticationController(IMediator mediator) : ControllerBase
 {
-    [HttpPost("create")]
-    public async Task<IActionResult> CreateAsync(
-        PersonCreateRequest body,
-        CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new PersonCreateHandler.Request
-        {
-            Model = body,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonCreateResult.Success success => Ok(success),
-            PersonCreateResult.Failure.LoginTaken => Conflict("Wybierz inny login."),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonCreateResult)}: {result.GetType()}"),
-        };
-    }
-
-
-    [HttpPost("activate/{operationId}")]
-    public async Task<IActionResult> ActivateAsync(
-        Guid operationId,
-        PersonActivateRequest body,
-        CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new PersonActivateHandler.Request
-        {
-            OperationId = operationId,
-            Model = body,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonActivateResult.Success => NoContent(),
-            PersonActivateResult.Failure => BadRequest(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonActivateResult)}: {result.GetType()}"),
-        };
-    }
-
-
-    [Authorize]
-    [HttpPost("remove")]
-    public async Task<IActionResult> RemoveAsync(CancellationToken cancellationToken)
-    {
-        if (!User.TryGetNameIdentifier(out var personId))
-            return Unauthorized();
-
-        var result = await mediator.Send(new PersonRemoveHandler.Request
-        {
-            PersonId = personId.Value,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonRemoveResult.Success => NoContent(),
-            PersonRemoveResult.Failure => BadRequest(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonActivateResult)}: {result.GetType()}"),
-        };
-    }
-
-
-    [HttpPost("restore/{operationId}")]
-    public async Task<IActionResult> RemoveAsync(
-        Guid operationId,
-        CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(new PersonRestoreHandler.Request
-        {
-            OperationId = operationId,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonRestoreResult.Success => NoContent(),
-            PersonRestoreResult.Failure => BadRequest(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonActivateResult)}: {result.GetType()}"),
-        };
-    }
-
-
     [HttpPost("loginIn")]
     public async Task<IActionResult> LoginInAsync(
         Guid personOperationId,
@@ -140,7 +56,7 @@ public class PersonProfileController(IMediator mediator) : ControllerBase
 
 
     [Authorize]
-    [HttpPost("logOut")]
+    [HttpDelete("logOut")]
     public async Task<IActionResult> LogOutAsync(
         PersonLogOutRequest body,
         CancellationToken cancellationToken)
@@ -161,7 +77,6 @@ public class PersonProfileController(IMediator mediator) : ControllerBase
             _ => throw new NotImplementedException($"Unknown type of {nameof(PersonLogOutResult)}: {result.GetType()}"),
         };
     }
-
 
     [Authorize]
     [HttpPost("login/initiation")]
@@ -273,54 +188,6 @@ public class PersonProfileController(IMediator mediator) : ControllerBase
             PersonUpdatePasswordResult.Success => NoContent(),
             PersonUpdatePasswordResult.Failure => BadRequest(),
             _ => throw new NotImplementedException($"Unknown type of {nameof(PersonUpdatePasswordResult)}: {result.GetType()}"),
-        };
-    }
-
-
-    [Authorize]
-    [HttpPost("identity")]
-    public async Task<IActionResult> UpdateIdentityDataAsync(
-        PersonUpdateIdentityDataRequest body,
-        CancellationToken cancellationToken)
-    {
-        if (!User.TryGetNameIdentifier(out var personId))
-            return Unauthorized();
-
-        var result = await mediator.Send(new PersonUpdateIdentityDataHandler.Request
-        {
-            PersonId = personId.Value,
-            Model = body,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonUpdateIdentityDataResult.Success => NoContent(),
-            PersonUpdateIdentityDataResult.Failure => BadRequest(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonUpdateIdentityDataResult)}: {result.GetType()}"),
-        };
-    }
-
-
-    [Authorize]
-    [HttpPost("profile")]
-    public async Task<IActionResult> UpdateProfileDataAsync(
-        PersonUpdateProfileDataRequest body,
-        CancellationToken cancellationToken)
-    {
-        if (!User.TryGetNameIdentifier(out var personId))
-            return Unauthorized();
-
-        var result = await mediator.Send(new PersonUpdateProfileDataHandler.Request
-        {
-            PersonId = personId.Value,
-            Model = body,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonUpdateProfileDataResult.Success => NoContent(),
-            PersonUpdateProfileDataResult.Failure => BadRequest(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonUpdateProfileDataResult)}: {result.GetType()}"),
         };
     }
 }

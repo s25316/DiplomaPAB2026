@@ -50,10 +50,12 @@ public class RequestRepository(
         var today = DateOnly.FromDateTime(DateTimeOffset.Now.Date);
         var updateIntervalDay = today.AddDays(-updateIntervalDays);
 
-        var databaseDictionary = await baseQueryBuilder
+        var baseQuery = baseQueryBuilder
             .WithRegons(regons)
             .WithAsNoTracking()
-            .Build()
+            .Build();
+
+        var databaseDictionary = await baseQuery
             .ToDictionaryAsync(k => Regon.Parse(k.Regon), cancellationToken);
         var updatedDictionary = databaseDictionary
             .Where(i => i.Value.LastUpdate >= updateIntervalDay)
@@ -105,10 +107,7 @@ public class RequestRepository(
         await context.SaveChangesAsync(cancellationToken);
 
 
-        var databaseList = await baseQueryBuilder
-            .WithRegons(regons)
-            .WithAsNoTracking()
-            .Build()
+        var databaseList = await baseQuery
             .ToListAsync(cancellationToken);
 
         if (databaseList.Count != regons.Count)

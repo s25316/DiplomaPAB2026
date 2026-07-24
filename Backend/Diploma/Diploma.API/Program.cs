@@ -4,8 +4,10 @@ using Diploma.API.Extensions;
 using Diploma.API.GraphQL;
 using Diploma.Application;
 using Diploma.Infrastructure;
+using Diploma.Infrastructure.Configurations;
 using HotChocolate.Types;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using System.Net.Mime;
@@ -112,18 +114,13 @@ public class Program
         app.MapReverseProxy();
 
 
-        app.MapGet("api/test", () =>
+        app.MapGet("/openapi/gateway.json", async (
+            IOptions<BackendHostConfiguration> options,
+            IMemoryCache cache,
+            HttpContext context) =>
         {
-            return Results.Ok();
-        });
-
-
-        app.MapGet("/openapi/gateway.json", async (IMemoryCache cache, HttpContext context) =>
-        {
-            var request = context.Request;
-            var baseHostUrl = $"{request.Scheme}://{request.Host}";
-
-            string cacheKey = $"openapi-gateway-{baseHostUrl.ToLowerInvariant()}";
+            var backendUri = options.Value.Uri;
+            string cacheKey = $"openapi-gateway-{backendUri.ToLowerInvariant()}";
 
             string jsonResponse = cache.GetOrCreate(cacheKey, entry =>
             {
@@ -131,7 +128,7 @@ public class Program
                 entry.Priority = CacheItemPriority.High;
 
                 var document = new OpenApiDocumentConfigurator(configurator.OpenApiConfigurations)
-                    .Build(new Uri(baseHostUrl));
+                    .Build(new Uri(backendUri));
 
                 return document.ToJsonString();
             }) ?? throw new InvalidOperationException($"{nameof(IMemoryCache)} not returns json.");

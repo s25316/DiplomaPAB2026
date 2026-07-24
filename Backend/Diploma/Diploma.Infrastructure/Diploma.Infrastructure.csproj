@@ -1,19 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Diploma.Application\Diploma.Application.csproj" />
-    <ProjectReference Include="..\Diploma.Database.MsSql\Diploma.Database.MsSql.csproj" />
-  </ItemGroup>
+	<ItemGroup Label="Quartz">
+		<PackageReference Include="Quartz.Extensions.DependencyInjection" />
+		<PackageReference Include="Quartz.Extensions.Hosting" />
+	</ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Diploma.Application\Diploma.Application.csproj" />
+        <ProjectReference Include="..\Diploma.Database.MsSql\Diploma.Database.MsSql.csproj" />
+    </ItemGroup>
 
 </Project>

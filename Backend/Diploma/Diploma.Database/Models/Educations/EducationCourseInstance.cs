@@ -5,6 +5,8 @@ namespace Diploma.Database.Models.Educations;
 public class EducationCourseInstance
 {
     public Guid EducationCourseInstanceId { get; set; }
+    public required DateOnly EducationStartDate { get; init; }
+    public required DateOnly? LiquidationDate { get; init; } = null;
 
 
     public Guid EducationCourseId { get; set; }

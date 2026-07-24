@@ -31,6 +31,7 @@ public class PolishBoolConverter : JsonConverter<bool>
         JsonTokenType.String => PolishBoolMapper.ReadString(reader.GetString()),
         JsonTokenType.False => false,
         JsonTokenType.True => true,
+        JsonTokenType.Null => false,
         _ => throw new JsonException($"Value '{reader.GetString()}' [{reader.TokenType}] is not a valid Polish boolean."),
     };
 

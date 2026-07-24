@@ -17,6 +17,7 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
 
 
     public DbSet<EducationCourse> EducationCourses { get; set; }
+    public DbSet<EducationDiscipline> EducationDisciplines { get; set; }
     public DbSet<EducationCourseDiscipline> EducationCourseDisciplines { get; set; }
     public DbSet<EducationCourseInstance> EducationCourseInstances { get; set; }
     public DbSet<EducationInstitution> EducationInstitutions { get; set; }

@@ -15,6 +15,9 @@ using Diploma.Domain.Persons.Events.Authentication;
 using Diploma.Domain.Persons.Events.Lifecycle;
 using Diploma.Domain.Persons.Events.Profile;
 using Diploma.Infrastructure.Configurations;
+using Diploma.Infrastructure.Educations.Jobs;
+using Diploma.Infrastructure.Educations.Services;
+using Diploma.Infrastructure.Jobs;
 using Diploma.Infrastructure.Persons;
 using Diploma.Infrastructure.Persons.Authentication.EventPublishers;
 using Diploma.Infrastructure.Persons.Authentication.MessageGenerators;
@@ -29,10 +32,13 @@ using Diploma.Infrastructure.Services.Generators;
 using Diploma.Infrastructure.Services.Repositories;
 using Diploma.Infrastructure.Services.Security;
 using Diploma.Infrastructure.Services.Smtp;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
@@ -47,10 +53,27 @@ public static class Configuration
 
     public static IServiceCollection AddInfrastructureConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<IOptions<BackendHostConfiguration>>(p =>
+        {
+            var server = p.GetRequiredService<IServer>();
+            var addressesFeature = server.Features.Get<IServerAddressesFeature>();
+            var addresses = addressesFeature?.Addresses;
+
+            var address = addresses?.FirstOrDefault();
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(address);
+
+            return Options.Create(new BackendHostConfiguration
+            {
+                Uri = address,
+            });
+        });
+
         services.Configure<DatabaseConfiguration>(configuration.GetSection(SECTION_DATABASE));
         services.Configure<EmailConfiguration>(configuration.GetSection(SECTION_EMAIL));
         services.Configure<FrontendHostConfiguration>(configuration.GetSection(SECTION_FRONTEND));
         services.Configure<JwtConfiguration>(configuration.GetSection(SECTION_JWT));
+
+
 
         services.AddDbContext<DiplomaDbContext, DiplomaMsSqlDbContext>();
         /*services.AddDbContext<DiplomaDbContext, DiplomaMsSqlDbContext>((p, c) =>
@@ -58,6 +81,9 @@ public static class Configuration
             var connectionString = p.GetRequiredService<IOptions<DatabaseConfiguration>>().Value.ConnectionString;
             c.UseSqlServer(connectionString);
         });*/
+
+        // JOBS
+        services.AddQuartz();
 
         // INFRASTRUCTURE SERVICES
         services.AddTransient<PersonOperationQueryBuilder>();
@@ -95,14 +121,33 @@ public static class Configuration
         services.AddTransient<IPersonOperationRepository, PersonOperationRepository>();
         services.AddTransient<IPersonRefreshTokenProjectionService, PersonRefreshTokenProjectionService>();
 
-
         services.AddPersonEventPublishers();
         services.AddPersonMessageGenerators();
 
+        // EDUCATION
+        services.AddTransient<IEducationDisciplineService, EducationDisciplineService>();
+        services.AddTransient<IEducationInstitutionService, EducationInstitutionService>();
+        services.AddTransient<IEducationCouseService, EducationCouseService>();
 
         return services;
     }
 
+    private static IServiceCollection AddQuartz(this IServiceCollection services)
+    {
+
+        services.AddQuartz(q =>
+        {
+            q.AddJobListener<JobChainerListener>();
+            var configurator = new JobConfigurator(q);
+
+            configurator.AddDictionaryJob<EducationDisciplineJob>();
+            configurator.AddJob<EducationInstitutionJob>();
+            configurator.AddJob<EducationCouseJobs>();
+        });
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
+        return services;
+    }
     private static IServiceCollection AddPersonEventPublishers(this IServiceCollection services)
     {
         services.AddTransient<IEventPublisher<PersonActivatedEvent>, PersonActivatedEventPublisher>();

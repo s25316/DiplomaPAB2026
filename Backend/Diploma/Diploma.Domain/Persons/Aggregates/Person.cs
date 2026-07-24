@@ -9,7 +9,6 @@ public record PersonId : BaseEntityId<Guid>
     public static implicit operator Guid(PersonId value) => value.Value;
     public static implicit operator PersonId(Guid value) => new() { Value = value };
 }
-
 public partial class Person : BaseEntity<PersonId>
 {
     public Email Login { get; protected set; } = null!;

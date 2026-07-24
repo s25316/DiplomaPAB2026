@@ -1,6 +1,7 @@
 ﻿using Quartz;
 
-namespace RADON.Infrastructure.Jobs;
+namespace Diploma.Infrastructure.Jobs;
+
 
 public class JobConfigurator(IServiceCollectionQuartzConfigurator configurator)
 {
@@ -17,8 +18,8 @@ public class JobConfigurator(IServiceCollectionQuartzConfigurator configurator)
 
         configurator.AddTrigger(opts => opts
             .ForJob(jobName)
-            .WithIdentity($"{jobName}-Midnight-Trigger")
-            .WithCronSchedule("0 0 0 * * ?"));
+            .WithIdentity($"{jobName}-1-After-Midnight-Trigger")
+            .WithCronSchedule("0 0 1 * * ?"));
 
         return this;
     }
