@@ -10,14 +10,27 @@ using Diploma.Application.Persons.Lifecycle.MessageGenerators;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
+using Diploma.Domain.Companies.Aggregates;
+using Diploma.Domain.EducationCourseInstances.Aggregates;
+using Diploma.Domain.EducationCourses.Aggregates;
+using Diploma.Domain.EducationDisciplines.ValueObjects;
+using Diploma.Domain.EducationInstitutions.Aggregates;
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.Persons.Events.Authentication;
 using Diploma.Domain.Persons.Events.Lifecycle;
 using Diploma.Domain.Persons.Events.Profile;
+using Diploma.Infrastructure.Companies.Repositories;
+using Diploma.Infrastructure.Companies.Services;
 using Diploma.Infrastructure.Configurations;
-using Diploma.Infrastructure.Educations.Jobs;
-using Diploma.Infrastructure.Educations.Services;
+using Diploma.Infrastructure.EducationCourseInstances.Repositories;
+using Diploma.Infrastructure.EducationCourses.Repositories;
+using Diploma.Infrastructure.EducationCourses.Services;
+using Diploma.Infrastructure.EducationDisciplines.Repositories;
+using Diploma.Infrastructure.EducationDisciplines.Services;
+using Diploma.Infrastructure.EducationInstitutions.Repositories;
+using Diploma.Infrastructure.EducationInstitutions.Services;
 using Diploma.Infrastructure.Jobs;
+using Diploma.Infrastructure.Jobs.Educations;
 using Diploma.Infrastructure.Persons;
 using Diploma.Infrastructure.Persons.Authentication.EventPublishers;
 using Diploma.Infrastructure.Persons.Authentication.MessageGenerators;
@@ -124,10 +137,22 @@ public static class Configuration
         services.AddPersonEventPublishers();
         services.AddPersonMessageGenerators();
 
+
+        // COMPANY
+        services.AddTransient<ICompanyService, CompanyService>();
+        services.AddTransient<ICompanyRepository, CompanyRepository>();
+
+
         // EDUCATION
-        services.AddTransient<IEducationDisciplineService, EducationDisciplineService>();
-        services.AddTransient<IEducationInstitutionService, EducationInstitutionService>();
         services.AddTransient<IEducationCouseService, EducationCouseService>();
+        services.AddTransient<IEducationCourseRepository, EducationCourseRepository>();
+        services.AddTransient<IEducationCourseInstanceRepository, EducationCourseInstanceRepository>();
+
+        services.AddTransient<IEducationDisciplineService, EducationDisciplineService>();
+        services.AddTransient<IEducationDisciplineRepository, EducationDisciplineRepository>();
+
+        services.AddTransient<IEducationInstitutionService, EducationInstitutionService>();
+        services.AddTransient<IEducationInstitutionRepository, EducationInstitutionRepository>();
 
         return services;
     }

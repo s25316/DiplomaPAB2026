@@ -24,7 +24,7 @@ public abstract class BaseQueryBuilder<TItem>
             return [];
 
         searchText = searchText.ToUpperInvariant();
-        searchText = Regex.Replace(searchText, @"[^a-zA-Z0-9]", " ");
+        searchText = Regex.Replace(searchText, @"[^a-zA-Z0-9ąęśćłóźżńĄĘŚĆŁÓŹŻŃ]", " ");
         return searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
     }
 

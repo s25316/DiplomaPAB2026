@@ -1,4 +1,4 @@
-﻿using Diploma.Infrastructure.Educations.Jobs;
+﻿using Diploma.Infrastructure.Jobs.Educations;
 using Quartz;
 
 namespace Diploma.Infrastructure.Jobs;
