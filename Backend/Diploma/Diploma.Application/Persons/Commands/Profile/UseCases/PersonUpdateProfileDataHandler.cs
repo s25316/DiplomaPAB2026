@@ -16,7 +16,6 @@ public class PersonUpdateProfileDataHandler(
     {
         public required Guid PersonId { get; init; }
         public required PersonUpdateProfileDataRequest Model { get; init; }
-
     }
 
 

@@ -1,24 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace Diploma.Models.Persons.Profile;
 
-namespace Diploma.Models.Persons.Profile;
-
-public sealed record PersonUpdateIdentityDataRequest
+public abstract record PersonIdentityDataQueryResult
 {
-    [Required]
-    public required string Name { get; init; }
-
-    [Required]
-    public required string Surname { get; init; }
-}
-
-public abstract record PersonUpdateIdentityDataResult
-{
-    public sealed record Success : PersonUpdateIdentityDataResult;
-    public sealed record Failure : PersonUpdateIdentityDataResult;
+    public abstract record Failure : PersonIdentityDataQueryResult
+    {
+        public sealed record NotFound : Failure;
+        public sealed record ProfileInactive : Failure;
+    };
+    public sealed record Success(PersonIdentityDataDto Response) : PersonIdentityDataQueryResult;
 }
 
 public sealed record PersonIdentityDataDto
 {
-    public required string Name { get; init; }
-    public required string Surname { get; init; }
+    public required string? Name { get; init; }
+    public required string? Surname { get; init; }
 }

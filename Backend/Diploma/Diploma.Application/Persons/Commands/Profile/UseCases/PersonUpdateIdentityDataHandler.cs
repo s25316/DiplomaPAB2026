@@ -16,11 +16,12 @@ public class PersonUpdateIdentityDataHandler(
     {
         public required Guid PersonId { get; init; }
         public required PersonUpdateIdentityDataRequest Model { get; init; }
-
     }
+
 
     private static readonly PersonUpdateIdentityDataResult.Success Success = new();
     private static readonly PersonUpdateIdentityDataResult.Failure Failure = new();
+
 
     public async Task<PersonUpdateIdentityDataResult> Handle(Request request, CancellationToken cancellationToken)
     {
