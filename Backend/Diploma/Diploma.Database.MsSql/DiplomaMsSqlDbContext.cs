@@ -51,6 +51,7 @@ public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbCont
 
 
         modelBuilder.ApplyConfiguration<EducationCourse>(new EducationCourseEFConfiguration());
+        modelBuilder.ApplyConfiguration<EducationSemester>(new EducationSemesterEFConfiguration());
         modelBuilder.ApplyConfiguration<EducationDiscipline>(new EducationDisciplineEFConfiguration());
         modelBuilder.ApplyConfiguration<EducationCourseDiscipline>(new EducationCourseDisciplineEFConfiguration());
         modelBuilder.ApplyConfiguration<EducationCourseInstance>(new EducationCourseInstanceEFConfiguration());

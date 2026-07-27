@@ -10,6 +10,6 @@ public sealed record CompanyId : BaseEntityId<Regon>
 }
 public class Company : BaseEntity<CompanyId>
 {
-    public required DateOnly? StartDate { get; init; } = null;
+    public required DateOnly StartDate { get; init; }
     public required DateOnly? EndDate { get; init; } = null;
 }

@@ -1,6 +1,6 @@
 ﻿using Diploma.Application.Interfaces.Repositories;
 using Diploma.Application.Interfaces.Smtp;
-using Diploma.Application.Persons.Interfaces;
+using Diploma.Application.Persons.Commands.Interfaces;
 using Diploma.Domain.ValueObjects;
 
 namespace Diploma.Application.Services;

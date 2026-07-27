@@ -15,11 +15,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\Base\Base.Exceptions\Base.Exceptions.csproj" />
         <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="PersonEducations\Aggregates\" />
-      <Folder Include="PersonEmployments\Aggregates\" />
+        <ProjectReference Include="..\Diploma.Shared\Diploma.Shared.csproj" />
     </ItemGroup>
 
 </Project>

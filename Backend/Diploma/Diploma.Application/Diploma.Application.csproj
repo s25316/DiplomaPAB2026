@@ -12,5 +12,11 @@
 		<ProjectReference Include="..\Diploma.Models\Diploma.Models.csproj" />
 		<ProjectReference Include="..\Diploma.Shared\Diploma.Shared.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="PersonEducations\UseCases\" />
+	  <Folder Include="PersonEmployments\UseCases\" />
+	  <Folder Include="Persons\Queries\" />
+	</ItemGroup>
 	
 </Project>

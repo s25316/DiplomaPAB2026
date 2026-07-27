@@ -1,5 +1,5 @@
 ﻿using Diploma.API.Extensions;
-using Diploma.Application.Persons.Authentication.UseCases;
+using Diploma.Application.Persons.Commands.Authentication.UseCases;
 using Diploma.Models.Persons.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

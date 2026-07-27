@@ -1,5 +1,5 @@
 ﻿using Diploma.Application.Interfaces.Generators;
-using Diploma.Application.Persons.Authentication.MessageGenerators;
+using Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
 using Diploma.Domain.Persons.Events.Authentication;
 
 namespace Diploma.Infrastructure.Persons.Authentication.MessageGenerators;

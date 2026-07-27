@@ -3,6 +3,7 @@ using Diploma.API.Configurators;
 using Diploma.API.Extensions;
 using Diploma.API.GraphQL;
 using Diploma.Application;
+using Diploma.Domain;
 using Diploma.Infrastructure;
 using Diploma.Infrastructure.Configurations;
 using HotChocolate.Types;
@@ -32,6 +33,7 @@ public class Program
 
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);
         builder.Services.AddApplicationConfiguration();
+        builder.Services.AddDomainConfiguration();
         builder.Services.AddJwtAuthorization(builder);
 
 

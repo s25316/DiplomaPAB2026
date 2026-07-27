@@ -1,0 +1,6 @@
+﻿using Diploma.Application.Interfaces.Generators;
+
+namespace Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
+
+public sealed record PersonUpdatedPasswordMessageInput : MessageGeneratorInput;
+public interface IPersonUpdatedPasswordMessageGenerator : IMessageGenerator<PersonUpdatedPasswordMessageInput>;

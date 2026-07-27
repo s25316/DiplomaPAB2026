@@ -1,4 +1,4 @@
-﻿using Diploma.Application.Persons.Authentication.Projections.RefreshTokens;
+﻿using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTokens;
 using Diploma.Database;
 using Diploma.Domain.Base.Results;
 using Microsoft.EntityFrameworkCore;

@@ -1,5 +1,5 @@
 ﻿using Base.Exceptions;
-using Diploma.Application.Persons.Interfaces;
+using Diploma.Application.Persons.Commands.Interfaces;
 using Diploma.Database;
 using Diploma.Domain.Base.Results;
 using Diploma.Infrastructure.QueryBuilders.Persons;

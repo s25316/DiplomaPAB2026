@@ -1,6 +1,0 @@
-﻿using Diploma.Application.Interfaces.Generators;
-
-namespace Diploma.Application.Persons.Authentication.MessageGenerators;
-
-public sealed record PersonLoginInSuccessMessageInput : MessageGeneratorInput;
-public interface IPersonLoginInSuccessMessageGenerator : IMessageGenerator<PersonLoginInSuccessMessageInput>;

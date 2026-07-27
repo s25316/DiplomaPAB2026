@@ -3,10 +3,10 @@ using Diploma.Application.Interfaces.Generators;
 using Diploma.Application.Interfaces.Repositories;
 using Diploma.Application.Interfaces.Security;
 using Diploma.Application.Interfaces.Smtp;
-using Diploma.Application.Persons.Authentication.MessageGenerators;
-using Diploma.Application.Persons.Authentication.Projections.RefreshTokens;
-using Diploma.Application.Persons.Interfaces;
-using Diploma.Application.Persons.Lifecycle.MessageGenerators;
+using Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
+using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTokens;
+using Diploma.Application.Persons.Commands.Interfaces;
+using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
@@ -15,10 +15,13 @@ using Diploma.Domain.EducationCourseInstances.Aggregates;
 using Diploma.Domain.EducationCourses.Aggregates;
 using Diploma.Domain.EducationDisciplines.ValueObjects;
 using Diploma.Domain.EducationInstitutions.Aggregates;
+using Diploma.Domain.PersonEducations.Aggregates;
+using Diploma.Domain.PersonEmployments.Aggregates;
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.Persons.Events.Authentication;
 using Diploma.Domain.Persons.Events.Lifecycle;
 using Diploma.Domain.Persons.Events.Profile;
+using Diploma.Domain.PersonUris.Aggregates;
 using Diploma.Infrastructure.Companies.Repositories;
 using Diploma.Infrastructure.Companies.Services;
 using Diploma.Infrastructure.Configurations;
@@ -31,6 +34,8 @@ using Diploma.Infrastructure.EducationInstitutions.Repositories;
 using Diploma.Infrastructure.EducationInstitutions.Services;
 using Diploma.Infrastructure.Jobs;
 using Diploma.Infrastructure.Jobs.Educations;
+using Diploma.Infrastructure.PersonEducations.Repositories;
+using Diploma.Infrastructure.PersonEmployments.Repositories;
 using Diploma.Infrastructure.Persons;
 using Diploma.Infrastructure.Persons.Authentication.EventPublishers;
 using Diploma.Infrastructure.Persons.Authentication.MessageGenerators;
@@ -39,6 +44,7 @@ using Diploma.Infrastructure.Persons.Lifecycle.EventPublishers;
 using Diploma.Infrastructure.Persons.Lifecycle.LinkGenerators;
 using Diploma.Infrastructure.Persons.Lifecycle.MessageGenerators;
 using Diploma.Infrastructure.Persons.Profile.EventPublishers;
+using Diploma.Infrastructure.PersonUris.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.Services.Database;
 using Diploma.Infrastructure.Services.Generators;
@@ -129,15 +135,6 @@ public static class Configuration
         services.AddSingleton<ISmtpService, SmtpService>();
 
 
-        // PERSON SERVICES
-        services.AddTransient<IPersonRepository, PersonRepository>();
-        services.AddTransient<IPersonOperationRepository, PersonOperationRepository>();
-        services.AddTransient<IPersonRefreshTokenProjectionService, PersonRefreshTokenProjectionService>();
-
-        services.AddPersonEventPublishers();
-        services.AddPersonMessageGenerators();
-
-
         // COMPANY
         services.AddTransient<ICompanyService, CompanyService>();
         services.AddTransient<ICompanyRepository, CompanyRepository>();
@@ -153,6 +150,19 @@ public static class Configuration
 
         services.AddTransient<IEducationInstitutionService, EducationInstitutionService>();
         services.AddTransient<IEducationInstitutionRepository, EducationInstitutionRepository>();
+
+
+        // PERSON
+        services.AddTransient<IPersonRepository, PersonRepository>();
+        services.AddTransient<IPersonOperationRepository, PersonOperationRepository>();
+        services.AddTransient<IPersonRefreshTokenProjectionService, PersonRefreshTokenProjectionService>();
+
+        services.AddTransient<IPersonUriRepository, PersonUriRepository>();
+        services.AddTransient<IPersonEducationRepository, PersonEducationRepository>();
+        services.AddTransient<IPersonEmploymentRepository, PersonEmploymentRepository>();
+
+        services.AddPersonEventPublishers();
+        services.AddPersonMessageGenerators();
 
         return services;
     }
@@ -173,6 +183,7 @@ public static class Configuration
 
         return services;
     }
+
     private static IServiceCollection AddPersonEventPublishers(this IServiceCollection services)
     {
         services.AddTransient<IEventPublisher<PersonActivatedEvent>, PersonActivatedEventPublisher>();

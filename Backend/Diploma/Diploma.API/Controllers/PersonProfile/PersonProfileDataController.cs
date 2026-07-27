@@ -1,5 +1,5 @@
 ﻿using Diploma.API.Extensions;
-using Diploma.Application.Persons.Profile.UseCases;
+using Diploma.Application.Persons.Commands.Profile.UseCases;
 using Diploma.Models.Persons.Profile;
 using HotChocolate.Authorization;
 using MediatR;

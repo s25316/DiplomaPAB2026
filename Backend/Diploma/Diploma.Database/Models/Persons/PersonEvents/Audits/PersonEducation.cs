@@ -5,12 +5,18 @@ namespace Diploma.Database.Models.Persons.PersonEvents.Audits;
 public class PersonEducation
 {
     public Guid PersonEducationId { get; set; }
-    public DateOnly From { get; set; }
-    public DateOnly? To { get; set; } = null;
+    public int YearStart { get; set; }
+    public int? YearEnd { get; set; } = null;
 
 
     public Guid PersonEventId { get; set; }
     public virtual PersonEvent PersonEvent { get; set; } = null!;
+
+    public int SemesterStartId { get; set; }
+    public virtual EducationSemester SemesterStart { get; set; } = null!;
+
+    public int? SemesterEndId { get; set; }
+    public virtual EducationSemester? SemesterEnd { get; set; } = null;
 
     public Guid EducationCourseId { get; set; }
     public virtual EducationCourse EducationCourse { get; set; } = null!;

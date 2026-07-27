@@ -1,5 +1,5 @@
 ﻿using Diploma.Application.Interfaces.Generators;
-using Diploma.Application.Persons.Lifecycle.MessageGenerators;
+using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
 
 namespace Diploma.Infrastructure.Persons.Lifecycle.MessageGenerators;
 
