@@ -5,7 +5,7 @@ public class PersonEmployment
     public Guid PersonEmploymentId { get; set; }
     public string Regon { get; set; } = null!;
     public string Position { get; set; } = null!;
-    public string Descrition { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public DateOnly From { get; set; }
     public DateOnly? To { get; set; } = null;
 

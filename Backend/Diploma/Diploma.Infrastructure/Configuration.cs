@@ -3,10 +3,12 @@ using Diploma.Application.Interfaces.Generators;
 using Diploma.Application.Interfaces.Repositories;
 using Diploma.Application.Interfaces.Security;
 using Diploma.Application.Interfaces.Smtp;
+using Diploma.Application.PersonEmployments.Queries.Interfaces;
 using Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
 using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTokens;
 using Diploma.Application.Persons.Commands.Interfaces;
 using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
+using Diploma.Application.PersonUris.Queries.Interfaces;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
@@ -35,6 +37,7 @@ using Diploma.Infrastructure.EducationInstitutions.Services;
 using Diploma.Infrastructure.Jobs;
 using Diploma.Infrastructure.Jobs.Educations;
 using Diploma.Infrastructure.PersonEducations.Repositories;
+using Diploma.Infrastructure.PersonEmployments.QueryServices;
 using Diploma.Infrastructure.PersonEmployments.Repositories;
 using Diploma.Infrastructure.Persons;
 using Diploma.Infrastructure.Persons.Authentication.EventPublishers;
@@ -44,6 +47,7 @@ using Diploma.Infrastructure.Persons.Lifecycle.EventPublishers;
 using Diploma.Infrastructure.Persons.Lifecycle.LinkGenerators;
 using Diploma.Infrastructure.Persons.Lifecycle.MessageGenerators;
 using Diploma.Infrastructure.Persons.Profile.EventPublishers;
+using Diploma.Infrastructure.PersonUris.QueryServices;
 using Diploma.Infrastructure.PersonUris.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.Services.Database;
@@ -106,6 +110,8 @@ public static class Configuration
 
         // INFRASTRUCTURE SERVICES
         services.AddTransient<PersonOperationQueryBuilder>();
+        services.AddTransient<PersonUriQueryBuilder>();
+        services.AddTransient<PersonEmploymentQueryBuilder>();
 
         // APPLICATION SERVICES
 
@@ -158,8 +164,12 @@ public static class Configuration
         services.AddTransient<IPersonRefreshTokenProjectionService, PersonRefreshTokenProjectionService>();
 
         services.AddTransient<IPersonUriRepository, PersonUriRepository>();
+        services.AddTransient<IPersonUriQueryService, PersonUriQueryService>();
+
         services.AddTransient<IPersonEducationRepository, PersonEducationRepository>();
+
         services.AddTransient<IPersonEmploymentRepository, PersonEmploymentRepository>();
+        services.AddTransient<IPersonEmploymentQueryService, PersonEmploymentQueryService>();
 
         services.AddPersonEventPublishers();
         services.AddPersonMessageGenerators();

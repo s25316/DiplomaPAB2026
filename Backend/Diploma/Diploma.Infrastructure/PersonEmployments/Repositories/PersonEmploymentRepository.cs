@@ -28,7 +28,7 @@ public class PersonEmploymentRepository(
             PersonEvent = @event,
             Regon = item.Regon.Value,
             Position = item.Position,
-            Descrition = item.Descrition,
+            Description = item.Description,
             From = item.From,
             To = item.To,
         };
@@ -61,7 +61,7 @@ public class PersonEmploymentRepository(
             .WithPersonId(databseItem.PersonEvent.PersonId)
             .WithRegon(databseItem.Regon)
             .WithPosition(databseItem.Position)
-            .WithDescrition(databseItem.Descrition)
+            .WithDescription(databseItem.Description)
             .WithFrom(databseItem.From)
             .WithTo(databseItem.To);
 
@@ -132,7 +132,7 @@ public class PersonEmploymentRepository(
             RootId = item.Id.Value,
             Regon = item.Regon.Value,
             Position = item.Position,
-            Descrition = item.Descrition,
+            Description = item.Description,
             From = item.From,
             To = item.To,
         };

@@ -38,9 +38,9 @@ public partial class PersonEmployment : BaseEntity<PersonEmploymentId>
             return this;
         }
 
-        public Builder WithDescrition(string value)
+        public Builder WithDescription(string value)
         {
-            With(i => i.Descrition = value);
+            With(i => i.Description = value);
             return this;
         }
 

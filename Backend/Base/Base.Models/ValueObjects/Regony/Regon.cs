@@ -3,11 +3,13 @@ using Base.Exceptions;
 using Base.Models.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace Base.Models.ValueObjects.Regony;
 
 [ModelBinder(typeof(RegonBinder))]
+[JsonConverter(typeof(RegonJsonConverter))]
 public sealed record Regon
 {
     private static readonly Regex regex = new(@"^(\d{9}|\d{14})$");

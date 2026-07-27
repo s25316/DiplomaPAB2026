@@ -16,7 +16,11 @@ public class PersonUriQueryParameters : BaseQueryParameters
 
 public abstract record PersonUriQueryResult
 {
-    public sealed record ProfileInactive : PersonUriQueryResult;
+    public abstract record Failure : PersonUriQueryResult
+    {
+        public sealed record NotFound : Failure;
+        public sealed record ProfileInactive : Failure;
+    };
     public sealed record Success(Response<PersonUriDto> Response) : PersonUriQueryResult;
 }
 

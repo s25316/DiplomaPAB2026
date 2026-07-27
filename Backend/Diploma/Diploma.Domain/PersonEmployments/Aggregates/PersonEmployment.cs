@@ -15,7 +15,7 @@ public partial class PersonEmployment : BaseEntity<PersonEmploymentId>
     public PersonId PersonId { get; protected set; } = null!;
     public Regon Regon { get; protected set; } = null!;
     public string Position { get; set; } = null!;
-    public string Descrition { get; set; } = null!;
+    public string Description { get; set; } = null!;
     public DateOnly From { get; protected set; }
     public DateOnly? To { get; protected set; } = null;
 
@@ -47,7 +47,7 @@ public partial class PersonEmployment : BaseEntity<PersonEmploymentId>
         employment.PersonId = personId;
         employment.Regon = regon;
         employment.Position = position;
-        employment.Descrition = descrition;
+        employment.Description = descrition;
         employment.UpdateDates(from, to);
 
         return employment;

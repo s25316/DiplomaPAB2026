@@ -1,4 +1,5 @@
-﻿using Diploma.Domain.Base.Results;
+﻿using Base.Models.ValueObjects.Regony;
+using Diploma.Domain.Base.Results;
 using Diploma.Domain.Companies.Aggregates;
 
 namespace Diploma.Domain.PersonEmployments.Aggregates;
@@ -9,8 +10,8 @@ public abstract record PersonEmploymentServiceResult
     public abstract record Failure : PersonEmploymentServiceResult
     {
         public sealed record NotExist : Failure;
-        public sealed record NotExistCompany : Failure;
-        public sealed record InvalidDates(DateOnly? ComapanyStartDate, DateOnly? CompanyEndDate) : Failure;
+        public sealed record NotExistCompany(Regon Regon) : Failure;
+        public sealed record InvalidCompanyDates(DateOnly? Start, DateOnly? End) : Failure;
     }
 }
 
@@ -29,7 +30,6 @@ public class PersonEmploymentService(
 {
     private static readonly PersonEmploymentServiceResult.Sucess Sucess = new();
     private static readonly PersonEmploymentServiceResult.Failure.NotExist NotExist = new();
-    private static readonly PersonEmploymentServiceResult.Failure.NotExistCompany NotExistCompany = new();
 
 
     public async Task<OptionalResult<PersonEmployment>> GetAsync(
@@ -86,26 +86,26 @@ public class PersonEmploymentService(
         var companyResult = await companyRepository.GetAsync(item.Regon, cancellationToken);
 
         if (!companyResult.HasValue)
-            return NotExistCompany;
+            return new PersonEmploymentServiceResult.Failure.NotExistCompany(item.Regon);
 
         var company = companyResult.Value;
 
         if (item.From < company.StartDate)
         {
-            return new PersonEmploymentServiceResult.Failure.InvalidDates(
-                    company.StartDate,
-                    company.EndDate
-                );
+            return new PersonEmploymentServiceResult.Failure.InvalidCompanyDates(
+                company.StartDate,
+                company.EndDate
+            );
         }
 
         if (company.EndDate.HasValue &&
             item.To.HasValue &&
             company.EndDate.Value < item.To.Value)
         {
-            return new PersonEmploymentServiceResult.Failure.InvalidDates(
-                    company.StartDate,
-                    company.EndDate
-                );
+            return new PersonEmploymentServiceResult.Failure.InvalidCompanyDates(
+                company.StartDate,
+                company.EndDate
+            );
         }
 
         return null;
