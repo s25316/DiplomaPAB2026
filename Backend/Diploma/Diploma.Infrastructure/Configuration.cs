@@ -3,6 +3,7 @@ using Diploma.Application.Interfaces.Generators;
 using Diploma.Application.Interfaces.Repositories;
 using Diploma.Application.Interfaces.Security;
 using Diploma.Application.Interfaces.Smtp;
+using Diploma.Application.PersonEducations.Queries.Interfaces;
 using Diploma.Application.PersonEmployments.Queries.Interfaces;
 using Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
 using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTokens;
@@ -36,6 +37,7 @@ using Diploma.Infrastructure.EducationInstitutions.Repositories;
 using Diploma.Infrastructure.EducationInstitutions.Services;
 using Diploma.Infrastructure.Jobs;
 using Diploma.Infrastructure.Jobs.Educations;
+using Diploma.Infrastructure.PersonEducations.QueryServices;
 using Diploma.Infrastructure.PersonEducations.Repositories;
 using Diploma.Infrastructure.PersonEmployments.QueryServices;
 using Diploma.Infrastructure.PersonEmployments.Repositories;
@@ -112,6 +114,7 @@ public static class Configuration
         services.AddTransient<PersonOperationQueryBuilder>();
         services.AddTransient<PersonUriQueryBuilder>();
         services.AddTransient<PersonEmploymentQueryBuilder>();
+        services.AddTransient<PersonEducationQueryBuilder>();
 
         // APPLICATION SERVICES
 
@@ -167,6 +170,8 @@ public static class Configuration
         services.AddTransient<IPersonUriQueryService, PersonUriQueryService>();
 
         services.AddTransient<IPersonEducationRepository, PersonEducationRepository>();
+        services.AddTransient<IPersonEducationQueryService, PersonEducationQueryService>();
+        services.AddTransient<IPersonDisciplineQueryService, PersonDisciplineQueryService>();
 
         services.AddTransient<IPersonEmploymentRepository, PersonEmploymentRepository>();
         services.AddTransient<IPersonEmploymentQueryService, PersonEmploymentQueryService>();

@@ -33,6 +33,6 @@ public sealed record Semester
        ?? throw new NotImplementedException($"Invalid {nameof(PersonOperation)} Id: {id}");
 
 
-    public static readonly Semester Summer = new(SemesterKind.Summer, "");
-    public static readonly Semester Winter = new(SemesterKind.Winter, "");
+    public static readonly Semester Summer = new(SemesterKind.Summer, "Letni");
+    public static readonly Semester Winter = new(SemesterKind.Winter, "Zimowy");
 }

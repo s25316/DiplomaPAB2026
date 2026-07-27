@@ -9,7 +9,10 @@ namespace Diploma.Infrastructure.PersonEmployments.QueryServices;
 
 public class PersonEmploymentQueryService(PersonEmploymentQueryBuilder builder) : IPersonEmploymentQueryService
 {
-    public async Task<Response<PersonEmploymentDto>> GetAsync(PersonId personId, PersonEmploymentQueryParameters parameters, CancellationToken cancellationToken = default)
+    public async Task<Response<PersonEmploymentDto>> GetAsync(
+        PersonId personId,
+        PersonEmploymentQueryParameters parameters,
+        CancellationToken cancellationToken = default)
     {
         var baseQuery = builder
             .WithPersonId(personId)

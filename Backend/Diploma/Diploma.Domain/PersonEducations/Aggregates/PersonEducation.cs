@@ -17,8 +17,35 @@ public partial class PersonEducation : BaseEntity<PersonEducationId>
     public PersonEducationId LastSnapshotId { get; protected set; } = null!;
     public EducationCourseId EducationCourseId { get; private set; } = null!;
     public EducationCourseInstanceId? EducationCourseInstanceId { get; private set; } = null!;
-    public EducationSemestr Start { get; set; } = null!;
-    public EducationSemestr? End { get; set; } = null;
+    public EducationSemestr Start { get; private set; } = null!;
+    public EducationSemestr? End { get; private set; } = null;
+
+
+    public void UpdateSemestrs(
+        EducationSemestr start,
+        EducationSemestr? end)
+    {
+        if (end is not null)
+        {
+            if (end.Year < start.Year)
+            {
+                var semestr = start;
+                start = end;
+                end = semestr;
+            }
+
+            if (end.Year == start.Year &&
+                end.Semester.Id < start.Semester.Id)
+            {
+                var semestr = start;
+                start = end;
+                end = semestr;
+            }
+        }
+
+        Start = start;
+        End = end;
+    }
 
 
     public static PersonEducation Create(
@@ -33,8 +60,7 @@ public partial class PersonEducation : BaseEntity<PersonEducationId>
         personEducation.PersonId = personId;
         personEducation.EducationCourseId = courseId;
         personEducation.EducationCourseInstanceId = ecourseInstanceId;
-        personEducation.Start = start;
-        personEducation.End = end;
+        personEducation.UpdateSemestrs(start, end);
 
         return personEducation;
     }

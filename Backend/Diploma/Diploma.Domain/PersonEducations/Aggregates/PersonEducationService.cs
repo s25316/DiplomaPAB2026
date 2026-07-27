@@ -9,13 +9,12 @@ public abstract record PersonEducationServiceResult
     public sealed record Sucess : PersonEducationServiceResult;
     public abstract record Failure : PersonEducationServiceResult
     {
-        public sealed record OverLimit(int MaxCount, int CurrentCount) : Failure;
+        public sealed record OverLimit(int MaxCount) : Failure;
         public sealed record NotExist : Failure;
-        public sealed record NotExistCourseInstance(EducationCourseInstanceId Id) : Failure;
+        public sealed record NotExistCourseInstance(EducationCourseInstanceId CourseInstanceId, EducationCourseId? CourseId = null) : Failure;
         public sealed record InvalidCourseInstanceDates(DateOnly? StartDate, DateOnly? EndDate) : Failure;
         public sealed record NotExistCourse(EducationCourseId Id) : Failure;
         public sealed record InvalidCourseDates(DateOnly? StartDate, DateOnly? EndDate) : Failure;
-
     }
 }
 
@@ -62,7 +61,7 @@ public class PersonEducationService(
         var totalCount = await personEducationRepository.TotalCountAsync(item.PersonId, cancellationToken);
 
         if (totalCount >= MAX_COUNT)
-            return new PersonEducationServiceResult.Failure.OverLimit(MAX_COUNT, totalCount);
+            return new PersonEducationServiceResult.Failure.OverLimit(MAX_COUNT);
 
         var result = await IsValidAsync(item, cancellationToken);
 
@@ -121,6 +120,14 @@ public class PersonEducationService(
                 return new PersonEducationServiceResult.Failure.InvalidCourseInstanceDates(
                     courseInstance.EducationStartDate,
                     courseInstance.LiquidationDate
+                );
+            }
+
+            if (courseInstance.EducationCourseId != item.EducationCourseId)
+            {
+                return new PersonEducationServiceResult.Failure.NotExistCourseInstance(
+                    item.EducationCourseInstanceId,
+                    item.EducationCourseId
                 );
             }
 

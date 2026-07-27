@@ -1,8 +1,8 @@
 ﻿using Diploma.API.Extensions;
 using Diploma.Application.Persons.Commands.Profile.UseCases;
 using Diploma.Models.Persons.Profile;
-using HotChocolate.Authorization;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Diploma.API.Controllers.PersonProfile;
