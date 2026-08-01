@@ -1,0 +1,26 @@
+﻿@using Frontend.Components.Authentications.Layout
+
+<header class="navbar navbar-dark bg-dark px-4 w-100 mb-4 custom-top-menu">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+
+        <!-- Lewa strona: Main -->
+        <div class="d-flex align-items-center">
+            <NavLink class="navbar-brand text-light" href="" Match="NavLinkMatch.All">
+                Main
+            </NavLink>
+        </div>
+
+        <!-- Prawa strona: Logowanie -->
+        <div class="navbar-nav">
+            <AuthorizeView>
+                <Authorized>
+                    <LogOutComponent/>
+                </Authorized>
+                <NotAuthorized>
+                    <a class="nav-link btn btn-outline-light btn-sm px-3 text-dark bg-light" href="authentication">Zaloguj się</a>
+                </NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+    </div>
+</header>

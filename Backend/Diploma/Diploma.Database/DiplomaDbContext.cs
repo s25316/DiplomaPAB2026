@@ -3,6 +3,11 @@ using Diploma.Database.Models.Persons;
 using Diploma.Database.Models.Persons.PersonEvents;
 using Diploma.Database.Models.Persons.PersonEvents.Audits;
 using Diploma.Database.Models.Persons.PersonOperations;
+using Diploma.Database.Models.Projects;
+using Diploma.Database.Models.Projects.ProjectEvents;
+using Diploma.Database.Models.Projects.ProjectEvents.Audits;
+using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
+using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectVisibilities;
 using Diploma.Database.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,4 +43,16 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
 
     public DbSet<PersonOperation> PersonOperations { get; set; }
     public DbSet<PersonOperationType> PersonOperationTypes { get; set; }
+
+
+    public DbSet<Project> Projects { get; set; }
+
+    public DbSet<ProjectEvent> ProjectEvents { get; set; }
+    public DbSet<ProjectEventType> ProjectEventTypes { get; set; }
+
+    public DbSet<ProjectData> ProjectDatas { get; set; }
+    public DbSet<ProjectManager> ProjectManagers { get; set; }
+    public DbSet<ProjectManagerType> ProjectManagerTypes { get; set; }
+    public DbSet<ProjectVisibility> ProjectVisibilities { get; set; }
+    public DbSet<ProjectVisibilityType> ProjectVisibilityTypes { get; set; }
 }

@@ -1,0 +1,48 @@
+﻿@page "/authentication"
+@using Frontend.Components.Authentications.Layout
+
+<div class="container mt-5" style="max-width: 500px;">
+
+    <div class="btn-group w-100 mb-4" role="group">
+        <button type="button" 
+                class="btn @(_currentView == AuthView.Login ? "btn-primary" : "btn-outline-primary")" 
+                @onclick="() => _currentView = AuthView.Login">
+            Zaloguj się
+        </button>
+        <button type="button" 
+                class="btn @(_currentView == AuthView.Register ? "btn-primary" : "btn-outline-primary")" 
+                @onclick="() => _currentView = AuthView.Register">
+            Zarejestruj się
+        </button>
+    </div>
+
+    @switch (_currentView)
+    {
+        case AuthView.Login:
+            <LoginInComponent 
+                OnSwitchToRegister="() => _currentView = AuthView.Register" 
+                OnSwitchToForgotPassword="() => _currentView = AuthView.ForgotPassword" />
+            break;
+
+        case AuthView.Register:
+            <RegistrationComponent 
+                OnRegistered="() => _currentView = AuthView.Login" />
+            break;
+
+        case AuthView.ForgotPassword:
+            <ForgotPasswordComponent 
+                OnSwitchToLogin="() => _currentView = AuthView.Login" />
+            break;
+    }
+</div>
+
+@code {
+    private enum AuthView { Login, Register, Activate, ForgotPassword }
+    private AuthView _currentView = AuthView.Login;
+    
+
+    private void HandleSuccessfulRegistration()
+    {
+        _currentView = AuthView.Login;
+    }
+}

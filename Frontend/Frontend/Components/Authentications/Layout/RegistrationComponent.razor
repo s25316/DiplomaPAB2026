@@ -1,0 +1,150 @@
+﻿@using Diploma.Models.Persons.Lifecycle
+
+
+<div class="container mt-5" style="max-width: 500px;">
+
+    @if (!isRegistered)
+    {
+        <h3>Rejestracja nowego użytkownika</h3>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <EditForm Model="@registerModel" OnValidSubmit="HandleRegister" FormName="RegisterForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Login:</label>
+                <InputText @bind-Value="registerModel.Login" class="form-control" />
+                <ValidationMessage For="@(() => registerModel.Login)" />
+            </div>
+
+            <div class="mb-3">
+                <label>Hasło:</label>
+                <InputText type="password" @bind-Value="registerModel.Password" class="form-control" />
+                <ValidationMessage For="@(() => registerModel.Password)" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Zarejestruj się</button>
+        </EditForm>
+    }
+    else
+    {
+        <h3>Aktywacja konta</h3>
+
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert @alertClass">@message</div>
+        }
+
+        <EditForm Model="@activateModel" OnValidSubmit="HandleActivate" FormName="ActivateForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Kod aktywacyjny:</label>
+                <InputText @bind-Value="activateModel.Code" class="form-control" />
+                <ValidationMessage For="@(() => activateModel.Code)" />
+            </div>
+
+            <button type="submit" class="btn btn-success">Aktywuj konto</button>
+        </EditForm>
+    }
+
+</div>
+
+@code {
+    [Parameter] public EventCallback OnRegistered { get; set; }
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default;
+    [Inject] private NavigationManager Navigation { get; set; } = default;
+
+    private bool isRegistered = false;
+    private Guid operationId;
+
+    [SupplyParameterFromForm]
+    private PersonCreateRequest registerModel { get; set; } = new();
+    private string? errorMessage;
+
+
+    [SupplyParameterFromForm]
+    private PersonActivateRequest activateModel { get; set; } = new();
+
+    private string? message;
+    private string alertClass = "alert-info";
+
+
+
+    private async Task HandleRegister()
+    {
+        errorMessage = null;
+
+        var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+        var response = await client.PostAsJsonAsync("api/person/profile", registerModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadFromJsonAsync<PersonCreateResult.Success>();
+
+            if (content is null)
+            {
+                errorMessage = "Wystąpił błąd podczas rejestracji.";
+                return;
+            }
+
+            // Zapisujemy zwrócone OperationId i zmieniamy stan widoku na aktywację
+            operationId = content.OperationId;
+            isRegistered = true;
+        }
+        else if ((int)response.StatusCode == 409)
+        {
+            errorMessage = await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            errorMessage = "Wystąpił błąd podczas rejestracji.";
+        }
+    }
+
+    // --- LOGIKA AKTYWACJI ---
+    private async Task HandleActivate()
+    {
+        message = null;
+
+        var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+        var response = await client.PostAsJsonAsync($"api/person/profile/activate/{operationId}", activateModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            alertClass = "alert-success";
+            message = "Konto zostało pomyślnie aktywowane! Za chwilę nastąpi przekierowanie do logowania...";
+
+            await Task.Delay(3000);
+            await OnRegistered.InvokeAsync();
+        }
+        else
+        {
+            alertClass = "alert-danger";
+            message = "Kod aktywacyjny jest nieprawidłowy lub wygasł.";
+        }
+    }
+
+    // --- KLASY DANEJ (DTO) ---
+    public class PersonCreateRequest
+    {
+        [Required(ErrorMessage = "Pole Login jest wymagane.")]
+        public string Login { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Pole Hasło jest wymagane.")]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class PersonActivateRequest
+    {
+        [Required(ErrorMessage = "Kod aktywacyjny jest wymagany.")]
+        public string Code { get; set; } = string.Empty;
+    }
+}

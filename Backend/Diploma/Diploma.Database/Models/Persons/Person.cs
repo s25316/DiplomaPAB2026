@@ -1,5 +1,7 @@
 ﻿using Diploma.Database.Models.Persons.PersonEvents;
 using Diploma.Database.Models.Persons.PersonOperations;
+using Diploma.Database.Models.Projects.ProjectEvents;
+using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
 
 namespace Diploma.Database.Models.Persons;
 
@@ -17,4 +19,6 @@ public class Person
 
     public virtual ICollection<PersonEvent> PersonEvents { get; set; } = [];
     public virtual ICollection<PersonOperation> PersonOperations { get; set; } = [];
+    public virtual ICollection<ProjectEvent> ProjectEvents { get; set; } = [];
+    public virtual ICollection<ProjectManager> ProjectManagers { get; set; } = [];
 }

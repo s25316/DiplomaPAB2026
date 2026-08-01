@@ -1,0 +1,72 @@
+﻿@using Diploma.Models.Persons.Authentication;
+
+@if (!string.IsNullOrEmpty(notificationMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @notificationMessage
+    </div>
+}
+
+<button class="btn btn-danger" @onclick="HandleLogOut">
+    Wyloguj się
+</button>
+
+@code {
+
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
+    [Inject] private CustomAuthenticationStateProvider StateProvider { get; set; } = default!;
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+    [Inject] private IUserSessionService SessionService { get; set; } = default!;
+
+    private string? notificationMessage;
+
+    private async Task HandleLogOut()
+    {
+        var jwtData = await SessionService.GetJwtTokenAsync();
+        var refreshToken = await SessionService.GetRefreshTokenAsync();
+
+        if (jwtData is null || refreshToken is null)
+        {
+            await StateProvider.NotifyUserLoggedOutAsync();
+            return;
+        }
+
+
+        var model = new PersonLogOutRequest
+        {
+            RefreshToken = refreshToken.Value,
+        };
+        var url = $"api/person/profile/logOut";
+        var requestMessage = new HttpRequestMessage(HttpMethod.Delete, url)
+        {
+            Content = JsonContent.Create(model)
+        };
+
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+
+            if (client is not null)
+            {
+                var response = await client.SendAsync(requestMessage);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    notificationMessage = "Wylogowano pomyślnie!";
+                }
+            }
+        }
+        finally
+        {
+            await StateProvider.NotifyUserLoggedOutAsync();
+            StateHasChanged();
+
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/");
+        }
+
+    }
+}

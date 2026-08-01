@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../Backend/Diploma/Diploma.Models/Diploma.Models.csproj" />
+  <Project Path="Frontend/Frontend.csproj" />
+</Solution>

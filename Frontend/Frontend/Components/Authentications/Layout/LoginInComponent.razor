@@ -1,0 +1,93 @@
+﻿@using Diploma.Models.Persons.Authentication
+
+<h3>Logowanie do systemu</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Login:</label>
+        <InputText @bind-Value="loginModel.Login" class="form-control" />
+        <ValidationMessage For="@(() => loginModel.Login)" />
+    </div>
+
+    <div class="mb-3">
+        <label>Hasło:</label>
+        <InputText type="password" @bind-Value="loginModel.Password" class="form-control" />
+        <ValidationMessage For="@(() => loginModel.Password)" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Zaloguj się</button>
+</EditForm>
+
+@code {
+    [Parameter] public EventCallback OnSwitchToRegister { get; set; }
+    [Parameter] public EventCallback OnSwitchToForgotPassword { get; set; }
+
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    [Inject] private AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
+    [Inject] private CustomAuthenticationStateProvider StateProvider { get; set; } = default!;
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+    [Inject] private ILocalStorage LocalStorage { get; set; } = default!;
+    [Inject] private IUserSessionService SessionService { get; set; } = default!;
+
+
+    [SupplyParameterFromForm]
+    private PersonLoginInRequest loginModel { get; set; } = new();
+
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null;
+
+        var url = $"api/person/profile/loginIn";
+
+        var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+        var response = await client.PostAsJsonAsync(url, loginModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<PersonLoginInResult.Success>();
+
+            if (result != null)
+            {
+                await SessionService.SetJwtTokenAsync(new SessionData
+                {
+                    Value = result.JwtToken,
+                    ExpiresAt = result.JwtTokenExpiresAt,                    
+                });
+                await SessionService.SetRefreshTokenAsync(new SessionData
+                {
+                    Value = result.RefreshToken,
+                    ExpiresAt = result.RefreshTokenTokenExpiresAt,                    
+                });
+
+                
+                await StateProvider.NotifyUserLoggedInAsync();
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+        }
+        else
+        {
+            errorMessage = "Błąd logowania. Sprawdź poprawność danych.";
+        }
+    }
+
+    public class PersonLoginInRequest
+    {
+        [Required(ErrorMessage = "Pole Login jest wymagane.")]
+        public string Login { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Pole Hasło jest wymagane.")]
+        public string Password { get; set; } = string.Empty;
+    }
+}
