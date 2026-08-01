@@ -12,7 +12,7 @@ public class JwtGenerator(
     JwtSecurityTokenHandler handler,
     SymmetricSecurityKey securityKey) : IJwtGenerator
 {
-    private const int JWT_VALID_IN_MINUTES = 5;
+    private const int JWT_VALID_IN_MINUTES = 1;
 
     private readonly SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 

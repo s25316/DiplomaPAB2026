@@ -1,0 +1,98 @@
+﻿@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        
+        <!-- LEWY PANEL BOCZNY (Sidebar) -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Mój Profil</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    
+                    <button type="button" 
+                            class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Details ? "active" : "")"
+                            @onclick="() => _activeTab = ProfileTab.Details">
+                        <i class="bi bi-person me-2"></i> Dane i Login
+                    </button>
+
+                    <button type="button" 
+                            class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Security ? "active" : "")"
+                            @onclick="() => _activeTab = ProfileTab.Security">
+                        <i class="bi bi-shield-lock me-2"></i> Bezpieczeństwo i Hasło
+                    </button>
+
+                    <button type="button" 
+                            class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Experience ? "active" : "")"
+                            @onclick="() => _activeTab = ProfileTab.Experience">
+                        <i class="bi bi-briefcase me-2"></i> Historia zatrudnienia
+                    </button>
+
+                    <button type="button" 
+                            class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Education ? "active" : "")"
+                            @onclick="() => _activeTab = ProfileTab.Education">
+                        <i class="bi bi-mortarboard me-2"></i> Edukacja
+                    </button>
+
+                    <button type="button" 
+                            class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Links ? "active" : "")"
+                            @onclick="() => _activeTab = ProfileTab.Links">
+                        <i class="bi bi-link-45deg me-2"></i> Profile (GitHub / URI)
+                    </button>
+
+                    <button type="button" 
+                            class="list-group-item list-group-item-action text-danger @(_activeTab == ProfileTab.DangerZone ? "active bg-danger text-white" : "")"
+                            @onclick="() => _activeTab = ProfileTab.DangerZone">
+                        <i class="bi bi-exclamation-triangle me-2"></i> Usuń konto
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- PRAWY PANEL (Wyświetlana treść wybranej zakładki) -->
+        <div class="col-md-9">
+            <div class="card shadow-sm p-4">
+                @switch (_activeTab)
+                {
+                    case ProfileTab.Details:
+                        <ProfileDetailsComponent />
+                        break;
+                    case ProfileTab.Security:
+                        <ProfileSecurityComponent />
+                        break;
+                    case ProfileTab.Experience:
+                        <ProfileExperienceComponent />
+                        break;
+                    case ProfileTab.Education:
+                        <ProfileEducationComponent />
+                        break;
+                    case ProfileTab.Links:
+                        <ProfileLinksComponent />
+                        break;
+                    case ProfileTab.DangerZone:
+                        <ProfileDeleteAccountComponent />
+                        break;
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private enum ProfileTab 
+    { 
+        Details, 
+        Security, 
+        Experience, 
+        Education, 
+        Links, 
+        DangerZone 
+    }
+
+    private ProfileTab _activeTab = ProfileTab.Details;
+}

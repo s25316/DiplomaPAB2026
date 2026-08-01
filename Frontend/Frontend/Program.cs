@@ -27,12 +27,20 @@ public class Program
         builder.Services.AddScoped<UserSessionService>();
         builder.Services.AddScoped<CustomAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<CustomAuthenticationStateProvider>());
-        builder.Services.AddAuthorizationCore();
 
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = "CustomJwt";
+            options.DefaultChallengeScheme = "CustomJwt";
+        })
+        .AddScheme<Microsoft.AspNetCore.Authentication.AuthenticationSchemeOptions, NoRedirectAuthenticationHandler>("CustomJwt", options => { });
+
+        builder.Services.AddAuthorization();
 
         builder.Services
             .AddRazorComponents()
             .AddInteractiveServerComponents();
+
 
         var app = builder.Build();
 
@@ -41,6 +49,9 @@ public class Program
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
         app.UseHttpsRedirection();

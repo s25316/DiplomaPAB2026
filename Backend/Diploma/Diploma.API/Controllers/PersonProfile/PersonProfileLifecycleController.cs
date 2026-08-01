@@ -73,7 +73,7 @@ public class PersonProfileLifecycleController(IMediator mediator) : ControllerBa
 
 
     [HttpPost("restore/{operationId}")]
-    public async Task<IActionResult> RemoveAsync(
+    public async Task<IActionResult> RestoreAsync(
         Guid operationId,
         CancellationToken cancellationToken)
     {

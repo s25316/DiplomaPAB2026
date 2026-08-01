@@ -16,4 +16,8 @@
     <ProjectReference Include="..\..\Backend\Diploma\Diploma.Models\Diploma.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Components\Profiles\Layout\" />
+  </ItemGroup>
+
 </Project>

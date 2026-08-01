@@ -1,5 +1,4 @@
-﻿using Diploma.Models.Persons.Authentication;
-using Frontend.Authentication;
+﻿using Frontend.Authentication;
 using Frontend.Configurations;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -18,15 +17,30 @@ public class BackendHttpClientFactory(
     CustomAuthenticationStateProvider stateProvider
     ) : IBackendHttpClientFactory
 {
-    private const int JWT_TOKEN_TIMEOUT_IN_SECONDS = 10;
-    private const string REFRESH_TOKEN_URL = "api/person/profile/refreshToken";
-
     public async Task<HttpClient> CreateUnAuthorizedClientAsync()
     {
         var client = factory.CreateClient();
         client.BaseAddress = new Uri(options.Value.Uri);
         return client;
     }
+
+    public async Task<HttpClient?> CreateAuthorizedClientAsync()
+    {
+        var isAuthenticated = await stateProvider.IsAuthenticatedAsync();
+        if (!isAuthenticated)
+            return null;
+
+        var jwtToken = await sessionService.GetJwtTokenAsync();
+        var refreshToken = await sessionService.GetRefreshTokenAsync();
+
+        if (jwtToken is null || refreshToken is null)
+            return null;
+
+        var client = await CreateUnAuthorizedClientAsync();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken.Value);
+
+        return client;
+    }/*
 
     public async Task<HttpClient?> CreateAuthorizedClientAsync()
     {
@@ -89,5 +103,5 @@ public class BackendHttpClientFactory(
         {
             await stateProvider.NotifyUserLoggedOutAsync();
         }
-    }
+    }*/
 }

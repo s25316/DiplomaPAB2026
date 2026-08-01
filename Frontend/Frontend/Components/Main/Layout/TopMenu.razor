@@ -14,7 +14,14 @@
         <div class="navbar-nav">
             <AuthorizeView>
                 <Authorized>
-                    <LogOutComponent/>
+                    <div class="d-flex align-items-center gap-2">
+
+                        <NavLink class="btn btn-outline-light btn-sm px-3" href="profile">
+                            Mój Profil
+                        </NavLink>
+
+                        <LogOutComponent />
+                    </div>
                 </Authorized>
                 <NotAuthorized>
                     <a class="nav-link btn btn-outline-light btn-sm px-3 text-dark bg-light" href="authentication">Zaloguj się</a>
