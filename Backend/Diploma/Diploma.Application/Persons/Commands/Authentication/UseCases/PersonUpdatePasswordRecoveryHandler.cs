@@ -61,11 +61,6 @@ public class PersonUpdatePasswordRecoveryHandler(
         var personId = operation.PersonId;
         var person = await GetPersonAsync(personId, cancellationToken);
 
-        var hashedPassword = passwordHasher.Hash(request.Model.Password, person.Salt);
-
-        if (person.Password == hashedPassword.HashedPassword)
-            return Failure;
-
         var newHashedPassword = passwordHasher.Hash(request.Model.Password);
         person.UpdatePassword(newHashedPassword.HashedPassword, newHashedPassword.Salt);
         var updatingResult = await repository.UpdateAsync(person, cancellationToken);

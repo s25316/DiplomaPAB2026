@@ -1,0 +1,65 @@
+﻿@using Diploma.Models.Persons.Authentication
+
+<div class="container mt-5" style="max-width: 500px;">
+    <h3>Aktywacja konta</h3>
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert @alertClass">@message</div>
+    }
+
+    <EditForm Model="@activateModel" OnValidSubmit="HandleActivate" FormName="ActivateForm">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label>Kod aktywacyjny:</label>
+            <InputText @bind-Value="activateModel.Code" class="form-control" />
+            <ValidationMessage For="@(() => activateModel.Code)" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Aktywuj konto</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter] public Guid OperationId { get; set; }
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private PersonActivateRequest activateModel { get; set; } = new();
+
+    private string? message;
+    private string alertClass = "alert-info";
+
+    private async Task HandleActivate()
+    {
+        message = null;
+
+        var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+        var response = await client.PostAsJsonAsync($"api/person/profile/activate/{OperationId}", activateModel);
+
+        if (response.IsSuccessStatusCode)
+        {
+            alertClass = "alert-success";
+            message = "Konto zostało pomyślnie aktywowane! Za chwilę nastąpi przekierowanie do logowania...";
+
+            StateHasChanged();
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/authentication", forceLoad: true);
+        }
+        else
+        {
+            alertClass = "alert-danger";
+            message = "Kod aktywacyjny jest nieprawidłowy lub wygasł.";
+        }
+    }
+
+    public class PersonActivateRequest
+    {
+        [Required(ErrorMessage = "Kod aktywacyjny jest wymagany.")]
+        public string Code { get; set; } = string.Empty;
+    }
+}
