@@ -1,5 +1,4 @@
 ﻿@page "/profile"
-
 <AuthorizeView>
     <Authorized>
         <div class="container-fluid mt-4">
@@ -12,6 +11,12 @@
                         </div>
                         <div class="list-group list-group-flush">
                     
+                            <button type="button" 
+                                    class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Overview ? "active" : "")"
+                                    @onclick="() => _activeTab = ProfileTab.Overview">
+                                <i class="bi bi-eye me-2"></i> Podgląd profilu
+                            </button>
+
                             <button type="button" 
                                     class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Details ? "active" : "")"
                                     @onclick="() => _activeTab = ProfileTab.Details">
@@ -56,6 +61,9 @@
                     <div class="card shadow-sm p-4">
                         @switch (_activeTab)
                         {
+                            case ProfileTab.Overview:
+                                <ProfileOverviewComponent />
+                                break;
                             case ProfileTab.Details:
                                 <ProfileDetailsComponent />
                                 break;
@@ -92,6 +100,7 @@
 @code {
     private enum ProfileTab 
     { 
+        Overview,
         Details, 
         Security, 
         Experience, 
@@ -100,5 +109,6 @@
         DangerZone 
     }
 
-    private ProfileTab _activeTab = ProfileTab.Details;
+    // Ustawienie podglądu jako domyślnej zakładki po wejściu na stronę
+    private ProfileTab _activeTab = ProfileTab.Overview;
 }

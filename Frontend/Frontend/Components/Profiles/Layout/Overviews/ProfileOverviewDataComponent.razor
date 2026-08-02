@@ -1,0 +1,144 @@
+﻿@using Diploma.Models.Persons.Profile
+@inject IBackendHttpClientFactory HttpClientFactory
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-eye me-2"></i>Podgląd Profilu</h5>
+    </div>
+    <div class="card-body">
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        @if (_isLoadingData)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Ładowanie podglądu profilu...</p>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small fw-bold">Imię</label>
+                    <div class="form-control-plaintext border-bottom pb-2">
+                        @(!string.IsNullOrWhiteSpace(_model.Name) ? _model.Name : "-")
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label text-muted small fw-bold">Nazwisko</label>
+                    <div class="form-control-plaintext border-bottom pb-2">
+                        @(!string.IsNullOrWhiteSpace(_model.Surname) ? _model.Surname : "-")
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">Tytuł zawodowy / Stanowisko</label>
+                <div class="form-control-plaintext border-bottom pb-2">
+                    @(!string.IsNullOrWhiteSpace(_model.Title) ? _model.Title : "-")
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">Podsumowanie / Biografia</label>
+                <div class="form-control-plaintext border rounded p-3 bg-light" style="white-space: pre-line; min-height: 80px;">
+                    @(!string.IsNullOrWhiteSpace(_model.Summary) ? _model.Summary : "Brak podsumowania.")
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private CombinedProfileModel _model = new();
+    private bool _isLoadingData = true;
+    private string? _errorMessage;
+
+    public class CombinedProfileModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Surname { get; set; } = string.Empty;
+        public string? Title { get; set; }
+        public string? Summary { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllProfileDataAsync();
+    }
+
+    private async Task LoadAllProfileDataAsync()
+    {
+        _isLoadingData = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            var identityResponseTask = client.GetAsync("api/person/profile/identity");
+            var profileResponseTask = client.GetAsync("api/person/profile/profile");
+
+            await Task.WhenAll(identityResponseTask, profileResponseTask);
+
+            var identityResponse = identityResponseTask.Result;
+            var profileResponse = profileResponseTask.Result;
+
+            bool hasError = false;
+
+            if (identityResponse.IsSuccessStatusCode)
+            {
+                var identityDto = await identityResponse.Content.ReadFromJsonAsync<PersonIdentityDataDto>();
+                if (identityDto is not null)
+                {
+                    _model.Name = identityDto.Name ?? string.Empty;
+                    _model.Surname = identityDto.Surname ?? string.Empty;
+                }
+            }
+            else if (identityResponse.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Twój profil jest nieaktywny.";
+                hasError = true;
+            }
+
+            if (!hasError && profileResponse.IsSuccessStatusCode)
+            {
+                var profileDto = await profileResponse.Content.ReadFromJsonAsync<PersonProfileDataDto>();
+                if (profileDto is not null)
+                {
+                    _model.Title = profileDto.Title;
+                    _model.Summary = profileDto.Summary;
+                }
+            }
+            else if (!hasError && profileResponse.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Twój profil jest nieaktywny.";
+                hasError = true;
+            }
+
+            if (!hasError && !identityResponse.IsSuccessStatusCode && !profileResponse.IsSuccessStatusCode)
+            {
+                _errorMessage = "Nie udało się pobrać danych podglądu profilu.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem podczas pobierania danych.";
+        }
+        finally
+        {
+            _isLoadingData = false;
+        }
+    }
+}
