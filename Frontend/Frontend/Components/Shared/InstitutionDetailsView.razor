@@ -35,6 +35,48 @@
                 </div>
             </div>
 
+            <!-- SEKCJA DAT -->
+            @if (Institution.Institution.Daty != null)
+            {
+                var dates = Institution.Institution.Daty;
+                <hr />
+                <h6 class="text-primary">Daty rejestrowe:</h6>
+                <div class="row small text-muted">
+                    <div class="col-md-4">
+                        <p class="mb-1"><strong>Data powstania:</strong> @dates.DataPowstania.ToString("yyyy-MM-dd")</p>
+                        <p class="mb-1"><strong>Data rozpoczęcia:</strong> @dates.DataRozpoczecia.ToString("yyyy-MM-dd")</p>
+                        @if (dates.DataWpisu.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data wpisu:</strong> @dates.DataWpisu.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        @if (dates.DataZawieszenia.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data zawieszenia:</strong> @dates.DataZawieszenia.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                        @if (dates.DataWznowienia.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data wznowienia:</strong> @dates.DataWznowienia.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                        @if (dates.DataZmiany.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data zmiany:</strong> @dates.DataZmiany.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                    </div>
+                    <div class="col-md-4">
+                        @if (dates.DataZakonczenia.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data zakończenia:</strong> @dates.DataZakonczenia.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                        @if (dates.DataSkreslenia.HasValue)
+                        {
+                            <p class="mb-1"><strong>Data skreślenia:</strong> @dates.DataSkreslenia.Value.ToString("yyyy-MM-dd")</p>
+                        }
+                    </div>
+                </div>
+            }
+
             @if (Institution.Pkd?.Items != null && Institution.Pkd.Items.Any())
             {
                 <hr />

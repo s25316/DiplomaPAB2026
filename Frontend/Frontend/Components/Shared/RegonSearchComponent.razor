@@ -10,9 +10,9 @@
 
         <!-- Formularz wyszukiwania -->
         <div class="mb-3">
-            <label class="form-label">Numery REGON (oddzielone przecinkami lub spacjami):</label>
+            <label class="form-label">Numer REGON:</label>
             <div class="input-group">
-                <input type="text" class="form-control" @bind="_regonInput" placeholder="np. 012345678, 876543210" />
+                <input type="text" class="form-control" @bind="_regonInput" placeholder="np. 012345678" />
                 <button class="btn btn-primary" type="button" @onclick="SearchInstitutionsAsync" disabled="@_isLoading">
                     @if (_isLoading)
                     {
@@ -21,7 +21,7 @@
                     <i class="bi bi-search me-1"></i> Szukaj
                 </button>
             </div>
-            <div class="form-text">Możesz podać jeden lub wiele numerów REGON (9 lub 14 cyfr).</div>
+            <div class="form-text">Wprowadź 9 lub 14-cyfrowy numer REGON.</div>
         </div>
 
         @if (!string.IsNullOrEmpty(_errorMessage))
@@ -44,12 +44,18 @@
         {
             <div class="mt-4">
                 <InstitutionDetailsView Institution="_institution" />
+
+                <div class="mt-3 text-end">
+                    <button type="button" class="btn btn-success" @onclick="SelectCompany">
+                        <i class="bi bi-check-circle me-1"></i> Wybierz tę firmę do zatrudnienia
+                    </button>
+                </div>
             </div>
         }
         else if (_hasSearched)
         {
             <div class="text-center text-muted py-4">
-                <p class="mb-0">Brak wyników dla podanych numerów REGON.</p>
+                <p class="mb-0">Brak wyników dla podanego numeru REGON.</p>
             </div>
         }
 
@@ -57,6 +63,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public EventCallback<string> OnRegonSelected { get; set; }
+
     private string _regonInput = string.Empty;
     private Full? _institution = null;
     private bool _isLoading = false;
@@ -83,9 +92,7 @@
                 .Select(r => r.Trim())
                 .Where(r => !string.IsNullOrEmpty(r))
                 .Distinct()
-                .ToList()
                 .FirstOrDefault();
-
 
             if (string.IsNullOrWhiteSpace(regon))
             {
@@ -96,7 +103,7 @@
 
             if (!Regon.TryParse(regon, out var _))
             {
-                _errorMessage = "Podane niepoprawny numer REGON.";
+                _errorMessage = "Podano niepoprawny numer REGON.";
                 _isLoading = false;
                 return;
             }
@@ -106,6 +113,10 @@
             if (response is not null)
             {
                 _institution = response.FirstOrDefault();
+                if (_institution == null)
+                {
+                    _errorMessage = "Nie znaleziono firmy o takim numerze REGON w rejestrze.";
+                }
             }
             else
             {
@@ -119,6 +130,14 @@
         finally
         {
             _isLoading = false;
+        }
+    }
+
+    private async Task SelectCompany()
+    {
+        if (_institution != null && !string.IsNullOrEmpty(_institution.Regon))
+        {
+            await OnRegonSelected.InvokeAsync(_institution.Regon);
         }
     }
 }
