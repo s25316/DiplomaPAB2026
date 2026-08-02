@@ -2,5 +2,6 @@
   <Project Path="../Backend/Base/Base.Models/Base.Models.csproj" />
   <Project Path="../Backend/Diploma/Diploma.Models/Diploma.Models.csproj" />
   <Project Path="../Backend/GUS.REGON/GUS.REGON.Models/GUS.REGON.Models.csproj" />
+  <Project Path="../Backend/RADON/RADON.Models/RADON.Models.csproj" />
   <Project Path="Frontend/Frontend.csproj" />
 </Solution>

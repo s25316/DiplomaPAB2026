@@ -25,6 +25,7 @@ public class Program
         builder.Services.AddScoped<ILocalStorage, LocalStorage>();
         builder.Services.AddScoped<IUserSessionService, UserSessionService>();
         builder.Services.AddScoped<IRegonService, RegonService>();
+        builder.Services.AddScoped<IRadonInstitutionService, RadonInstitutionService>();
         builder.Services.AddScoped<UserSessionService>();
         builder.Services.AddScoped<CustomAuthenticationStateProvider>();
         builder.Services.AddScoped<AuthenticationStateProvider>(p => p.GetRequiredService<CustomAuthenticationStateProvider>());
