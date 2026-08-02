@@ -1,0 +1,121 @@
+﻿@using RADON.Models.Courses.Responses
+
+@if (CourseInstance == null)
+{
+    <p class="text-muted">Brak danych o instancji kierunku.</p>
+}
+else
+{
+    <div class="container-fluid px-0">
+        <h5 class="text-primary mb-3">Szczegóły instancji: @CourseInstance.Name</h5>
+
+        <!-- Podstawowe informacje (UUID i nazwa) -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">UUID Instancji</span>
+                    <strong class="text-break">@CourseInstance.CourseInstanceUuid</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Status</span>
+                    <strong>@(CourseInstance.Status?.Name ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daty -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Data rozpoczęcia kształcenia</span>
+                    <strong>@CourseInstance.EducationStartDate.ToString("yyyy-MM-dd")</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Data likwidacji</span>
+                    <strong>@(CourseInstance.LiquidationDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Parametry akademickie (Semestry i ECTS) -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Liczba semestrów</span>
+                    <strong>@CourseInstance.NumberOfSemesters</strong>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Punkty ECTS</span>
+                    <strong>@CourseInstance.Ects</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Słownikowe parametry (Forma, Tytuł zawodowy, Język główny) -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Forma studiów</span>
+                    <strong>@(CourseInstance.Form?.Name ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Tytuł zawodowy</span>
+                    <strong>@(CourseInstance.ProfessionalTitle?.Name ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Język wykładowy</span>
+                    <strong>@(CourseInstance.Language?.Name ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flagi (Badge'e) -->
+        <div class="mb-4">
+            <span class="text-muted d-block small mb-2">Cechy szczególne instancji:</span>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge @(CourseInstance.IsDual ? "bg-success" : "bg-secondary")">
+                    Studia dualne: @(CourseInstance.IsDual ? "Tak" : "Nie")
+                </span>
+                <span class="badge @(CourseInstance.IsBridging ? "bg-success" : "bg-secondary")">
+                    Studia pomostowe: @(CourseInstance.IsBridging ? "Tak" : "Nie")
+                </span>
+                <span class="badge @(CourseInstance.IsCoopWithVocational ? "bg-success" : "bg-secondary")">
+                    Współpraca z zawodowymi: @(CourseInstance.IsCoopWithVocational ? "Tak" : "Nie")
+                </span>
+            </div>
+        </div>
+
+        <!-- Lista Języków Filologicznych -->
+        <div class="mb-3">
+            <h6 class="text-secondary">Języki filologiczne</h6>
+            @if (CourseInstance.PhilologicalLanguages == null || !CourseInstance.PhilologicalLanguages.Any())
+            {
+                <p class="text-muted small">Brak przypisanych języków filologicznych.</p>
+            }
+            else
+            {
+                <ul class="list-group list-group-flush border rounded">
+                    @foreach (var lang in CourseInstance.PhilologicalLanguages)
+                    {
+                        <li class="list-group-item bg-light">@lang.Name <small class="text-muted">(@lang.Code)</small></li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public CourseInstance? CourseInstance { get; set; }
+}

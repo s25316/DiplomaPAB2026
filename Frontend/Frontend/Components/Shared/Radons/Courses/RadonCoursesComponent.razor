@@ -1,0 +1,472 @@
+﻿@page "/courses"
+@using RADON.Models.Dictionaries.Responses
+@using RADON.Models.Courses
+@using RADON.Models.Courses.Responses
+@using RADON.Models.Shared
+@using Frontend.Components.Shared.Radons.Courses
+@inject IBackendHttpClientFactory ClientFactory
+@inject IRadonCourseService CourseService
+
+<h3>Lista Kierunków Studiów RADON</h3>
+
+<!-- FORMULARZ Z WALIDACJĄ -->
+<EditForm Model="_filterModel" OnValidSubmit="LoadDataAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="alert alert-danger" />
+
+    <div class="card mb-3 p-3 bg-light">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Nazwa kierunku</label>
+                <InputText class="form-control" @bind-Value="_filterModel.Name" />
+            </div>
+
+            <!-- Poziom studiów -->
+            <div class="col-md-4">
+                <label class="form-label">Poziom studiów</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedLevelCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_levels != null)
+                    {
+                        @foreach (var item in _levels)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Profil studiów -->
+            <div class="col-md-4">
+                <label class="form-label">Profil studiów</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedProfileCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_profiles != null)
+                    {
+                        @foreach (var item in _profiles)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- ISCED -->
+            <div class="col-md-4">
+                <label class="form-label">Kod ISCED</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedIscedCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_isceds != null)
+                    {
+                        @foreach (var item in _isceds)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Dyscyplina -->
+            <div class="col-md-4">
+                <label class="form-label">Dyscyplina</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedDisciplineCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_disciplines != null)
+                    {
+                        @foreach (var item in _disciplines)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Status kierunku -->
+            <div class="col-md-4">
+                <label class="form-label">Status kierunku</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedStatusCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_statuses != null)
+                    {
+                        @foreach (var item in _statuses)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Status instancji -->
+            <div class="col-md-4">
+                <label class="form-label">Status instancji</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedInstanceStatusCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_instanceStatuses != null)
+                    {
+                        @foreach (var item in _instanceStatuses)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Forma studiów -->
+            <div class="col-md-4">
+                <label class="form-label">Forma studiów</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedFormCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_forms != null)
+                    {
+                        @foreach (var item in _forms)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Język -->
+            <div class="col-md-4">
+                <label class="form-label">Język wykładowy</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedLanguageCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_languages != null)
+                    {
+                        @foreach (var item in _languages)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Tytuł zawodowy -->
+            <div class="col-md-4">
+                <label class="form-label">Tytuł zawodowy</label>
+                <InputSelect class="form-select" @bind-Value="_filterModel.SelectedProfessionalTitleCode">
+                    <option value="">-- Wszystkie --</option>
+                    @if (_titles != null)
+                    {
+                        @foreach (var item in _titles)
+                        {
+                            <option value="@item.Code">@item.Name</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Przyciski akcji -->
+            <div class="col-md-12 d-flex align-items-end mt-2">
+                <button type="submit" class="btn btn-primary me-2">Filtruj</button>
+                <button type="button" class="btn btn-secondary" @onclick="ResetFiltersAsync">Resetuj</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @_errorMessage
+    </div>
+}
+
+<!-- TABELA DANYCH -->
+@if (_response == null)
+{
+    <p><em>Ładowanie danych...</em></p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 40px;"></th>
+                    <th>Nazwa kierunku</th>
+                    <th>Poziom</th>
+                    <th>Profil</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!_response.Items.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">Brak wyników spełniających kryteria.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in _response.Items)
+                    {
+                        bool isExpanded = _expandedUuid == item.CourseUuid;
+
+                        <!-- Główny wiersz kierunku -->
+                        <tr @onclick="() => ToggleRow(item.CourseUuid)" style="cursor: pointer;" class="@(isExpanded ? "table-active" : "")">
+                            <td class="text-center">
+                                <i class="bi @(isExpanded ? "bi-chevron-down" : "bi-chevron-right") text-muted"></i>
+                            </td>
+                            <td><strong>@item.Name</strong></td>
+                            <td>@(item.Level?.Name ?? "-")</td>
+                            <td>@(item.Profile?.Name ?? "-")</td>
+                            <td>@(item.Status?.Name ?? "-")</td>
+                        </tr>
+
+                        <!-- Rozwijany wiersz ze szczegółami kierunku i listą instancji -->
+                        @if (isExpanded)
+                        {
+                            <tr class="table-light">
+                                <td></td>
+                                <td colspan="4" class="p-4">
+                                    <!-- Szczegóły kierunku -->
+                                    <div class="card border-primary shadow-sm bg-white mb-4">
+                                        <div class="card-header bg-primary text-white">
+                                            <strong>Szczegóły kierunku</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            <RadonCourseDetailsView Course="item" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Sekcja Instancji Kierunku -->
+                                    <div class="card border-secondary shadow-sm bg-white">
+                                        <div class="card-header bg-secondary text-white">
+                                            <strong>Instancje kierunku (@(item.CourseInstances?.Count ?? 0))</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            @if (item.CourseInstances == null || !item.CourseInstances.Any())
+                                            {
+                                                <p class="text-muted mb-0">Brak przypisanych instancji dla tego kierunku.</p>
+                                            }
+                                            else
+                                            {
+                                                <div class="accordion" id="accordionInstances_@item.CourseUuid">
+                                                    @foreach (var instance in item.CourseInstances)
+                                                    {
+                                                        string instanceAccordionId = $"instance_{instance.CourseInstanceUuid}";
+                                                        bool isInstanceExpanded = _expandedInstanceUuid == instance.CourseInstanceUuid;
+
+                                                        <div class="accordion-item mb-2 border rounded">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button @(isInstanceExpanded ? "" : "collapsed") bg-light" 
+                                                                        type="button" 
+                                                                        @onclick="() => ToggleInstanceRow(instance.CourseInstanceUuid)">
+                                                                    <div class="d-flex justify-content-between w-100 me-3">
+                                                                        <span><strong>@instance.Name</strong></span>
+                                                                        <span class="text-muted small">Status: <strong>@(instance.Status?.Name ?? "-")</strong> | Forma: <strong>@(instance.Form?.Name ?? "-")</strong></span>
+                                                                    </div>
+                                                                </button>
+                                                            </h2>
+                                                            
+                                                            @if (isInstanceExpanded)
+                                                            {
+                                                                <div class="accordion-collapse collapse show">
+                                                                    <div class="accordion-body bg-white border-top">
+                                                                        <!-- Użycie komponentu RadonCourseInstanceDetailsView -->
+                                                                        <RadonCourseInstanceDetailsView CourseInstance="instance" />
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGINACJA -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+            <span>Strona @_filterModel.Page z @TotalPages (Łącznie rekordów: @_response.Pagination.TotalCount)</span>
+        </div>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(_filterModel.Page <= 1 ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => ChangePage(_filterModel.Page - 1)">Poprzednia</button>
+                </li>
+
+                @foreach (var pageNum in GetVisiblePages())
+                {
+                    @if (pageNum == -1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+                    else
+                    {
+                        <li class="page-item @(pageNum == _filterModel.Page ? "active" : "")">
+                            <button class="page-link" @onclick="() => ChangePage(pageNum)">@pageNum</button>
+                        </li>
+                    }
+                }
+
+                <li class="page-item @(_filterModel.Page >= TotalPages ? "disabled" : "")">
+                    <button class="page-link" @onclick="() => ChangePage(_filterModel.Page + 1)">Następna</button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid? InstitutionId { get; set; }
+
+    private RadonCourseFilterViewModel _filterModel = new();
+    private Response<Course>? _response;
+
+    // Listy słowników
+    private List<DictionaryItem>? _levels;
+    private List<DictionaryItem>? _profiles;
+    private List<DictionaryItem>? _isceds;
+    private List<DictionaryItem>? _disciplines;
+    private List<DictionaryItem>? _statuses;
+    private List<DictionaryItem>? _instanceStatuses;
+    private List<DictionaryItem>? _forms;
+    private List<DictionaryItem>? _languages;
+    private List<DictionaryItem>? _titles;
+
+    private string? _errorMessage;
+    private Guid? _expandedUuid;
+    private Guid? _expandedInstanceUuid; // Stan rozwinięcia dla konkretnej instancji
+
+    private int TotalPages => _response == null ? 1 : (int)Math.Ceiling((double)_response.Pagination.TotalCount / _filterModel.ItemsPerPage);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDictionariesAsync();
+        await LoadDataAsync();
+    }
+
+    private void ToggleRow(Guid uuid)
+    {
+        if (_expandedUuid == uuid)
+        {
+            _expandedUuid = null;
+        }
+        else
+        {
+            _expandedUuid = uuid;
+            _expandedInstanceUuid = null; // Resetujemy rozwinięcie instancji przy zmianie kierunku
+        }
+    }
+
+    private void ToggleInstanceRow(Guid instanceUuid)
+    {
+        if (_expandedInstanceUuid == instanceUuid)
+        {
+            _expandedInstanceUuid = null;
+        }
+        else
+        {
+            _expandedInstanceUuid = instanceUuid;
+        }
+    }
+
+    private async Task LoadDictionariesAsync()
+    {
+        using var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+        try
+        {
+            _levels = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/levels");
+            _profiles = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/profiles");
+            _isceds = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/isceds");
+            _disciplines = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/shared/disciplines");
+            _statuses = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/statuses");
+            _instanceStatuses = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/instances/statuses");
+            _forms = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/instances/forms");
+            _languages = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/instances/languages");
+            _titles = await client.GetFromJsonAsync<List<DictionaryItem>>("/api/radon/courses/instances/titles");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd podczas ładowania słowników: {ex.Message}";
+        }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        try
+        {
+            _errorMessage = null;
+            _expandedUuid = null;
+            _expandedInstanceUuid = null;
+
+            QueryParameters queryParameters = _filterModel.ToQueryParameters();
+
+            if (InstitutionId.HasValue && InstitutionId != Guid.Empty)
+            {
+                if (!queryParameters.InstitutionUuids.Contains(InstitutionId.Value))
+                {
+                    queryParameters.InstitutionUuids.Add(InstitutionId.Value);
+                }
+            }
+
+            _response = await CourseService.GetAsync(queryParameters);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd podczas pobierania danych: {ex.Message}";
+        }
+    }
+
+    private async Task ChangePage(int newPage)
+    {
+        _filterModel.Page = newPage;
+        await LoadDataAsync();
+    }
+
+    private async Task ResetFiltersAsync()
+    {
+        _filterModel = new RadonCourseFilterViewModel();
+        await LoadDataAsync();
+    }
+
+    private IEnumerable<int> GetVisiblePages()
+    {
+        var total = TotalPages;
+        var current = _filterModel.Page;
+        var delta = 2;
+        var range = new List<int>();
+
+        for (int i = 1; i <= total; i++)
+        {
+            if (i == 1 || i == total || (i >= current - delta && i <= current + delta))
+            {
+                range.Add(i);
+            }
+        }
+
+        var result = new List<int>();
+        int? last = null;
+
+        foreach (var i in range)
+        {
+            if (last.HasValue)
+            {
+                if (i - last == 2)
+                {
+                    result.Add(last.Value + 1);
+                }
+                else if (i - last > 2)
+                {
+                    result.Add(-1);
+                }
+            }
+            result.Add(i);
+            last = i;
+        }
+
+        return result;
+    }
+}

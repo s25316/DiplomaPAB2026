@@ -98,20 +98,18 @@
 else
 {
     <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle">
+        <table class="table table-hover align-middle">
             <thead class="table-dark">
                 <tr>
+                    <th style="width: 40px;"></th>
                     <th>Nazwa</th>
-                    <th>REGON</th>
-                    <th>Rodzaj</th>
-                    <th>Akcje</th>
                 </tr>
             </thead>
             <tbody>
                 @if (!_response.Items.Any())
                 {
                     <tr>
-                        <td colspan="5" class="text-center text-muted">Brak wyników spełniających kryteria.</td>
+                        <td colspan="4" class="text-center text-muted">Brak wyników spełniających kryteria.</td>
                     </tr>
                 }
                 else
@@ -120,25 +118,21 @@ else
                     {
                         bool isExpanded = _expandedUuid == item.InstitutionUuid;
 
-                        <tr>
-                            <td><strong>@item.Names.OrderByDescending(n => n.Date).FirstOrDefault()?.Name</strong></td>
-                            <td>@(item.Regon ?? "-")</td>
-                            <td>@item.InstitutionKind?.Name</td>
-                            <td>
-                                <!-- Przycisk przełączający rozwinięcie wiersza -->
-                                <button class="btn btn-sm @(isExpanded ? "btn-secondary" : "btn-info") text-white"
-                                        @onclick="() => ToggleRow(item.InstitutionUuid)">
-                                    @(isExpanded ? "Zamknij" : "Szczegóły")
-                                </button>
+                        <!-- Główny wiersz -->
+                        <tr @onclick="() => ToggleRow(item.InstitutionUuid)" style="cursor: pointer;" class="@(isExpanded ? "table-active" : "")">
+                            <td class="text-center">
+                                <i class="bi @(isExpanded ? "bi-chevron-down" : "bi-chevron-right") text-muted"></i>
                             </td>
+                            <td><strong>@item.Names.OrderByDescending(n => n.Date).FirstOrDefault()?.Name</strong></td>
                         </tr>
 
                         <!-- Rozwijany wiersz ze szczegółami -->
                         @if (isExpanded)
                         {
-                            <tr>
-                                <td colspan="5" class="bg-light p-4">
-                                    <div class="card border-primary shadow-sm">
+                            <tr class="table-light">
+                                <td></td>
+                                <td colspan="3" class="p-4">
+                                    <div class="card border-primary shadow-sm bg-white">
                                         <div class="card-body">
                                             <RadonInstitutionDetailsView Institution="item" />
                                         </div>

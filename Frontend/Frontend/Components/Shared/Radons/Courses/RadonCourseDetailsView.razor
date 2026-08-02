@@ -1,0 +1,145 @@
+﻿@using RADON.Models.Courses.Responses
+
+@if (Course == null)
+{
+    <p class="text-muted">Brak danych o kierunku.</p>
+}
+else
+{
+    <div class="container-fluid px-0">
+        <h5 class="text-primary mb-3">Szczegóły kierunku: @Course.Name</h5>
+
+        <!-- Podstawowe informacje i statusy -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">UUID Kierunku</span>
+                    <strong class="text-break">@Course.CourseUuid</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">UUID Instytucji</span>
+                    <strong class="text-break">@Course.InstitutionUuid</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Status</span>
+                    <strong>@(Course.Status?.Name ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Słownikowe parametry akademickie -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Poziom studiów</span>
+                    <strong>@(Course.Level?.Name ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Profil</span>
+                    <strong>@(Course.Profile?.Name ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Kod ISCED</span>
+                    <strong>@(Course.Isced?.Name ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daty -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Data utworzenia</span>
+                    <strong>@(Course.CreationDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Data inicjalizacji wygaszania</span>
+                    <strong>@(Course.TerminationInitializationDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border bg-light rounded">
+                    <span class="text-muted d-block small">Data likwidacji</span>
+                    <strong>@(Course.LiquidationDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flagi (Badge'e) -->
+        <div class="mb-4">
+            <span class="text-muted d-block small mb-2">Cechy szczególne:</span>
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="badge @(Course.IsTeacherTraining ? "bg-success" : "bg-secondary")">
+                    Kształcenie nauczycieli: @(Course.IsTeacherTraining ? "Tak" : "Nie")
+                </span>
+                <span class="badge @(Course.IsPhilological ? "bg-success" : "bg-secondary")">
+                    Kierunek filologiczny: @(Course.IsPhilological ? "Tak" : "Nie")
+                </span>
+            </div>
+        </div>
+
+        <!-- Tabela Dyscyplin -->
+        <div class="mb-4">
+            <h6 class="text-secondary">Dyscypliny</h6>
+            @if (Course.Disciplines == null || !Course.Disciplines.Any())
+            {
+                <p class="text-muted small">Brak przypisanych dyscyplin.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Dyscyplina</th>
+                                <th style="width: 120px;" class="text-center">Procent</th>
+                                <th style="width: 120px;" class="text-center">Wiodąca</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var disc in Course.Disciplines)
+                            {
+                                <tr>
+                                    <td>@disc.Discipline?.Name</td>
+                                    <td class="text-center">@disc.Percentage%</td>
+                                    <td class="text-center">
+                                        @if (disc.IsLeading)
+                                        {
+                                            <span class="badge bg-primary">Tak</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Nie</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <!-- Metadane / Systemowe -->
+        <div class="text-muted small border-top pt-3 mt-4">
+            <div>Źródło danych: <strong>@Course.DataSource</strong></div>
+            <div>Ostatnie odświeżenie: @Course.LastRefresh.ToString("yyyy-MM-dd HH:mm:ss")</div>
+            <div>Źródłowe odświeżenie: @Course.SourceLastRefresh.ToString("yyyy-MM-dd HH:mm:ss")</div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Course? Course { get; set; }
+}
