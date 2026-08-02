@@ -1,0 +1,300 @@
+﻿@using Diploma.Models.Dictionaries
+@using Diploma.Models.PersonEducations
+@using RADON.Models.Courses.Responses
+@using RADON.Models.Institutions.Responses
+
+@inject IBackendHttpClientFactory ClientFactory
+@inject IRadonCourseService CourseService
+@inject IRadonInstitutionService InstitutionService
+
+<div class="container my-4">
+    <h3>Wykształcenie</h3>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@_errorMessage</div>
+    }
+
+    <!-- SEKCJA: Lista wpisów w formacie blokowym -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <strong>Wpisy wykształcenia</strong>
+        </div>
+        <div class="card-body bg-light">
+            @if (_educations == null)
+            {
+                <p><em>Ładowanie...</em></p>
+            }
+            else if (!_educations.Any())
+            {
+                <p class="text-muted mb-0">Brak zapisanych wpisów wykształcenia.</p>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var edu in _paginatedEducations)
+                    {
+                        _courseDictionary.TryGetValue(edu.EducationCourseId, out var course);
+                        var institutionName = "-";
+                        if (course != null && _institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var institution))
+                        {
+                            institutionName = institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name ?? "-";
+                        }
+
+                        var isSelected = _selectedEducation?.EducationId == edu.EducationId;
+
+                        <div class="col-12">
+                            <div class="card shadow-sm @(isSelected ? "border-primary" : "border-0")">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Główny układ: Uczelnia i Kierunek -->
+                                        <div class="col-md-9" style="cursor: pointer;" @onclick="() => ToggleDetails(edu)">
+                                            <h5 class="text-dark mb-1">
+                                                <i class="bi bi-bank me-1 text-secondary"></i> <strong>@institutionName</strong>
+                                            </h5>
+                                            <h6 class="text-primary mb-2">
+                                                <i class="bi bi-book me-1"></i> @(course?.Name ?? edu.EducationCourseId.ToString())
+                                            </h6>
+                                            <small class="text-muted">
+                                                Semestr startowy: <strong>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</strong> |
+                                                Semestr końcowy: <strong>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "Trwa")</strong>
+                                            </small>
+                                        </div>
+
+                                        <!-- Przycisk szczegółów -->
+                                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                            <button class="btn btn-info btn-sm text-white" @onclick="() => ToggleDetails(edu)">
+                                                @(isSelected ? "Ukryj" : "Szczegóły")
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rozwijana sekcja szczegółów -->
+                                    @if (isSelected)
+                                    {
+                                        <hr class="my-3 text-muted" />
+                                        <div class="card bg-white border-info shadow-sm mt-3">
+                                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                                                <span>Szczegóły wpisu</span>
+                                                <button class="btn-close btn-close-white btn-sm" @onclick="CloseDetails"></button>
+                                            </div>
+                                            <div class="card-body">
+                                                <!-- 1. Instytucja / Uczelnia -->
+                                                <div class="mb-4">
+                                                    <h6 class="text-primary fw-bold">Uczelnia / Instytucja</h6>
+                                                    @if (_selectedInstitution != null)
+                                                    {
+                                                        <RadonInstitutionDetailsView Institution="_selectedInstitution" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów uczelni.</p>
+                                                    }
+                                                </div>
+
+                                                <hr class="text-muted" />
+
+                                                <!-- 2. Kierunek studiów -->
+                                                <div class="mb-4">
+                                                    <h6 class="text-primary fw-bold">Kierunek studiów</h6>
+                                                    @if (_selectedCourse != null)
+                                                    {
+                                                        <RadonCourseDetailsView Course="_selectedCourse" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów kierunku.</p>
+                                                    }
+                                                </div>
+
+                                                <hr class="text-muted" />
+
+                                                <!-- 3. Instancja kierunku -->
+                                                <div>
+                                                    <h6 class="text-primary fw-bold">Instancja kierunku</h6>
+                                                    @if (_selectedCourseInstance != null)
+                                                    {
+                                                        <RadonCourseInstanceDetailsView CourseInstance="_selectedCourseInstance" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów instancji kierunku.</p>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Paginacja -->
+                @if (_totalPages > 1)
+                {
+                    <nav class="d-flex justify-content-center mt-4">
+                        <ul class="pagination">
+                            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
+                            </li>
+                            @for (int i = 1; i <= _totalPages; i++)
+                            {
+                                var pageNum = i;
+                                <li class="page-item @(_currentPage == pageNum ? "active" : "")">
+                                    <button class="page-link" @onclick="() => ChangePage(pageNum)">@pageNum</button>
+                                </li>
+                            }
+                            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<PersonEducationDto>? _educations;
+    private Dictionary<Guid, Course>? _courseDictionary;
+    private Dictionary<Guid, Institution>? _institutionDictionary;
+
+    private PersonEducationDto? _selectedEducation;
+    private Course? _selectedCourse;
+    private CourseInstance? _selectedCourseInstance;
+    private Institution? _selectedInstitution;
+
+    private string? _errorMessage;
+
+    // Zmienne obsługujące paginację
+    private int _currentPage = 1;
+    private int _pageSize = 5; // Liczba elementów na stronę (możesz zmienić)
+    private int _totalPages = 1;
+
+    private IEnumerable<PersonEducationDto> _paginatedEducations =>
+        _educations == null ? Enumerable.Empty<PersonEducationDto>()
+        : _educations.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEducationsAsync();
+    }
+
+    private async Task LoadEducationsAsync()
+    {
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            _errorMessage = null;
+            var response = await client.GetFromJsonAsync<List<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
+            _educations = response ?? new List<PersonEducationDto>();
+
+            // Obliczanie liczby stron
+            if (_educations.Any())
+            {
+                _totalPages = (int)Math.Ceiling(_educations.Count / (double)_pageSize);
+            }
+
+            if (!_educations.Any()) return;
+
+            var courseIds = _educations.Select(i => i.EducationCourseId).ToHashSet();
+            if (!courseIds.Any()) return;
+
+            var courseResponse = await CourseService.GetAsync(new RADON.Models.Courses.QueryParameters
+            {
+                CourseUuids = courseIds,
+                OrderBy = RADON.Models.Courses.QueryParameters.QueryParametersOrderBy.CreationDate,
+                Order = RADON.Models.Shared.Order.Ascending,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = courseIds.Count
+                },
+            });
+
+            if (courseResponse?.Items is null) return;
+
+            _courseDictionary = courseResponse.Items.ToDictionary(i => i.CourseUuid);
+            var institutionIds = courseResponse.Items.Select(i => i.InstitutionUuid).ToHashSet();
+
+            if (!institutionIds.Any()) return;
+
+            var institutionResponse = await InstitutionService.GetAsync(new RADON.Models.Institutions.QueryParameters
+            {
+                InstitutionUuids = institutionIds,
+                OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+                Order = RADON.Models.Shared.Order.Ascending,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = institutionIds.Count,
+                },
+            });
+
+            if (institutionResponse?.Items is null) return;
+
+            _institutionDictionary = institutionResponse.Items.ToDictionary(i => i.InstitutionUuid);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd podczas pobierania wykształcenia: {ex.Message}";
+        }
+    }
+
+    private void ToggleDetails(PersonEducationDto edu)
+    {
+        if (_selectedEducation?.EducationId == edu.EducationId)
+        {
+            CloseDetails();
+        }
+        else
+        {
+            SelectEducation(edu);
+        }
+    }
+
+    private void SelectEducation(PersonEducationDto edu)
+    {
+        _selectedEducation = edu;
+        _selectedCourse = null;
+        _selectedCourseInstance = null;
+        _selectedInstitution = null;
+
+        if (_courseDictionary != null && _courseDictionary.TryGetValue(edu.EducationCourseId, out var course))
+        {
+            _selectedCourse = course;
+
+            if (course.CourseInstances != null && edu.EducationCourseInstanceId.HasValue)
+            {
+                _selectedCourseInstance = course.CourseInstances.FirstOrDefault(i => i.CourseInstanceUuid == edu.EducationCourseInstanceId.Value);
+            }
+
+            if (_institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var inst))
+            {
+                _selectedInstitution = inst;
+            }
+        }
+    }
+
+    private void CloseDetails()
+    {
+        _selectedEducation = null;
+        _selectedCourse = null;
+        _selectedCourseInstance = null;
+        _selectedInstitution = null;
+    }
+
+    private void ChangePage(int page)
+    {
+        if (page >= 1 && page <= _totalPages)
+        {
+            _currentPage = page;
+            CloseDetails(); 
+        }
+    }
+}

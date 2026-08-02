@@ -1,0 +1,144 @@
+﻿@using Diploma.Models.Educations
+
+@inject IBackendHttpClientFactory ClientFactory
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <strong>Moje dyscypliny naukowe</strong>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@_errorMessage</div>
+        }
+
+        @if (_isLoading)
+        {
+            <p class="text-muted"><em>Ładowanie dyscyplin...</em></p>
+        }
+        else if (_disciplines == null || !_disciplines.Any())
+        {
+            <p class="text-muted mb-0">Brak przypisanych dyscyplin naukowych.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 150px;">Kod</th>
+                            <th>Nazwa dyscypliny</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var discipline in _paginatedDisciplines)
+                        {
+                            <tr>
+                                <td><code>@discipline.Code</code></td>
+                                <td>@discipline.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginacja -->
+            @if (_totalPages > 1)
+            {
+                <nav class="d-flex justify-content-center mt-4">
+                    <ul class="pagination mb-0">
+                        <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                            <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
+                        </li>
+                        @for (int i = 1; i <= _totalPages; i++)
+                        {
+                            var pageNum = i;
+                            <li class="page-item @(_currentPage == pageNum ? "active" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(pageNum)">@pageNum</button>
+                            </li>
+                        }
+                        <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                            <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<EducationDisciplineDto>? _disciplines;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    // Zmienne obsługujące paginację
+    private int _currentPage = 1;
+    private int _pageSize = 5; // Liczba elementów na stronę (możesz dostosować)
+    private int _totalPages = 1;
+
+    private IEnumerable<EducationDisciplineDto> _paginatedDisciplines =>
+        _disciplines == null ? Enumerable.Empty<EducationDisciplineDto>()
+        : _disciplines.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDisciplinesAsync();
+    }
+
+    private async Task LoadDisciplinesAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+            {
+                return;
+            }
+
+            var response = await client.GetAsync("api/person/profile/educations/disciplines");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var list = await response.Content.ReadFromJsonAsync<IEnumerable<EducationDisciplineDto>>();
+                _disciplines = list?.ToList() ?? new List<EducationDisciplineDto>();
+
+                if (_disciplines.Any())
+                {
+                    _totalPages = (int)Math.Ceiling(_disciplines.Count / (double)_pageSize);
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _disciplines = new List<EducationDisciplineDto>();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Profil jest nieaktywny.";
+            }
+            else
+            {
+                _errorMessage = $"Wystąpił błąd podczas pobierania dyscyplin (Kod: {response.StatusCode}).";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd sieciowy: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void ChangePage(int page)
+    {
+        if (page >= 1 && page <= _totalPages)
+        {
+            _currentPage = page;
+        }
+    }
+}
