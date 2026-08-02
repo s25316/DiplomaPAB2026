@@ -85,7 +85,17 @@
                         {
                             <tr>
                                 <td><strong>@employment.Position</strong></td>
-                                <td><code>@employment.Regon</code></td>
+                                <td>
+                                    @if (_companyDictionary.TryGetValue(employment.Regon, out var company))
+                                    {
+                                        <div><strong>@(company.Institution?.Nazwa ?? "Brak nazwy")</strong></div>
+                                        <small class="text-muted">REGON: @employment.Regon</small>
+                                    }
+                                    else
+                                    {
+                                        <code>@employment.Regon</code>
+                                    }
+                                </td>
                                 <td><span class="text-truncate d-inline-block" style="max-width: 250px;">@employment.Description</span></td>
                                 <td>
                                     @employment.From.ToString("dd.MM.yyyy") -
@@ -251,6 +261,7 @@
 }
 
 @code {
+    private Dictionary<string, Full> _companyDictionary = new();
     private List<PersonEmploymentDto> _employments = new();
     private bool _isLoading = true;
     private bool _isSaving = false;
@@ -320,6 +331,12 @@
                     _employments = result.Items?.ToList() ?? new();
                     _totalCount = result.Pagination.TotalCount;
                     _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
+
+                    var regons = _employments.Select(i => i.Regon).ToHashSet();
+                    var companies = await RegonService.GetAsync(regons);
+                    if (companies is not null)
+                        _companyDictionary = companies.ToDictionary(i => i.Regon);
+
                     if (_totalPages == 0) _totalPages = 1;
                 }
             }
@@ -493,7 +510,7 @@
                 var updateRequest = new PersonEmploymentUpdateRequest
                 {
                     Position = _currentModel.Position,
-                    Descrition = _currentModel.Description, // Literówka z Twojego modelu backendowego
+                    Descrition = _currentModel.Description, 
                     From = _currentModel.From,
                     To = _currentModel.To
                 };
