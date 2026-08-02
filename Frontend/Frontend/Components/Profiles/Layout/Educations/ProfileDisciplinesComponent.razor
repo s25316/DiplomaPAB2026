@@ -1,0 +1,101 @@
+﻿@using Diploma.Models.Educations
+
+@inject IBackendHttpClientFactory ClientFactory
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <strong>Moje dyscypliny naukowe</strong>
+        <button class="btn btn-outline-light btn-sm" @onclick="LoadDisciplinesAsync">Odśwież</button>
+    </div>
+    <div class="card-body">
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">@_errorMessage</div>
+        }
+
+        @if (_isLoading)
+        {
+            <p class="text-muted"><em>Ładowanie dyscyplin...</em></p>
+        }
+        else if (_disciplines == null || !_disciplines.Any())
+        {
+            <p class="text-muted mb-0">Brak przypisanych dyscyplin naukowych.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 150px;">Kod</th>
+                            <th>Nazwa dyscypliny</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var discipline in _disciplines)
+                        {
+                            <tr>
+                                <td><code>@discipline.Code</code></td>
+                                <td>@discipline.Name</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private IEnumerable<EducationDisciplineDto>? _disciplines;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDisciplinesAsync();
+    }
+
+    private async Task LoadDisciplinesAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+            {
+                return;
+            }
+
+            // Dopasuj ścieżkę do route'a Twojego kontrolera API (np. api/person/profile/disciplines)
+            var response = await client.GetAsync("api/person/profile/educations/disciplines");
+
+            if (response.IsSuccessStatusCode)
+            {
+                _disciplines = await response.Content.ReadFromJsonAsync<IEnumerable<EducationDisciplineDto>>();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _disciplines = Enumerable.Empty<EducationDisciplineDto>();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Profil jest nieaktywny.";
+            }
+            else
+            {
+                _errorMessage = $"Wystąpił błąd podczas pobierania dyscyplin (Kod: {response.StatusCode}).";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd sieciowy: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

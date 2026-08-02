@@ -250,14 +250,4 @@
             _errorMessage = $"Błąd sieci: {ex.Message}";
         }
     }
-
-    public class PersonEducationFormModel
-    {
-        public Guid EducationCourseId { get; set; }
-        public Guid? EducationCourseInstanceId { get; set; }
-        public int StartYear { get; set; }
-        public int StartSemestrId { get; set; }
-        public int? EndYear { get; set; }
-        public int? EndSemestrId { get; set; }
-    }
 }
