@@ -1,0 +1,80 @@
+﻿@using static GUS.REGON.Models.Responses.Report
+
+<div class="card border-secondary mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+        <strong>@Institution?.Institution?.Nazwa</strong>
+        <span class="badge @(Institution?.Status == Status.Istneje ? "bg-success" : "bg-warning text-dark")">
+            Status: @Institution?.Status
+        </span>
+    </div>
+    <div class="card-body">
+        @if (Institution?.Institution == null)
+        {
+            <p class="text-muted mb-0">Brak szczegółowych danych dla podmiotu o numerze REGON: @Institution?.Regon</p>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-1"><strong>REGON:</strong> @Institution.Regon</p>
+                    @if (!string.IsNullOrEmpty(Institution.Institution.NazwaSkrocona))
+                    {
+                        <p class="mb-1"><strong>Nazwa skrócona:</strong> @Institution.Institution.NazwaSkrocona</p>
+                    }
+                    <p class="mb-1"><strong>Forma prawna:</strong> @Institution.Institution.PodstawowaFormaPrawna?.Nazwa</p>
+                    <p class="mb-1"><strong>Typ jednostki:</strong> @Institution.Institution.TypJednostki?.Nazwa</p>
+                </div>
+                <div class="col-md-6">
+                    @if (Institution.Institution.Adres != null)
+                    {
+                        var addr = Institution.Institution.Adres;
+                        <p class="mb-1"><strong>Adres:</strong> ul. @addr.Ulica?.Nazwa @addr.NumerNieruchomosci @(string.IsNullOrEmpty(addr.NumerLokalu) ? "" : "/" + addr.NumerLokalu)</p>
+                        <p class="mb-1"><strong>Kod pocztowy / Miejscowość:</strong> @addr.KodPocztowy @addr.Miejscowosc?.Nazwa</p>
+                        <p class="mb-1"><strong>Województwo:</strong> @addr.Wojewodztwo?.Nazwa, Powiat: @addr.Powiat?.Nazwa</p>
+                    }
+                </div>
+            </div>
+
+            @if (Institution.Pkd?.Items != null && Institution.Pkd.Items.Any())
+            {
+                <hr />
+                <h6 class="text-primary">Klasyfikacja PKD:</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 15%;">Kod</th>
+                                <th>Opis działalności</th>
+                                <th style="width: 15%;" class="text-center">Przeważająca</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pkdItem in Institution.Pkd.Items)
+                            {
+                                <tr class="@(pkdItem.IsMain ? "table-success" : "")">
+                                    <td><code>@pkdItem.Pkd.Code</code></td>
+                                    <td>@pkdItem.Pkd.Nazwa</td>
+                                    <td class="text-center">
+                                        @if (pkdItem.IsMain)
+                                        {
+                                            <span class="badge bg-success">Główna</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Full? Institution { get; set; }
+}

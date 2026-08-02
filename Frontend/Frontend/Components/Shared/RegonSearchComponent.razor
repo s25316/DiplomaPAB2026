@@ -1,0 +1,130 @@
+﻿@using Base.Models.ValueObjects.Regony
+@using static GUS.REGON.Models.Responses.Report
+@inject IRegonService RegonService
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white d-flex align-items-center">
+        <h5 class="mb-0"><i class="bi bi-building me-2"></i>Wyszukiwarka Instytucji (REGON)</h5>
+    </div>
+    <div class="card-body">
+
+        <!-- Formularz wyszukiwania -->
+        <div class="mb-3">
+            <label class="form-label">Numery REGON (oddzielone przecinkami lub spacjami):</label>
+            <div class="input-group">
+                <input type="text" class="form-control" @bind="_regonInput" placeholder="np. 012345678, 876543210" />
+                <button class="btn btn-primary" type="button" @onclick="SearchInstitutionsAsync" disabled="@_isLoading">
+                    @if (_isLoading)
+                    {
+                        <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                    }
+                    <i class="bi bi-search me-1"></i> Szukaj
+                </button>
+            </div>
+            <div class="form-text">Możesz podać jeden lub wiele numerów REGON (9 lub 14 cyfr).</div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        <!-- Wyniki wyszukiwania -->
+        @if (_isLoading)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Pobieranie danych z rejestru REGON...</p>
+            </div>
+        }
+        else if (_institutions != null && _institutions.Any())
+        {
+            <div class="mt-4">
+                <h6 class="text-muted mb-3">Znalezione podmioty (@_institutions.Count):</h6>
+
+                @foreach (var item in _institutions)
+                {
+                    <InstitutionDetailsView Institution="item" />
+                }
+            </div>
+        }
+        else if (_hasSearched)
+        {
+            <div class="text-center text-muted py-4">
+                <p class="mb-0">Brak wyników dla podanych numerów REGON.</p>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    private string _regonInput = string.Empty;
+    private List<Full> _institutions = new();
+    private bool _isLoading = false;
+    private bool _hasSearched = false;
+    private string? _errorMessage;
+
+    private async Task SearchInstitutionsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_regonInput))
+        {
+            _errorMessage = "Wprowadź numer REGON.";
+            return;
+        }
+
+        _isLoading = true;
+        _errorMessage = null;
+        _hasSearched = true;
+        _institutions.Clear();
+
+        try
+        {
+            var regon = _regonInput
+                .Split(new[] { ',', ' ', '\n', '\r', '-', '_' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(r => r.Trim())
+                .Where(r => !string.IsNullOrEmpty(r))
+                .Distinct()
+                .ToList()
+                .FirstOrDefault();
+
+
+            if (string.IsNullOrWhiteSpace(regon))
+            {
+                _errorMessage = "Nie podano numeru REGON.";
+                _isLoading = false;
+                return;
+            }
+
+            if (!Regon.TryParse(regon, out var _))
+            {
+                _errorMessage = "Podane niepoprawny numer REGON.";
+                _isLoading = false;
+                return;
+            }
+
+
+            var response = await RegonService.GetAsync([regon]);
+
+            if (response is not null)
+            {
+                _institutions = response;
+            }
+            else
+            {
+                _errorMessage = "Wystąpił błąd podczas pobierania danych z serwera REGON.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}
