@@ -3,7 +3,7 @@ using RADON.Models.Shared;
 using System.ComponentModel.DataAnnotations;
 using static RADON.Models.Institutions.QueryParameters;
 
-namespace Frontend.Components.Shared.Radons
+namespace Frontend.Components.Shared.Radons.Institutions
 {
     public class RadonInstitutionFilterViewModel
     {

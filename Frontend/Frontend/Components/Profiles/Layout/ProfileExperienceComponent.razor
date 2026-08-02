@@ -39,8 +39,8 @@
                     <option value="@PersonEmploymentQueryParameters.PersonEmploymentOrderBy.Position">Stanowisko</option>
                 </select>
                 <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
-                    <option value="@Order.Ascending">Rosnąco</option>
                     <option value="@Order.Descending">Malejąco</option>
+                    <option value="@Order.Ascending">Rosnąco</option>
                 </select>
             </div>
             <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
@@ -73,10 +73,10 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Stanowisko</th>
-                            <th>Firma (REGON)</th>
-                            <th>Opis</th>
                             <th>Okres zatrudnienia</th>
+                            <th>Firma (REGON)</th>
+                            <th>Stanowisko</th>
+                            <th>Opis / Obowiązki</th>
                             <th class="text-end">Akcje</th>
                         </tr>
                     </thead>
@@ -84,7 +84,10 @@
                         @foreach (var employment in _employments)
                         {
                             <tr>
-                                <td><strong>@employment.Position</strong></td>
+                                <td>
+                                    <div><strong>@employment.From.ToString("yyyy-MM-dd")</strong></div>
+                                    <small class="text-muted">do @(employment.To.HasValue ? employment.To.Value.ToString("yyyy-MM-dd") : "Obecnie")</small>
+                                </td>
                                 <td>
                                     @if (_companyDictionary.TryGetValue(employment.Regon, out var company))
                                     {
@@ -96,10 +99,9 @@
                                         <code>@employment.Regon</code>
                                     }
                                 </td>
-                                <td><span class="text-truncate d-inline-block" style="max-width: 250px;">@employment.Description</span></td>
+                                <td><strong>@employment.Position</strong></td>
                                 <td>
-                                    @employment.From.ToString("dd.MM.yyyy") -
-                                    @(employment.To.HasValue ? employment.To.Value.ToString("dd.MM.yyyy") : "Obecnie")
+                                    <span class="text-muted" style="white-space: pre-line;">@employment.Description</span>
                                 </td>
                                 <td class="text-end">
                                     <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(employment)">
@@ -157,7 +159,6 @@
                     <DataAnnotationsValidator />
                     <div class="modal-body">
 
-                        <!-- TUTAJ DODANY KOMUNIKAT BŁĘDU W MODALU -->
                         @if (!string.IsNullOrEmpty(_errorMessage))
                         {
                             <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
@@ -167,13 +168,11 @@
                         }
 
                         <ValidationSummary class="text-danger mb-3" />
-                        <!-- SEKCJA REGON: Inna dla Dodawania (wyszukiwarka), inna dla Edycji (zablokowane pole) -->
+
                         @if (!_isEditing)
                         {
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Wyszukaj pracodawcę po numerze REGON:</label>
-
-                                <!-- Wbudowany komponent wyszukiwania REGON -->
                                 <div class="card shadow-sm border">
                                     <div class="card-body">
                                         <div class="input-group mb-3">
@@ -510,7 +509,7 @@
                 var updateRequest = new PersonEmploymentUpdateRequest
                 {
                     Position = _currentModel.Position,
-                    Descrition = _currentModel.Description, 
+                    Descrition = _currentModel.Description,
                     From = _currentModel.From,
                     To = _currentModel.To
                 };

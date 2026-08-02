@@ -40,7 +40,9 @@ public class PersonEmploymentQueryBuilder(DiplomaDbContext context) : BaseQueryB
 
                 _ => order == Order.Ascending
                     ? query.OrderBy(i => i.From)
-                    : query.OrderByDescending(i => i.From),
+                    .OrderBy(i => i.To)
+                    : query.OrderByDescending(i => i.From)
+                    .ThenByDescending(i => i.To),
             };
         });
         Paginate(pagination);
