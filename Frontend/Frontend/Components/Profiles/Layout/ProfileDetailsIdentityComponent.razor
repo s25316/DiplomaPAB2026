@@ -1,0 +1,187 @@
+﻿@using Diploma.Models.Persons.Profile
+@inject IBackendHttpClientFactory HttpClientFactory
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-person me-2"></i>Dane i Login</h5>
+    </div>
+    <div class="card-body">
+
+        @if (!string.IsNullOrEmpty(_successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        @if (_isLoadingData)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Ładowanie danych profilu...</p>
+            </div>
+        }
+        else
+        {
+            <EditForm Model="_model" OnValidSubmit="HandleSubmitAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger mb-3" />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Imię</label>
+                    <InputText id="name" class="form-control" @bind-Value="_model.Name" />
+                    <ValidationMessage For="() => _model.Name" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="surname" class="form-label">Nazwisko</label>
+                    <InputText id="surname" class="form-control" @bind-Value="_model.Surname" />
+                    <ValidationMessage For="() => _model.Surname" />
+                </div>
+
+                <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                    @if (_isSaving)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Zapisywanie...</span>
+                    }
+                    else
+                    {
+                        <span>Zapisz zmiany</span>
+                    }
+                </button>
+            </EditForm>
+        }
+
+    </div>
+</div>
+
+@code {
+    private PersonUpdateIdentityDataRequestModel _model = new();
+    private bool _isLoadingData = true;
+    private bool _isSaving = false;
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    // Model formularza z walidacją dla Blazora
+    public class PersonUpdateIdentityDataRequestModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Imię jest wymagane.")]
+        public string Name { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Nazwisko jest wymagane.")]
+        public string Surname { get; set; } = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadIdentityDataAsync();
+    }
+
+    private async Task LoadIdentityDataAsync()
+    {
+        _isLoadingData = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            // Odpowiednik endpointu [HttpGet("identity")]
+            using var response = await client.GetAsync("api/person/profile/identity");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // API zwraca obiekt typu PersonIdentityDataDto (wewnątrz PersonIdentityDataQueryResult.Success)
+                var dto = await response.Content.ReadFromJsonAsync<PersonIdentityDataDto>();
+                if (dto is not null)
+                {
+                    _model.Name = dto.Name ?? string.Empty;
+                    _model.Surname = dto.Surname ?? string.Empty;
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _errorMessage = "Nie znaleziono danych profilu.";
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Twój profil jest nieaktywny.";
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać danych tożsamości.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem podczas pobierania danych.";
+        }
+        finally
+        {
+            _isLoadingData = false;
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            // Tworzymy strukturę żądania zgodną z PersonUpdateIdentityDataRequest
+            var requestBody = new
+            {
+                Name = _model.Name,
+                Surname = _model.Surname
+            };
+
+            // Odpowiednik endpointu [HttpPost("identity")]
+            using var response = await client.PostAsJsonAsync("api/person/profile/identity", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Dane tożsamości zostały pomyślnie zaktualizowane.";
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(errorContent))
+                {
+                    errorContent = errorContent.Trim('"');
+                }
+
+                _errorMessage = response.StatusCode switch
+                {
+                    System.Net.HttpStatusCode.BadRequest => "Wprowadzono niepoprawne dane.",
+                    _ => !string.IsNullOrEmpty(errorContent) ? errorContent : "Wystąpił błąd podczas zapisywania danych."
+                };
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+}

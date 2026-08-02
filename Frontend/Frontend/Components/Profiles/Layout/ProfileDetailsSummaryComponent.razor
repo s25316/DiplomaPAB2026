@@ -1,0 +1,182 @@
+﻿@using Diploma.Models.Persons.Profile
+@inject IBackendHttpClientFactory HttpClientFactory
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-file-text me-2"></i>Informacje o profilu</h5>
+    </div>
+    <div class="card-body">
+
+        @if (!string.IsNullOrEmpty(_successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        @if (_isLoadingData)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Ładowanie informacji o profilu...</p>
+            </div>
+        }
+        else
+        {
+            <EditForm Model="_model" OnValidSubmit="HandleSubmitAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger mb-3" />
+
+                <div class="mb-3">
+                    <label for="title" class="form-label">Tytuł zawodowy / Stanowisko</label>
+                    <InputText id="title" class="form-control" @bind-Value="_model.Title" />
+                    <ValidationMessage For="() => _model.Title" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="summary" class="form-label">Podsumowanie / Biografia</label>
+                    <InputTextArea id="summary" class="form-control" rows="4" @bind-Value="_model.Summary" />
+                    <ValidationMessage For="() => _model.Summary" />
+                </div>
+
+                <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                    @if (_isSaving)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>Zapisywanie...</span>
+                    }
+                    else
+                    {
+                        <span>Zapisz zmiany</span>
+                    }
+                </button>
+            </EditForm>
+        }
+
+    </div>
+</div>
+
+@code {
+    private PersonUpdateProfileDataRequestModel _model = new();
+    private bool _isLoadingData = true;
+    private bool _isSaving = false;
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    // Model formularza z walidacją dla Blazora
+    public class PersonUpdateProfileDataRequestModel
+    {
+        public string? Title { get; set; }
+        public string? Summary { get; set; }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProfileDataAsync();
+    }
+
+    private async Task LoadProfileDataAsync()
+    {
+        _isLoadingData = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            // Odpowiednik endpointu [HttpGet("profile")]
+            using var response = await client.GetAsync("api/person/profile/profile");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var dto = await response.Content.ReadFromJsonAsync<PersonProfileDataDto>();
+                if (dto is not null)
+                {
+                    _model.Title = dto.Title;
+                    _model.Summary = dto.Summary;
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _errorMessage = "Nie znaleziono danych profilu.";
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Twój profil jest nieaktywny.";
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać informacji o profilu.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem podczas pobierania danych.";
+        }
+        finally
+        {
+            _isLoadingData = false;
+        }
+    }
+
+    private async Task HandleSubmitAsync()
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            var requestBody = new PersonUpdateProfileDataRequest
+            {
+                Title = _model.Title,
+                Summary = _model.Summary
+            };
+
+            // Odpowiednik endpointu [HttpPost("profile")]
+            using var response = await client.PostAsJsonAsync("api/person/profile/profile", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Informacje o profilu zostały pomyślnie zaktualizowane.";
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(errorContent))
+                {
+                    errorContent = errorContent.Trim('"');
+                }
+
+                _errorMessage = response.StatusCode switch
+                {
+                    System.Net.HttpStatusCode.BadRequest => "Wprowadzono niepoprawne dane.",
+                    _ => !string.IsNullOrEmpty(errorContent) ? errorContent : "Wystąpił błąd podczas zapisywania danych."
+                };
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+}

@@ -1,0 +1,219 @@
+﻿@using Diploma.Models.Persons.Authentication
+@inject IBackendHttpClientFactory HttpClientFactory
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-person-gear me-2"></i>Zmiana loginu</h5>
+    </div>
+    <div class="card-body">
+
+        @if (!string.IsNullOrEmpty(_successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        @if (!_isInitiated)
+        {
+            <!-- ETAP 1: Inicjacja zmiany loginu -->
+            <p class="text-muted">
+                Aby zmienić login, rozpocznij proces inicjacji. Na Twój adres email zostanie wysłany kod weryfikacyjny.
+            </p>
+
+            <button type="button" class="btn btn-outline-primary" @onclick="InitializeUpdateAsync" disabled="@_isLoading">
+                @if (_isLoading)
+                {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>Inicjowanie...</span>
+                }
+                else
+                {
+                    <span>Rozpocznij zmianę loginu</span>
+                }
+            </button>
+        }
+        else
+        {
+            <!-- ETAP 2: Wprowadzenie nowego loginu oraz kodu z emaila -->
+            <div class="alert alert-info py-2 small mb-3">
+                <i class="bi bi-info-circle me-1"></i> Sesja inicjacji aktywna (ID: <code>@_operationId</code>). Wpisz nowy login oraz kod otrzymany w wiadomości e-mail.
+            </div>
+
+            <EditForm Model="_model" OnValidSubmit="SubmitNewLoginAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger mb-3" />
+
+                <div class="mb-3">
+                    <label for="newLogin" class="form-label">Nowy login</label>
+                    <InputText id="newLogin" class="form-control" @bind-Value="_model.NewLogin" />
+                    <ValidationMessage For="() => _model.NewLogin" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="code" class="form-label">Kod weryfikacyjny z e-maila</label>
+                    <InputText id="code" class="form-control" @bind-Value="_model.Code" />
+                    <ValidationMessage For="() => _model.Code" />
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" disabled="@_isLoading">
+                        @if (_isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>Zapisywanie...</span>
+                        }
+                        else
+                        {
+                            <span>Zatwierdź zmianę</span>
+                        }
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary" @onclick="ResetState" disabled="@_isLoading">
+                        Anuluj
+                    </button>
+                </div>
+            </EditForm>
+        }
+
+    </div>
+</div>
+
+@code {
+    private bool _isInitiated = false;
+    private bool _isLoading = false;
+    private Guid _operationId;
+
+    private PersonUpdateLoginModel _model = new();
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    // Model formularza dla Blazora obsługujący walidację
+    public class PersonUpdateLoginModel
+    {
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Nowy login jest wymagany.")]
+        [System.ComponentModel.DataAnnotations.MinLength(3, ErrorMessage = "Login musi mieć co najmniej 3 znaki.")]
+        public string NewLogin { get; set; } = string.Empty;
+
+        [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Kod weryfikacyjny jest wymagany.")]
+        public string Code { get; set; } = string.Empty;
+    }
+
+    // Klasa mapująca wynik inicjacji zwracany przez API (zakładając strukturę JSON z OperationId)
+    public class InitiationResultDto
+    {
+        public Guid OperationId { get; set; }
+    }
+
+    private async Task InitializeUpdateAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            using var response = await client.PostAsync("api/person/profile/login/initiation", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<InitiationResultDto>();
+                if (result is not null && result.OperationId != Guid.Empty)
+                {
+                    _operationId = result.OperationId;
+                    _isInitiated = true;
+                }
+                else
+                {
+                    _errorMessage = "Nie udało się pobrać identyfikatora operacji.";
+                }
+            }
+            else
+            {
+                _errorMessage = "Nie udało się zainicjować zmiany loginu.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task SubmitNewLoginAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            // Używamy docelowej klasy żądania z przestrzeni nazw Diploma.Models.Persons.Authentication
+            var requestBody = new PersonUpdateLoginRequest
+            {
+                Login = _model.NewLogin,
+                Code = _model.Code
+            };
+
+            using var response = await client.PostAsJsonAsync($"api/person/profile/login/{_operationId}", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Login został pomyślnie zaktualizowany.";
+                ResetState();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(errorContent) && response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    _errorMessage = errorContent;
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    _errorMessage = "Wporwadzono niepoprawny kod.";
+                }
+                else
+                {
+                    _errorMessage = $"Wystąpił nieoczekiwany błąd (Kod: {(int)response.StatusCode}).";
+                }
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void ResetState()
+    {
+        _isInitiated = false;
+        _operationId = Guid.Empty;
+        _model = new();
+    }
+}

@@ -1,0 +1,91 @@
+﻿@page "/restore/{OperationId:guid}"
+@inject IBackendHttpClientFactory HttpClientFactory
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-arrow-counterclockwise me-2"></i>Przywracanie konta / operacji</h5>
+                </div>
+                <div class="card-body text-center p-4">
+
+                    @if (_isProcessing)
+                    {
+                        <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                        <p class="text-muted">Trwa przywracanie... Proszę czekać.</p>
+                    }
+                    else if (!string.IsNullOrEmpty(_successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                        </div>
+                        <button class="btn btn-primary mt-3" @onclick="NavigateToLogin">Przejdź do logowania</button>
+                    }
+                    else
+                    {
+                        @if (!string.IsNullOrEmpty(_errorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @_errorMessage
+                            </div>
+                        }
+
+                        <p class="mb-4">Czy na pewno chcesz przywrócić konto?</p>
+
+                        <button class="btn btn-success btn-lg px-4" @onclick="RestoreAccountAsync">
+                            <i class="bi bi-check2-circle me-2"></i>Potwierdź i przywróć
+                        </button>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid OperationId { get; set; }
+
+    private bool _isProcessing = false;
+    private string? _errorMessage;
+    private string? _successMessage;
+
+    private async Task RestoreAccountAsync()
+    {
+        _isProcessing = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateUnAuthorizedClientAsync();
+
+            using var response = await client.PostAsync($"api/person/profile/restore/{OperationId}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Operacja przywracania przebiegła pomyślnie!";
+            }
+            else
+            {
+                _errorMessage = "Nie udało się przywrócić danych. Link może być nieaktualny lub wygasł.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isProcessing = false;
+        }
+    }
+
+    private void NavigateToLogin()
+    {
+        Navigation.NavigateTo("/authentication");
+    }
+}

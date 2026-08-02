@@ -1,0 +1,81 @@
+﻿
+
+<div class="card border-danger shadow-sm">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Strefa niebezpieczna</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">
+            Usunięcie konta jest nieodwracalne. Wszystkie Twoje dane, historia zatrudnienia oraz edukacja zostaną trwale usunięte z systemu.
+        </p>
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @_errorMessage
+            </div>
+        }
+
+        <button type="button" class="btn btn-outline-danger" @onclick="ConfirmAndDeleteAsync" disabled="@_isLoading">
+            @if (_isLoading)
+            {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span class="visually-hidden">Usuwanie...</span>
+                <span>Usuwanie konta...</span>
+            }
+            else
+            {
+                <text>Usuń moje konto</text>
+            }
+        </button>
+    </div>
+</div>
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; } = default!;
+    [Inject] IJSRuntime JS { get; set; } = default!;
+    [Inject] IBackendHttpClientFactory HttpClientFactory { get; set; } = default!;
+    [Inject] CustomAuthenticationStateProvider AuthStateProvider { get; set; } = default!;
+
+
+    private bool _isLoading = false;
+    private string? _errorMessage;
+
+    private async Task ConfirmAndDeleteAsync()
+    {
+        bool confirmed = await JS.InvokeAsync<bool>("confirm", "Czy na pewno chcesz trwale usunąć swoje konto? Tej operacji nie można cofnąć.");
+
+        if (!confirmed)
+            return;
+
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            using var response = await client.DeleteAsync("api/person/profile");
+
+            if (response.IsSuccessStatusCode)
+            {
+                await AuthStateProvider.NotifyUserLoggedOutAsync();
+                Navigation.NavigateTo("/", forceLoad: true);
+            }
+            else
+            {
+                _errorMessage = "Wystąpił błąd podczas usuwania konta. Spróbuj ponownie później.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Nie udało się połączyć z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

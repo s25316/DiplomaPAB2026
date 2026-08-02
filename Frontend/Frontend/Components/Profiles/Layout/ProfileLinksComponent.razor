@@ -1,0 +1,315 @@
+﻿@using Diploma.Models.PersonUris
+@using Diploma.Models.Shared
+@inject IBackendHttpClientFactory HttpClientFactory
+
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Profile i Linki (GitHub / URI)</h5>
+        <button class="btn btn-light btn-sm" @onclick="OpenCreateModal">
+            <i class="bi bi-plus-lg me-1"></i> Dodaj link
+        </button>
+    </div>
+    <div class="card-body">
+
+        @if (!string.IsNullOrEmpty(_successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
+
+        @if (_isLoading)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Ładowanie linków...</p>
+            </div>
+        }
+        else if (_links == null || !_links.Any())
+        {
+            <div class="text-center text-muted py-4">
+                <p class="mb-0">Brak dodanych linków.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nazwa</th>
+                            <th>Adres URI</th>
+                            <th>Opis</th>
+                            <th class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var link in _links)
+                        {
+                            <tr>
+                                <td><strong>@link.Name</strong></td>
+                                <td>
+                                    <a href="@link.Uri" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block" style="max-width: 250px;">
+                                        @link.Uri
+                                    </a>
+                                </td>
+                                <td>@link.Description</td>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(link)">
+                                        <i class="bi bi-pencil">Edytuj</i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm" @onclick="() => DeleteLinkAsync(link.UriId)">
+                                        <i class="bi bi-trash">Usuń</i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>
+
+<!-- MODAL DODawania / EDYCJI -->
+@if (_isModalOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(_isEditing ? "Edytuj link" : "Dodaj nowy link")</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+
+                <EditForm Model="_currentModel" OnValidSubmit="SaveLinkAsync">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <ValidationSummary class="text-danger mb-3" />
+
+                        @if (!_isEditing)
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">Adres URI</label>
+                                <InputText class="form-control" @bind-Value="_currentModel.Uri" placeholder="https://..." />
+                                <ValidationMessage For="() => _currentModel.Uri" />
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label">Nazwa</label>
+                            <InputText class="form-control" @bind-Value="_currentModel.Name" placeholder="np. GitHub" />
+                            <ValidationMessage For="() => _currentModel.Name" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Opis</label>
+                            <InputText class="form-control" @bind-Value="_currentModel.Description" placeholder="np. Mój główny profil z repozytoriami" />
+                            <ValidationMessage For="() => _currentModel.Description" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary" disabled="@_isSaving">
+                            @if (_isSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Zapisz
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<PersonUriDto> _links = new();
+    private bool _isLoading = true;
+    private bool _isSaving = false;
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    // Stan modalu
+    private bool _isModalOpen = false;
+    private bool _isEditing = false;
+    private Guid _selectedUriId;
+    private UriFormModel _currentModel = new();
+
+    public class UriFormModel
+    {
+        [Required(ErrorMessage = "Adres URI jest wymagany.")]
+        [Url(ErrorMessage = "Podaj poprawny adres URL.")]
+        public string Uri { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Nazwa jest wymagana.")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Opis jest wymagany.")]
+        public string Description { get; set; } = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadLinksAsync();
+    }
+
+    private async Task LoadLinksAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            // Tworzymy zapytanie z parametrami domyślnymi (sortowanie po nazwie rosnąco)
+            var response = await client.GetAsync("api/person/profile/urls?OrderBy=1&Order=1");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Zakładając, że Response<PersonUriDto> zawiera kolekcję elementów (np. właściwość Items lub jest bezpośrednio kolekcją)
+                var result = await response.Content.ReadFromJsonAsync<Response<PersonUriDto>>();
+                if (result?.Items != null)
+                {
+                    _links = result.Items.ToList();
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Profil jest nieaktywny.";
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać listy linków.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void OpenCreateModal()
+    {
+        _isEditing = false;
+        _currentModel = new();
+        _isModalOpen = true;
+    }
+
+    private void OpenEditModal(PersonUriDto dto)
+    {
+        _isEditing = true;
+        _selectedUriId = dto.UriId;
+        _currentModel = new UriFormModel
+        {
+            Uri = dto.Uri,
+            Name = dto.Name,
+            Description = dto.Description
+        };
+        _isModalOpen = true;
+    }
+
+    private void CloseModal()
+    {
+        _isModalOpen = false;
+    }
+
+    private async Task SaveLinkAsync()
+    {
+        _isSaving = true;
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            HttpResponseMessage response;
+
+            if (_isEditing)
+            {
+                var updateRequest = new PersonUriUpdateRequest
+                {
+                    Name = _currentModel.Name,
+                    Description = _currentModel.Description
+                };
+                response = await client.PutAsJsonAsync($"api/person/profile/urls/{_selectedUriId}", updateRequest);
+            }
+            else
+            {
+                var createRequest = new PersonUriCreateRequest
+                {
+                    Uri = _currentModel.Uri,
+                    Name = _currentModel.Name,
+                    Description = _currentModel.Description
+                };
+                response = await client.PostAsJsonAsync("api/person/profile/urls", createRequest);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = _isEditing ? "Link został zaktualizowany." : "Link został dodany.";
+                CloseModal();
+                await LoadLinksAsync();
+            }
+            else
+            {
+                _errorMessage = "Nie udało się zapisać linku.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd podczas komunikacji z serwerem.";
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private async Task DeleteLinkAsync(Guid uriId)
+    {
+        _errorMessage = null;
+        _successMessage = null;
+
+        try
+        {
+            using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var response = await client.DeleteAsync($"api/person/profile/urls/{uriId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Link został pomyślnie usunięty.";
+                await LoadLinksAsync();
+            }
+            else
+            {
+                _errorMessage = "Nie udało się usunąć linku.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+    }
+}
