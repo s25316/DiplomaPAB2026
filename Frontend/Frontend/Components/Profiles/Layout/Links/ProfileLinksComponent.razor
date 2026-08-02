@@ -68,34 +68,55 @@
         {
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
-                    <thead>
+                    <thead class="table-light">
                         <tr>
+                            <th style="width: 40px;"></th>
                             <th>Nazwa</th>
                             <th>Adres URI</th>
-                            <th>Opis</th>
                             <th class="text-end">Akcje</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var link in _links)
                         {
-                            <tr>
+                            var isExpanded = _expandedRowIds.Contains(link.UriId);
+
+                            <!-- Główny wiersz -->
+                            <tr @onclick="() => ToggleRow(link.UriId)" style="cursor: pointer;" class="@(isExpanded ? "table-active" : "")">
+                                <td class="text-center">
+                                    <i class="bi @(isExpanded ? "bi-chevron-down" : "bi-chevron-right") text-muted"></i>
+                                </td>
                                 <td><strong>@link.Name</strong></td>
                                 <td>
-                                    <a href="@link.Uri" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block" style="max-width: 250px;">
-                                        @link.Uri
+                                    <a href="@link.Uri" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block text-decoration-none" style="max-width: 300px;" @onclick:stopPropagation="true">
+                                        @link.Uri <i class="bi bi-box-arrow-up-right small ms-1"></i>
                                     </a>
                                 </td>
-                                <td>@link.Description</td>
-                                <td class="text-end">
+                                <td class="text-end" @onclick:stopPropagation="true">
                                     <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(link)">
-                                        <i class="bi bi-pencil">Edytuj</i>
+                                        <i class="bi bi-pencil"> Edytuj</i>
                                     </button>
                                     <button class="btn btn-outline-danger btn-sm" @onclick="() => DeleteLinkAsync(link.UriId)">
-                                        <i class="bi bi-trash">Usuń</i>
+                                        <i class="bi bi-trash"> Usuń</i>
                                     </button>
                                 </td>
                             </tr>
+
+                            <!-- Rozwijany wiersz z opisem -->
+                            @if (isExpanded)
+                            {
+                                <tr class="table-light">
+                                    <td></td>
+                                    <td colspan="3" class="p-3">
+                                        <div class="card border-0 shadow-sm bg-white p-3">
+                                            <span class="fw-bold text-muted small mb-1"><i class="bi bi-card-text me-1"></i> Opis:</span>
+                                            <div class="text-dark" style="white-space: pre-line;">
+                                                @(!string.IsNullOrWhiteSpace(link.Description) ? link.Description : "Brak opisu dla tego linku.")
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -161,7 +182,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Opis</label>
-                            <InputText class="form-control" @bind-Value="_currentModel.Description" placeholder="np. Mój główny profil z repozytoriami" />
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_currentModel.Description" placeholder="np. Mój główny profil z repozytoriami"></InputTextArea>
                             <ValidationMessage For="() => _currentModel.Description" />
                         </div>
                     </div>
@@ -187,6 +208,9 @@
     private bool _isSaving = false;
     private string? _successMessage;
     private string? _errorMessage;
+
+    // Obsługa rozwijania wierszy
+    private HashSet<Guid> _expandedRowIds = new();
 
     // Parametry filtrowania/paginacji/sortowania
     private PersonUriQueryParameters.PersonUriOrderBy _selectedOrderBy = PersonUriQueryParameters.PersonUriOrderBy.Name;
@@ -220,6 +244,18 @@
         await LoadLinksAsync();
     }
 
+    private void ToggleRow(Guid uriId)
+    {
+        if (_expandedRowIds.Contains(uriId))
+        {
+            _expandedRowIds.Remove(uriId);
+        }
+        else
+        {
+            _expandedRowIds.Add(uriId);
+        }
+    }
+
     private async Task LoadLinksAsync()
     {
         _isLoading = true;
@@ -230,7 +266,6 @@
             using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            // Budowanie QueryString na podstawie parametrów
             var url = $"api/person/profile/urls?OrderBy={(int)_selectedOrderBy}&Order={(int)_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
 
             var response = await client.GetAsync(url);
@@ -241,7 +276,7 @@
                 if (result != null)
                 {
                     _links = result.Items?.ToList() ?? new();
-                    _totalCount = result.Pagination.TotalCount; // Założenie, że obiekt Response posiada TotalCount
+                    _totalCount = result.Pagination.TotalCount;
                     _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
                     if (_totalPages == 0) _totalPages = 1;
                 }
@@ -270,7 +305,7 @@
         if (Enum.TryParse<PersonUriQueryParameters.PersonUriOrderBy>(e.Value?.ToString(), out var parsed))
         {
             _selectedOrderBy = parsed;
-            _currentPage = 1; // Reset do 1 strony przy zmianie sortowania
+            _currentPage = 1;
             await LoadLinksAsync();
         }
     }
@@ -396,6 +431,11 @@
             if (response.IsSuccessStatusCode)
             {
                 _successMessage = "Link został pomyślnie usunięty.";
+                _expandedRowIds.Remove(uriId);
+
+                if (_links.Count == 1 && _currentPage > 1)
+                    _currentPage--;
+
                 await LoadLinksAsync();
             }
             else

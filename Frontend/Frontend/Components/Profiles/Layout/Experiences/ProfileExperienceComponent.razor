@@ -73,17 +73,23 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
+                            <th style="width: 40px;"></th>
                             <th>Okres zatrudnienia</th>
                             <th>Firma (REGON)</th>
                             <th>Stanowisko</th>
-                            <th>Opis / Obowiązki</th>
                             <th class="text-end">Akcje</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var employment in _employments)
                         {
-                            <tr>
+                            var isExpanded = _expandedRowIds.Contains(employment.EmploymentId);
+
+                            <!-- Główny wiersz -->
+                            <tr @onclick="() => ToggleRow(employment.EmploymentId)" style="cursor: pointer;" class="@(isExpanded ? "table-active" : "")">
+                                <td class="text-center">
+                                    <i class="bi @(isExpanded ? "bi-chevron-down" : "bi-chevron-right") text-muted"></i>
+                                </td>
                                 <td>
                                     <div><strong>@employment.From.ToString("yyyy-MM-dd")</strong></div>
                                     <small class="text-muted">do @(employment.To.HasValue ? employment.To.Value.ToString("yyyy-MM-dd") : "Obecnie")</small>
@@ -100,10 +106,7 @@
                                     }
                                 </td>
                                 <td><strong>@employment.Position</strong></td>
-                                <td>
-                                    <span class="text-muted" style="white-space: pre-line;">@employment.Description</span>
-                                </td>
-                                <td class="text-end">
+                                <td class="text-end" @onclick:stopPropagation="true">
                                     <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(employment)">
                                         <i class="bi bi-pencil"> Edytuj</i>
                                     </button>
@@ -112,6 +115,30 @@
                                     </button>
                                 </td>
                             </tr>
+
+                            <!-- Rozwijany wiersz z opisem -->
+                            @if (isExpanded)
+                            {
+                                <tr class="table-light">
+                                    <td></td>
+                                    <td colspan="4" class="p-3">
+                                        <div class="card border-0 shadow-sm bg-white p-3 mb-2">
+                                            <span class="fw-bold text-muted small mb-1"><i class="bi bi-card-text me-1"></i> Opis stanowiska / Obowiązki:</span>
+                                            <div class="text-dark" style="white-space: pre-line;">
+                                                @(!string.IsNullOrWhiteSpace(employment.Description) ? employment.Description : "Brak opisu dla tego stanowiska.")
+                                            </div>
+                                        </div>
+
+                                        @if (_companyDictionary.TryGetValue(employment.Regon, out var currentCompany))
+                                        {
+                                            <div class="card border-0 shadow-sm bg-white p-3">
+                                                <span class="fw-bold text-muted small mb-2"><i class="bi bi-building me-1"></i> Szczegóły pracodawcy (GUS):</span>
+                                                <RegonInstitutionDetailsView Institution="currentCompany" />
+                                            </div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -267,6 +294,9 @@
     private string? _successMessage;
     private string? _errorMessage;
 
+    // Obsługa rozwijania wierszy (przechowujemy ID elementów rozwinętych)
+    private HashSet<Guid> _expandedRowIds = new();
+
     // Parametry filtrowania/paginacji/sortowania
     private PersonEmploymentQueryParameters.PersonEmploymentOrderBy _selectedOrderBy = PersonEmploymentQueryParameters.PersonEmploymentOrderBy.From;
     private Order _selectedOrder = Order.Descending;
@@ -307,6 +337,18 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadEmploymentsAsync();
+    }
+
+    private void ToggleRow(Guid employmentId)
+    {
+        if (_expandedRowIds.Contains(employmentId))
+        {
+            _expandedRowIds.Remove(employmentId);
+        }
+        else
+        {
+            _expandedRowIds.Add(employmentId);
+        }
     }
 
     private async Task LoadEmploymentsAsync()
@@ -573,6 +615,7 @@
             if (response.IsSuccessStatusCode)
             {
                 _successMessage = "Wpis o zatrudnieniu został usunięty.";
+                _expandedRowIds.Remove(employmentId);
 
                 if (_employments.Count == 1 && _currentPage > 1)
                     _currentPage--;
