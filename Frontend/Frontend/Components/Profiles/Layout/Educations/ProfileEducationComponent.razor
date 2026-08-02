@@ -1,8 +1,5 @@
-﻿@page "/person/educations"
-@using Diploma.Models.Dictionaries
+﻿@using Diploma.Models.Dictionaries
 @using Diploma.Models.PersonEducations
-@using RADON.Models.Courses.Responses
-@using RADON.Models.Institutions.Responses
 
 @inject IBackendHttpClientFactory ClientFactory
 
@@ -56,6 +53,7 @@
                                 <td>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</td>
                                 <td>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "-")</td>
                                 <td class="text-end">
+                                    <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(edu)">Edytuj</button>
                                     <button class="btn btn-danger btn-sm" @onclick="() => DeleteEducationAsync(edu.EducationId)">Usuń</button>
                                 </td>
                             </tr>
@@ -66,11 +64,85 @@
         </div>
     </div>
 
-    <!-- SEKCJADRUGA: Formularz dodawania -->
+    <!-- SEKCJADRUGA: Formularz DODAWANIA (używa RadonSearchComponent) -->
     @if (_isCreating)
     {
         <RadonSearchComponent OnEducationCreated="HandleEducationCreated" />
         <button class="btn btn-secondary mt-2" @onclick="CloseCreateModal">Zamknij</button>
+    }
+
+    <!-- SEKCJATRZECIA: Formularz EDYCJI (tylko daty/semestry, brak RadonSearchComponent) -->
+    @if (_editingEducationId.HasValue && _editFormModel != null)
+    {
+        <div class="card border-warning shadow mb-4">
+            <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <strong>Edycja okresu wykształcenia</strong>
+                <button class="btn-close" @onclick="CloseCreateModal"></button>
+            </div>
+            <div class="card-body">
+                <EditForm Model="_editFormModel" OnValidSubmit="SubmitUpdateAsync">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary class="alert alert-danger" />
+
+                    <h6 class="text-primary font-weight-bold">Dane początkowe (Start)</h6>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Rok startu</label>
+                            <InputNumber class="form-control" @bind-Value="_editFormModel.StartYear" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Semestr startu</label>
+                            <InputSelect class="form-select" @bind-Value="_editFormModel.StartSemestrId">
+                                <option value="0">-- Wybierz semestr --</option>
+                                @if (_semesters != null)
+                                {
+                                    @foreach (var sem in _semesters)
+                                    {
+                                        <option value="@sem.Code">@sem.Name</option>
+                                    }
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="hasEndCheck" @onchange="ToggleEditEndSection" checked="@(_editIncludeEnd)">
+                        <label class="form-check-label font-weight-bold" for="hasEndCheck">
+                            Określ datę zakończenia (opcjonalnie)
+                        </label>
+                    </div>
+
+                    @if (_editIncludeEnd)
+                    {
+                        <h6 class="text-secondary font-weight-bold">Dane końcowe (End)</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Rok końca</label>
+                                <InputNumber class="form-control" @bind-Value="_editFormModel.EndYear" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Semestr końca</label>
+                                <InputSelect class="form-select" @bind-Value="_editFormModel.EndSemestrId">
+                                    <option value="0">-- Wybierz semestr --</option>
+                                    @if (_semesters != null)
+                                    {
+                                        @foreach (var sem in _semesters)
+                                        {
+                                            <option value="@sem.Code">@sem.Name</option>
+                                        }
+                                    }
+                                </InputSelect>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-success">Zapisz zmiany</button>
+                        <button type="button" class="btn btn-secondary ms-2" @onclick="CloseCreateModal">Anuluj</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
     }
 </div>
 
@@ -78,17 +150,12 @@
     private IEnumerable<PersonEducationDto>? _educations;
     private List<DictionaryItem<int>>? _semesters;
     private bool _isCreating = false;
-    private bool _includeEnd = false;
+    private Guid? _editingEducationId = null;
+    private bool _editIncludeEnd = false;
+    private EditEducationFormModel? _editFormModel;
+
     private string? _errorMessage;
     private string? _successMessage;
-
-    // Stany wyboru z komponentów RADON
-    private Institution? _selectedInstitution;
-    private Course? _selectedCourse;
-    private CourseInstance? _selectedInstance;
-
-    // Lokalny model formularza z właściwościami 'set'
-    private PersonEducationFormModel? _formModel;
 
     protected override async Task OnInitializedAsync()
     {
@@ -101,8 +168,7 @@
         try
         {
             var client = await ClientFactory.CreateAuthorizedClientAsync();
-            if (client is null)
-                return;
+            if (client is null) return;
 
             _errorMessage = null;
             _educations = await client.GetFromJsonAsync<IEnumerable<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
@@ -129,89 +195,68 @@
     private void OpenCreateModal()
     {
         _isCreating = true;
-        _includeEnd = false;
-        _selectedInstitution = null;
-        _selectedCourse = null;
-        _selectedInstance = null;
+        _editingEducationId = null;
+        _editFormModel = null;
+        _successMessage = null;
+    }
+
+    private void OpenEditModal(PersonEducationDto edu)
+    {
+        _isCreating = false;
+        _editingEducationId = edu.EducationId;
         _successMessage = null;
 
-        _formModel = new PersonEducationFormModel
+        _editIncludeEnd = edu.End != null;
+        _editFormModel = new EditEducationFormModel
         {
-            StartYear = 0,
-            StartSemestrId = 0
+            StartYear = edu.Start?.Year ?? 0,
+            StartSemestrId = edu.Start?.Semester?.SemestrId ?? 0,
+            EndYear = edu.End?.Year,
+            EndSemestrId = edu.End?.Semester?.SemestrId
         };
     }
 
     private void CloseCreateModal()
     {
         _isCreating = false;
-        _formModel = null;
+        _editingEducationId = null;
+        _editFormModel = null;
     }
 
-    private void ToggleEndSection(ChangeEventArgs e)
+    private void ToggleEditEndSection(ChangeEventArgs e)
     {
-        _includeEnd = (bool)(e.Value ?? false);
-        if (_formModel != null && _includeEnd)
+        _editIncludeEnd = (bool)(e.Value ?? false);
+        if (_editFormModel != null)
         {
-            _formModel.EndYear = 0;
-            _formModel.EndSemestrId = 0;
-        }
-        else if (_formModel != null)
-        {
-            _formModel.EndYear = null;
-            _formModel.EndSemestrId = null;
-        }
-    }
-
-    private void HandleInstitutionSelected(Institution institution)
-    {
-        _selectedInstitution = institution;
-        _selectedCourse = null;
-        _selectedInstance = null;
-        if (_formModel != null)
-        {
-            _formModel.EducationCourseId = Guid.Empty;
-            _formModel.EducationCourseInstanceId = null;
+            if (_editIncludeEnd)
+            {
+                _editFormModel.EndYear = 0;
+                _editFormModel.EndSemestrId = 0;
+            }
+            else
+            {
+                _editFormModel.EndYear = null;
+                _editFormModel.EndSemestrId = null;
+            }
         }
     }
 
-    private void HandleCourseSelected(Course course)
+    private async Task SubmitUpdateAsync()
     {
-        _selectedCourse = course;
-        if (_formModel != null)
-        {
-            _formModel.EducationCourseId = course.CourseUuid;
-        }
-    }
+        if (!_editingEducationId.HasValue || _editFormModel == null) return;
 
-    private void HandleInstanceSelected(CourseInstance instance)
-    {
-        _selectedInstance = instance;
-        if (_formModel != null)
+        var updateRequest = new PersonEducationUpdateRequest
         {
-            _formModel.EducationCourseInstanceId = instance?.CourseInstanceUuid;
-        }
-    }
-
-    private async Task SubmitCreateAsync()
-    {
-        if (_formModel == null) return;
-
-        // Mapowanie lokalnego ViewModelu na oryginalny niezmienialny kontrakt (z użyciem init)
-        var apiRequest = new PersonEducationCreateRequest
-        {
-            EducationCourseId = _formModel.EducationCourseId,
-            EducationCourseInstanceId = _formModel.EducationCourseInstanceId,
             Start = new EducationSemestrRequestDto
             {
-                Year = _formModel.StartYear,
-                SemestrId = _formModel.StartSemestrId
+                Year = _editFormModel.StartYear,
+                SemestrId = _editFormModel.StartSemestrId
             },
-            End = _includeEnd && _formModel.EndYear.HasValue && _formModel.EndSemestrId.HasValue
+            End = _editIncludeEnd && _editFormModel.EndYear.HasValue && _editFormModel.EndSemestrId.HasValue
                 ? new EducationSemestrRequestDto
                 {
-                    Year = _formModel.EndYear.Value,
-                    SemestrId = _formModel.EndSemestrId.Value
+                    Year = _editFormModel.EndYear.Value,
+                    SemestrId = _editFormModel.EndSemestrId.Value
                 }
                 : null
         };
@@ -219,22 +264,20 @@
         try
         {
             var client = await ClientFactory.CreateAuthorizedClientAsync();
-            if (client is null)
-                return;
+            if (client is null) return;
 
             _errorMessage = null;
-            var response = await client.PostAsJsonAsync("api/person/profile/educations", apiRequest);
+            var response = await client.PutAsJsonAsync($"api/person/profile/educations/{_editingEducationId.Value}", updateRequest);
 
             if (response.IsSuccessStatusCode)
             {
-                _successMessage = "Pomyślnie dodano wpis wykształcenia!";
-                _isCreating = false;
-                _formModel = null;
+                _successMessage = "Pomyślnie zaktualizowano wpis wykształcenia!";
+                CloseCreateModal();
                 await LoadEducationsAsync();
             }
             else
             {
-                _errorMessage = "Wystąpił błąd podczas zapisu danych (kod: " + response.StatusCode + ")";
+                _errorMessage = "Wystąpił błąd podczas aktualizacji danych (kod: " + response.StatusCode + ")";
             }
         }
         catch (Exception ex)
@@ -248,8 +291,7 @@
         try
         {
             var client = await ClientFactory.CreateAuthorizedClientAsync();
-            if (client is null)
-                return;
+            if (client is null) return;
 
             _errorMessage = null;
             var response = await client.DeleteAsync($"api/person/profile/educations/{educationId}");
@@ -272,8 +314,9 @@
 
     private async Task HandleEducationCreated()
     {
-        _isCreating = false;
+        CloseCreateModal();
         _successMessage = "Pomyślnie dodano wpis wykształcenia!";
         await LoadEducationsAsync();
     }
+
 }
