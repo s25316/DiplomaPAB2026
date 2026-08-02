@@ -21,13 +21,13 @@
         <div class="alert alert-success" role="alert">@_successMessage</div>
     }
 
-    <!-- SEKPCJA PIERWSZA: Lista istniejących wpisów wykształcenia -->
+    <!-- SEKCJA PIERWSZA: Lista wpisów w formacie blokowym -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <strong>Twoje wpisy wykształcenia</strong>
             <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">Dodaj nowe wykształcenie</button>
         </div>
-        <div class="card-body">
+        <div class="card-body bg-light">
             @if (_educations == null)
             {
                 <p><em>Ładowanie...</em></p>
@@ -38,88 +38,114 @@
             }
             else
             {
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>Uczelnia</th>
-                            <th>Kierunek (Course)</th>
-                            <th>Semestr startowy</th>
-                            <th>Semestr końcowy</th>
-                            <th class="text-end">Akcje</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var edu in _educations)
+                <div class="row g-3">
+                    @foreach (var edu in _educations)
+                    {
+                        _courseDictionary.TryGetValue(edu.EducationCourseId, out var course);
+                        var institutionName = "-";
+                        if (course != null && _institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var institution))
                         {
-                            _courseDictionary.TryGetValue(edu.EducationCourseId, out var course);
-                            var institutionName = "-";
-                            if (course != null && _institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var institution))
-                            {
-                                institutionName = institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name ?? "-"; // Założyłem, że obiekt ma właściwość Name (lub dostosuj do swojego modelu)
-                            }
-
-                            // Sprawdzamy czy ten wiersz jest aktualnie wybrany w szczegółach
-                            var isSelected = _selectedEducation?.EducationId == edu.EducationId;
-
-                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectEducation(edu)">
-                                <td><strong>@institutionName</strong></td>
-                                <td>@(course?.Name ?? edu.EducationCourseId.ToString())</td>
-                                <td>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</td>
-                                <td>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "-")</td>
-                                <td class="text-end" @onclick:stopPropagation="true">
-                                    <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => SelectEducation(edu)">Szczegóły</button>
-                                    <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(edu)">Edytuj</button>
-                                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteEducationAsync(edu.EducationId)">Usuń</button>
-                                </td>
-                            </tr>
+                            institutionName = institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name ?? "-";
                         }
-                    </tbody>
-                </table>
+
+                        var isSelected = _selectedEducation?.EducationId == edu.EducationId;
+
+                        <div class="col-12">
+                            <div class="card shadow-sm @(isSelected ? "border-primary" : "border-0")">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Główny układ: Uczelnia i Kierunek w układzie blokowym -->
+                                        <div class="col-md-8" style="cursor: pointer;" @onclick="() => ToggleDetails(edu)">
+                                            <!-- Uczelnia jako główny nagłówek -->
+                                            <h5 class="text-dark mb-1">
+                                                <i class="bi bi-bank me-1 text-secondary"></i> <strong>@institutionName</strong>
+                                            </h5>
+                                            <!-- Kierunek pod spodem -->
+                                            <h6 class="text-primary mb-2">
+                                                <i class="bi bi-book me-1"></i> @(course?.Name ?? edu.EducationCourseId.ToString())
+                                            </h6>
+                                            <!-- Okres studiów -->
+                                            <small class="text-muted">
+                                                Semestr startowy: <strong>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</strong> |
+                                                Semestr końcowy: <strong>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "Trwa")</strong>
+                                            </small>
+                                        </div>
+
+                                        <!-- Przyciski akcji -->
+                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                            <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => ToggleDetails(edu)">
+                                                @(isSelected ? "Ukryj" : "Szczegóły")
+                                            </button>
+                                            <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(edu)">Edytuj</button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteEducationAsync(edu.EducationId)">Usuń</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rozwijana sekcja szczegółów bezpośrednio w bloku (Układ pionowy po kolei) -->
+                                    @if (isSelected)
+                                    {
+                                        <hr class="my-3 text-muted" />
+                                        <div class="card bg-white border-info shadow-sm mt-3">
+                                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                                                <span>Szczegóły wpisu</span>
+                                                <button class="btn-close btn-close-white btn-sm" @onclick="CloseDetails"></button>
+                                            </div>
+                                            <div class="card-body">
+
+                                                <!-- 1. Instytucja / Uczelnia -->
+                                                <div class="mb-4">
+                                                    <h6 class="text-primary fw-bold">Uczelnia / Instytucja</h6>
+                                                    @if (_selectedInstitution != null)
+                                                    {
+                                                        <RadonInstitutionDetailsView Institution="_selectedInstitution" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów uczelni.</p>
+                                                    }
+                                                </div>
+
+                                                <hr class="text-muted" />
+
+                                                <!-- 2. Kierunek studiów -->
+                                                <div class="mb-4">
+                                                    <h6 class="text-primary fw-bold">Kierunek studiów</h6>
+                                                    @if (_selectedCourse != null)
+                                                    {
+                                                        <RadonCourseDetailsView Course="_selectedCourse" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów kierunku.</p>
+                                                    }
+                                                </div>
+
+                                                <hr class="text-muted" />
+
+                                                <!-- 3. Instytucja kierunku (CourseInstance) -->
+                                                <div>
+                                                    <h6 class="text-primary fw-bold">Instancja kierunku</h6>
+                                                    @if (_selectedCourseInstance != null)
+                                                    {
+                                                        <RadonCourseInstanceDetailsView CourseInstance="_selectedCourseInstance"/>
+                                                    }
+                                                    else
+                                                    {
+                                                        <p class="text-muted mb-0">Brak szczegółów instancji kierunku.</p>
+                                                    }
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
             }
         </div>
     </div>
-
-    <!-- SEKPCJA SZCZEGÓŁÓW: Wyświetlanie szczegółów kierunku i uczelnia wybranego rekordu -->
-    @if (_selectedEducation != null)
-    {
-        <div class="card border-info shadow mb-4">
-            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                <strong>Szczegóły wybranego wykształcenia</strong>
-                <button class="btn-close btn-close-white" @onclick="CloseDetails"></button>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- Informacje o kierunku -->
-                    <div class="col-md-6 border-end">
-                        <h5 class="text-primary">Kierunek studiów</h5>
-                        @if (_selectedCourse != null)
-                        {
-                            <!-- Tutaj podepnij swój komponent RadonCourseDetailsView przekazując odpowiedni parametr -->
-                            <RadonCourseDetailsView Course="_selectedCourse" />
-                        }
-                        else
-                        {
-                            <p class="text-muted">Brak szczegółów kierunku.</p>
-                        }
-                    </div>
-
-                    <!-- Informacje o uczelni -->
-                    <div class="col-md-6">
-                        <h5 class="text-primary">Uczelnia / Instytucja</h5>
-                        @if (_selectedInstitution != null)
-                        {
-                            <!-- Tutaj podepnij swój komponent RadonInstitutionDetailsView -->
-                            <RadonInstitutionDetailsView Institution="_selectedInstitution" />
-                        }
-                        else
-                        {
-                            <p class="text-muted">Brak szczegółów uczelni.</p>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
 
     <!-- FORMULARZ DODAWANIA -->
     @if (_isCreating)
@@ -214,9 +240,9 @@
     private bool _editIncludeEnd = false;
     private EditEducationFormModel? _editFormModel;
 
-    // Pola do obsługi szczegółów wybranego rekordu
     private PersonEducationDto? _selectedEducation;
     private Course? _selectedCourse;
+    private CourseInstance? _selectedCourseInstance;
     private Institution? _selectedInstitution;
 
     private string? _errorMessage;
@@ -238,8 +264,7 @@
             _errorMessage = null;
             _educations = await client.GetFromJsonAsync<IEnumerable<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
 
-            if (_educations is null)
-                return;
+            if (_educations is null) return;
 
             var courseIds = _educations.Select(i => i.EducationCourseId).ToHashSet();
             if (!courseIds.Any()) return;
@@ -256,8 +281,7 @@
                 },
             });
 
-            if (courseResponse?.Items is null)
-                return;
+            if (courseResponse?.Items is null) return;
 
             _courseDictionary = courseResponse.Items.ToDictionary(i => i.CourseUuid);
             var institutionIds = courseResponse.Items.Select(i => i.InstitutionUuid).ToHashSet();
@@ -276,8 +300,7 @@
                 },
             });
 
-            if (institutionResponse?.Items is null)
-                return;
+            if (institutionResponse?.Items is null) return;
 
             _institutionDictionary = institutionResponse.Items.ToDictionary(i => i.InstitutionUuid);
         }
@@ -300,20 +323,35 @@
         }
     }
 
-    // Metoda wywoływana przy kliknięciu w wiersz lub przycisk "Szczegóły"
+    private void ToggleDetails(PersonEducationDto edu)
+    {
+        if (_selectedEducation?.EducationId == edu.EducationId)
+        {
+            CloseDetails();
+        }
+        else
+        {
+            SelectEducation(edu);
+        }
+    }
+
     private void SelectEducation(PersonEducationDto edu)
     {
         _selectedEducation = edu;
-
-        // Pobieramy Course ze słownika
         _selectedCourse = null;
+        _selectedCourseInstance = null;
         _selectedInstitution = null;
 
         if (_courseDictionary != null && _courseDictionary.TryGetValue(edu.EducationCourseId, out var course))
         {
             _selectedCourse = course;
 
-            // Pobieramy Institution ze słownika na podstawie Course.InstitutionUuid
+            // Bezpieczne pobranie instancji kierunku (może być null)
+            if (course.CourseInstances != null && edu.EducationCourseInstanceId.HasValue)
+            {
+                _selectedCourseInstance = course.CourseInstances.FirstOrDefault(i => i.CourseInstanceUuid == edu.EducationCourseInstanceId.Value);
+            }
+
             if (_institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var inst))
             {
                 _selectedInstitution = inst;
@@ -325,6 +363,7 @@
     {
         _selectedEducation = null;
         _selectedCourse = null;
+        _selectedCourseInstance = null;
         _selectedInstitution = null;
     }
 
