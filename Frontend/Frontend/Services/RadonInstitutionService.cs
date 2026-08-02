@@ -43,6 +43,9 @@ public class RadonInstitutionService(
             foreach (var sciType in queryParameters.ScientificInstitutionTypeCodes)
                 query.Add($"ScientificInstitutionTypeCode={Uri.EscapeDataString(sciType)}");
 
+            foreach (var sciType in queryParameters.InstitutionUuids)
+                query.Add($"InstitutionUuid={Uri.EscapeDataString(sciType.ToString())}");
+
             if (queryParameters.Regon is not null)
                 query.Add($"Regon={Uri.EscapeDataString(queryParameters.Regon.Value)}");
 

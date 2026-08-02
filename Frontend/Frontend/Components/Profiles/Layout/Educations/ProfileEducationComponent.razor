@@ -1,7 +1,11 @@
 ﻿@using Diploma.Models.Dictionaries
 @using Diploma.Models.PersonEducations
+@using RADON.Models.Courses.Responses
+@using RADON.Models.Institutions.Responses
 
 @inject IBackendHttpClientFactory ClientFactory
+@inject IRadonCourseService CourseService
+@inject IRadonInstitutionService InstitutionService
 
 <div class="container my-4">
     <h3>Zarządzanie wykształceniem</h3>
@@ -17,7 +21,7 @@
         <div class="alert alert-success" role="alert">@_successMessage</div>
     }
 
-    <!-- SEKCJAPIERWSZA: Lista istniejących wpisów wykształcenia -->
+    <!-- SEKPCJA PIERWSZA: Lista istniejących wpisów wykształcenia -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
             <strong>Twoje wpisy wykształcenia</strong>
@@ -37,8 +41,8 @@
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>ID Kierunku (Course)</th>
-                            <th>ID Instancji</th>
+                            <th>Uczelnia</th>
+                            <th>Kierunek (Course)</th>
                             <th>Semestr startowy</th>
                             <th>Semestr końcowy</th>
                             <th class="text-end">Akcje</th>
@@ -47,12 +51,23 @@
                     <tbody>
                         @foreach (var edu in _educations)
                         {
-                            <tr>
-                                <td><code>@edu.EducationCourseId</code></td>
-                                <td><code>@(edu.EducationCourseInstanceId?.ToString() ?? "-")</code></td>
+                            _courseDictionary.TryGetValue(edu.EducationCourseId, out var course);
+                            var institutionName = "-";
+                            if (course != null && _institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var institution))
+                            {
+                                institutionName = institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name ?? "-"; // Założyłem, że obiekt ma właściwość Name (lub dostosuj do swojego modelu)
+                            }
+
+                            // Sprawdzamy czy ten wiersz jest aktualnie wybrany w szczegółach
+                            var isSelected = _selectedEducation?.EducationId == edu.EducationId;
+
+                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectEducation(edu)">
+                                <td><strong>@institutionName</strong></td>
+                                <td>@(course?.Name ?? edu.EducationCourseId.ToString())</td>
                                 <td>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</td>
                                 <td>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "-")</td>
-                                <td class="text-end">
+                                <td class="text-end" @onclick:stopPropagation="true">
+                                    <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => SelectEducation(edu)">Szczegóły</button>
                                     <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(edu)">Edytuj</button>
                                     <button class="btn btn-danger btn-sm" @onclick="() => DeleteEducationAsync(edu.EducationId)">Usuń</button>
                                 </td>
@@ -64,14 +79,56 @@
         </div>
     </div>
 
-    <!-- SEKCJADRUGA: Formularz DODAWANIA (używa RadonSearchComponent) -->
+    <!-- SEKPCJA SZCZEGÓŁÓW: Wyświetlanie szczegółów kierunku i uczelnia wybranego rekordu -->
+    @if (_selectedEducation != null)
+    {
+        <div class="card border-info shadow mb-4">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <strong>Szczegóły wybranego wykształcenia</strong>
+                <button class="btn-close btn-close-white" @onclick="CloseDetails"></button>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Informacje o kierunku -->
+                    <div class="col-md-6 border-end">
+                        <h5 class="text-primary">Kierunek studiów</h5>
+                        @if (_selectedCourse != null)
+                        {
+                            <!-- Tutaj podepnij swój komponent RadonCourseDetailsView przekazując odpowiedni parametr -->
+                            <RadonCourseDetailsView Course="_selectedCourse" />
+                        }
+                        else
+                        {
+                            <p class="text-muted">Brak szczegółów kierunku.</p>
+                        }
+                    </div>
+
+                    <!-- Informacje o uczelni -->
+                    <div class="col-md-6">
+                        <h5 class="text-primary">Uczelnia / Instytucja</h5>
+                        @if (_selectedInstitution != null)
+                        {
+                            <!-- Tutaj podepnij swój komponent RadonInstitutionDetailsView -->
+                            <RadonInstitutionDetailsView Institution="_selectedInstitution" />
+                        }
+                        else
+                        {
+                            <p class="text-muted">Brak szczegółów uczelni.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- FORMULARZ DODAWANIA -->
     @if (_isCreating)
     {
         <RadonSearchComponent OnEducationCreated="HandleEducationCreated" />
         <button class="btn btn-secondary mt-2" @onclick="CloseCreateModal">Zamknij</button>
     }
 
-    <!-- SEKCJATRZECIA: Formularz EDYCJI (tylko daty/semestry, brak RadonSearchComponent) -->
+    <!-- FORMULARZ EDYCJI -->
     @if (_editingEducationId.HasValue && _editFormModel != null)
     {
         <div class="card border-warning shadow mb-4">
@@ -148,11 +205,19 @@
 
 @code {
     private IEnumerable<PersonEducationDto>? _educations;
+    private Dictionary<Guid, Course>? _courseDictionary;
+    private Dictionary<Guid, Institution>? _institutionDictionary;
     private List<DictionaryItem<int>>? _semesters;
+
     private bool _isCreating = false;
     private Guid? _editingEducationId = null;
     private bool _editIncludeEnd = false;
     private EditEducationFormModel? _editFormModel;
+
+    // Pola do obsługi szczegółów wybranego rekordu
+    private PersonEducationDto? _selectedEducation;
+    private Course? _selectedCourse;
+    private Institution? _selectedInstitution;
 
     private string? _errorMessage;
     private string? _successMessage;
@@ -172,6 +237,49 @@
 
             _errorMessage = null;
             _educations = await client.GetFromJsonAsync<IEnumerable<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
+
+            if (_educations is null)
+                return;
+
+            var courseIds = _educations.Select(i => i.EducationCourseId).ToHashSet();
+            if (!courseIds.Any()) return;
+
+            var courseResponse = await CourseService.GetAsync(new RADON.Models.Courses.QueryParameters
+            {
+                CourseUuids = courseIds,
+                OrderBy = RADON.Models.Courses.QueryParameters.QueryParametersOrderBy.CreationDate,
+                Order = RADON.Models.Shared.Order.Ascending,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = courseIds.Count
+                },
+            });
+
+            if (courseResponse?.Items is null)
+                return;
+
+            _courseDictionary = courseResponse.Items.ToDictionary(i => i.CourseUuid);
+            var institutionIds = courseResponse.Items.Select(i => i.InstitutionUuid).ToHashSet();
+
+            if (!institutionIds.Any()) return;
+
+            var institutionResponse = await InstitutionService.GetAsync(new RADON.Models.Institutions.QueryParameters
+            {
+                InstitutionUuids = institutionIds,
+                OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+                Order = RADON.Models.Shared.Order.Ascending,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = institutionIds.Count,
+                },
+            });
+
+            if (institutionResponse?.Items is null)
+                return;
+
+            _institutionDictionary = institutionResponse.Items.ToDictionary(i => i.InstitutionUuid);
         }
         catch (Exception ex)
         {
@@ -192,12 +300,41 @@
         }
     }
 
+    // Metoda wywoływana przy kliknięciu w wiersz lub przycisk "Szczegóły"
+    private void SelectEducation(PersonEducationDto edu)
+    {
+        _selectedEducation = edu;
+
+        // Pobieramy Course ze słownika
+        _selectedCourse = null;
+        _selectedInstitution = null;
+
+        if (_courseDictionary != null && _courseDictionary.TryGetValue(edu.EducationCourseId, out var course))
+        {
+            _selectedCourse = course;
+
+            // Pobieramy Institution ze słownika na podstawie Course.InstitutionUuid
+            if (_institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var inst))
+            {
+                _selectedInstitution = inst;
+            }
+        }
+    }
+
+    private void CloseDetails()
+    {
+        _selectedEducation = null;
+        _selectedCourse = null;
+        _selectedInstitution = null;
+    }
+
     private void OpenCreateModal()
     {
         _isCreating = true;
         _editingEducationId = null;
         _editFormModel = null;
         _successMessage = null;
+        CloseDetails();
     }
 
     private void OpenEditModal(PersonEducationDto edu)
@@ -205,6 +342,7 @@
         _isCreating = false;
         _editingEducationId = edu.EducationId;
         _successMessage = null;
+        CloseDetails();
 
         _editIncludeEnd = edu.End != null;
         _editFormModel = new EditEducationFormModel
@@ -298,6 +436,10 @@
 
             if (response.IsSuccessStatusCode)
             {
+                if (_selectedEducation?.EducationId == educationId)
+                {
+                    CloseDetails();
+                }
                 _successMessage = "Wpis został usunięty.";
                 await LoadEducationsAsync();
             }
@@ -318,5 +460,4 @@
         _successMessage = "Pomyślnie dodano wpis wykształcenia!";
         await LoadEducationsAsync();
     }
-
 }
