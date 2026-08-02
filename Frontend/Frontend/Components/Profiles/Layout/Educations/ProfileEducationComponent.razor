@@ -1,5 +1,279 @@
-﻿<h3>ProfileEducationComponent</h3>
+﻿@page "/person/educations"
+@using Diploma.Models.Dictionaries
+@using Diploma.Models.PersonEducations
+@using RADON.Models.Courses.Responses
+@using RADON.Models.Institutions.Responses
+
+@inject IBackendHttpClientFactory ClientFactory
+
+<div class="container my-4">
+    <h3>Zarządzanie wykształceniem</h3>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@_errorMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(_successMessage))
+    {
+        <div class="alert alert-success" role="alert">@_successMessage</div>
+    }
+
+    <!-- SEKCJAPIERWSZA: Lista istniejących wpisów wykształcenia -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <strong>Twoje wpisy wykształcenia</strong>
+            <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">Dodaj nowe wykształcenie</button>
+        </div>
+        <div class="card-body">
+            @if (_educations == null)
+            {
+                <p><em>Ładowanie...</em></p>
+            }
+            else if (!_educations.Any())
+            {
+                <p class="text-muted mb-0">Brak zapisanych wpisów wykształcenia.</p>
+            }
+            else
+            {
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID Kierunku (Course)</th>
+                            <th>ID Instancji</th>
+                            <th>Semestr startowy</th>
+                            <th>Semestr końcowy</th>
+                            <th class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var edu in _educations)
+                        {
+                            <tr>
+                                <td><code>@edu.EducationCourseId</code></td>
+                                <td><code>@(edu.EducationCourseInstanceId?.ToString() ?? "-")</code></td>
+                                <td>@(edu.Start?.Semester?.Name ?? "-") (Rok: @(edu.Start?.Year))</td>
+                                <td>@(edu.End != null ? $"{edu.End.Semester.Name} (Rok: {edu.End.Year})" : "-")</td>
+                                <td class="text-end">
+                                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteEducationAsync(edu.EducationId)">Usuń</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- SEKCJADRUGA: Formularz dodawania -->
+    @if (_isCreating)
+    {
+        <RadonSearchComponent OnEducationCreated="HandleEducationCreated" />
+        <button class="btn btn-secondary mt-2" @onclick="CloseCreateModal">Zamknij</button>
+    }
+</div>
 
 @code {
+    private IEnumerable<PersonEducationDto>? _educations;
+    private List<DictionaryItem<int>>? _semesters;
+    private bool _isCreating = false;
+    private bool _includeEnd = false;
+    private string? _errorMessage;
+    private string? _successMessage;
 
+    // Stany wyboru z komponentów RADON
+    private Institution? _selectedInstitution;
+    private Course? _selectedCourse;
+    private CourseInstance? _selectedInstance;
+
+    // Lokalny model formularza z właściwościami 'set'
+    private PersonEducationFormModel? _formModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadEducationsAsync();
+        await LoadSemestersAsync();
+    }
+
+    private async Task LoadEducationsAsync()
+    {
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            _errorMessage = null;
+            _educations = await client.GetFromJsonAsync<IEnumerable<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd podczas pobierania wykształcenia: {ex.Message}";
+        }
+    }
+
+    private async Task LoadSemestersAsync()
+    {
+        try
+        {
+            var client = await ClientFactory.CreateUnAuthorizedClientAsync();
+            _semesters = await client.GetFromJsonAsync<List<DictionaryItem<int>>>("api/person/profile/educations/semesters");
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd podczas ładowania słownika semestrów: {ex.Message}";
+        }
+    }
+
+    private void OpenCreateModal()
+    {
+        _isCreating = true;
+        _includeEnd = false;
+        _selectedInstitution = null;
+        _selectedCourse = null;
+        _selectedInstance = null;
+        _successMessage = null;
+
+        _formModel = new PersonEducationFormModel
+        {
+            StartYear = 0,
+            StartSemestrId = 0
+        };
+    }
+
+    private void CloseCreateModal()
+    {
+        _isCreating = false;
+        _formModel = null;
+    }
+
+    private void ToggleEndSection(ChangeEventArgs e)
+    {
+        _includeEnd = (bool)(e.Value ?? false);
+        if (_formModel != null && _includeEnd)
+        {
+            _formModel.EndYear = 0;
+            _formModel.EndSemestrId = 0;
+        }
+        else if (_formModel != null)
+        {
+            _formModel.EndYear = null;
+            _formModel.EndSemestrId = null;
+        }
+    }
+
+    private void HandleInstitutionSelected(Institution institution)
+    {
+        _selectedInstitution = institution;
+        _selectedCourse = null;
+        _selectedInstance = null;
+        if (_formModel != null)
+        {
+            _formModel.EducationCourseId = Guid.Empty;
+            _formModel.EducationCourseInstanceId = null;
+        }
+    }
+
+    private void HandleCourseSelected(Course course)
+    {
+        _selectedCourse = course;
+        if (_formModel != null)
+        {
+            _formModel.EducationCourseId = course.CourseUuid;
+        }
+    }
+
+    private void HandleInstanceSelected(CourseInstance instance)
+    {
+        _selectedInstance = instance;
+        if (_formModel != null)
+        {
+            _formModel.EducationCourseInstanceId = instance?.CourseInstanceUuid;
+        }
+    }
+
+    private async Task SubmitCreateAsync()
+    {
+        if (_formModel == null) return;
+
+        // Mapowanie lokalnego ViewModelu na oryginalny niezmienialny kontrakt (z użyciem init)
+        var apiRequest = new PersonEducationCreateRequest
+        {
+            EducationCourseId = _formModel.EducationCourseId,
+            EducationCourseInstanceId = _formModel.EducationCourseInstanceId,
+            Start = new EducationSemestrRequestDto
+            {
+                Year = _formModel.StartYear,
+                SemestrId = _formModel.StartSemestrId
+            },
+            End = _includeEnd && _formModel.EndYear.HasValue && _formModel.EndSemestrId.HasValue
+                ? new EducationSemestrRequestDto
+                {
+                    Year = _formModel.EndYear.Value,
+                    SemestrId = _formModel.EndSemestrId.Value
+                }
+                : null
+        };
+
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            _errorMessage = null;
+            var response = await client.PostAsJsonAsync("api/person/profile/educations", apiRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Pomyślnie dodano wpis wykształcenia!";
+                _isCreating = false;
+                _formModel = null;
+                await LoadEducationsAsync();
+            }
+            else
+            {
+                _errorMessage = "Wystąpił błąd podczas zapisu danych (kod: " + response.StatusCode + ")";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd sieciowy: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteEducationAsync(Guid educationId)
+    {
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            _errorMessage = null;
+            var response = await client.DeleteAsync($"api/person/profile/educations/{educationId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                _successMessage = "Wpis został usunięty.";
+                await LoadEducationsAsync();
+            }
+            else
+            {
+                _errorMessage = "Nie udało się usunąć wpisu.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Błąd: {ex.Message}";
+        }
+    }
+
+    private async Task HandleEducationCreated()
+    {
+        _isCreating = false;
+        _successMessage = "Pomyślnie dodano wpis wykształcenia!";
+        await LoadEducationsAsync();
+    }
 }

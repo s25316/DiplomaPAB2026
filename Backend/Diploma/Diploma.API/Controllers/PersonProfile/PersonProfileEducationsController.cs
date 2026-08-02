@@ -1,7 +1,9 @@
 ﻿using Diploma.API.Extensions;
 using Diploma.Application.PersonEducations.Commands.UseCases;
 using Diploma.Application.PersonEducations.Queries.UseCases;
+using Diploma.Models.Dictionaries;
 using Diploma.Models.PersonEducations;
+using Diploma.Shared.Semesters;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +15,19 @@ namespace Diploma.API.Controllers.PersonProfile;
 [ApiController]
 public class PersonProfileEducationsController(IMediator mediator) : ControllerBase
 {
+    [AllowAnonymous]
+    [HttpGet("semesters")]
+    public IActionResult GetSemesters()
+    {
+        var items = Semester.All.Select(i => new DictionaryItem<int>
+        {
+            Code = i.Id,
+            Name = i.Name,
+        });
+        return Ok(items);
+    }
+
+
     [Authorize]
     [HttpGet()]
     public async Task<IActionResult> GetAsync(
@@ -79,7 +94,7 @@ public class PersonProfileEducationsController(IMediator mediator) : ControllerB
             PersonEducationCreateResult.Success => Created(),
             PersonEducationCreateResult.Failure.NotFound => NotFound(),
             PersonEducationCreateResult.Failure.Forbidden => Forbid(),
-            PersonEducationCreateResult.Failure.OverLimit overLimit => BadRequest(),
+            PersonEducationCreateResult.Failure.OverLimit overLimit => Conflict(),
             PersonEducationCreateResult.Failure.NotFoundCourse notFoundCourse => NotFound(),
             PersonEducationCreateResult.Failure.NotFoundCourseInstance notFoundCourseInstance => NotFound(),
             PersonEducationCreateResult.Failure.InvalidCourseDates invalidCourseDates => BadRequest(),
