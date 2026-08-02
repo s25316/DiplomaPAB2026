@@ -1,0 +1,125 @@
+﻿@page "/institutions"
+@using RADON.Models.Courses.Responses
+@using RADON.Models.Institutions.Responses
+
+<div class="container my-4">
+    <h2>Wyszukiwarka powiązań RADON</h2>
+    <hr />
+
+    <!-- KROK 1: Wybór instytucji -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <strong>Krok 1: Wybierz instytucję</strong>
+        </div>
+        <div class="card-body">
+            @if (_selectedInstitution == null)
+            {
+                <p class="text-muted">Nie wybrano jeszcze instytucji. Wyszukaj i wybierz uczelnię poniżej:</p>
+                
+                <!-- Tutaj możesz podpiąć swój komponent do wyszukiwania instytucji, np. RadonInstitutionsComponent -->
+                <!-- Przykład uproszczonego pola/przycisku symulującego wybór lub gotowy komponent: -->
+                <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionSelected" />
+            }
+            else
+            {
+                <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+                    <div>
+                        <h5 class="mb-1 text-primary">@_selectedInstitution?.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name </h5>
+                        <p class="mb-0 text-muted small">ID / UUID: @_selectedInstitution.InstitutionUuid</p>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" @onclick="ResetInstitution">
+                        Zmień instytucję
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- KROK 2: Wybór kierunku i instancji (widoczny dopiero po wybraniu instytucji) -->
+    @if (_selectedInstitution != null)
+    {
+        <div class="card mb-4 shadow-sm animate__animated animate__fadeIn">
+            <div class="card-header bg-success text-white">
+                <strong>Krok 2: Wybierz kierunek oraz instancję dla: @_selectedInstitution?.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name </strong>
+            </div>
+            <div class="card-body">
+                <!-- Wykorzystujemy nasz zmodyfikowany RadonCoursesComponent przekazując InstitutionId -->
+                <RadonCoursesComponent InstitutionId="_selectedInstitution.InstitutionUuid"
+                                       OnCourseSelected="HandleCourseSelected"
+                                       OnInstanceSelected="HandleInstanceSelected" />
+            </div>
+        </div>
+    }
+
+    <!-- KROK 3: Podsumowanie / Zapisany stan -->
+    @if (_selectedCourse != null || _selectedInstance != null)
+    {
+        <div class="card border-success shadow">
+            <div class="card-header bg-success text-white">
+                <strong>Podsumowanie dokonanego wyboru</strong>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item">
+                        <strong>Wybrana instytucja:</strong> 
+                        @(_selectedInstitution?.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name ?? "Brak")
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Wybrany kierunek:</strong> 
+                        @(_selectedCourse?.Name ?? "Brak")
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Wybrana instancja kierunku:</strong> 
+                        @(_selectedInstance?.Name ?? "Brak") (Forma: @(_selectedInstance?.Form?.Name ?? "-"))
+                    </li>
+                </ul>
+
+                <div class="text-end">
+                    <button class="btn btn-success btn-lg" @onclick="SaveSelection">
+                        Zapisz powiązanie
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    // Stan przechowywany w komponencie
+    private Institution? _selectedInstitution;
+    private Course? _selectedCourse;
+    private CourseInstance? _selectedInstance;
+
+    private void HandleInstitutionSelected(Institution institution)
+    {
+        _selectedInstitution = institution;
+        _selectedCourse = null;
+        _selectedInstance = null;
+    }
+
+    private void ResetInstitution()
+    {
+        _selectedInstitution = null;
+        _selectedCourse = null;
+        _selectedInstance = null;
+    }
+
+    private void HandleCourseSelected(Course? course)
+    {
+        _selectedCourse = course;
+    }
+
+    private void HandleInstanceSelected(CourseInstance instance)
+    {
+        _selectedInstance = instance;
+    }
+
+    private async Task SaveSelection()
+    {
+        // Tutaj implementujesz właściwą logikę zapisu (np. wysłanie do własnego API, bazy danych lub przekazanie wyżej)
+        // Przykład:
+        // await MyService.SaveUserFavoriteAsync(_selectedInstitution?.InstitutionUuid, _selectedCourse?.CourseUuid, _selectedInstance?.CourseInstanceUuid);
+
+        await Task.CompletedTask;
+    }
+}
