@@ -1,0 +1,9 @@
+/* Styl dla interaktywnego bloku wykształcenia */
+.clickable-block {
+    cursor: pointer;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.clickable-block:hover {
+    opacity: 0.85;
+}

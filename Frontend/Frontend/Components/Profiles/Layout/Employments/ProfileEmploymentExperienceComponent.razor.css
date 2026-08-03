@@ -1,0 +1,11 @@
+.row-pointer {
+    cursor: pointer;
+}
+
+.description-text {
+    white-space: pre-line;
+}
+
+.modal-backdrop-custom {
+    background-color: rgba(0, 0, 0, 0.5);
+}

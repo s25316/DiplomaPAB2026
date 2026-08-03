@@ -32,15 +32,15 @@
                             </button>
 
                             <button type="button"
-                                    class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Experience ? "active" : "")"
-                                    @onclick="() => _activeTab = ProfileTab.Experience">
-                                <i class="bi bi-briefcase me-2"></i> Historia zatrudnienia
-                            </button>
-
-                            <button type="button"
                                     class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Education ? "active" : "")"
                                     @onclick="() => _activeTab = ProfileTab.Education">
                                 <i class="bi bi-mortarboard me-2"></i> Edukacja
+                            </button>
+
+                            <button type="button"
+                                    class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Experience ? "active" : "")"
+                                    @onclick="() => _activeTab = ProfileTab.Experience">
+                                <i class="bi bi-briefcase me-2"></i> Historia zatrudnienia
                             </button>
 
                             <button type="button"
@@ -73,11 +73,11 @@
                             case ProfileTab.Security:
                                 <ProfileSecurityComponent />
                                 break;
-                            case ProfileTab.Experience:
-                                <ProfileEmploymentExperienceComponent />
-                                break;
                             case ProfileTab.Education:
                                 <ProfileEducationComponent />
+                                break;
+                            case ProfileTab.Experience:
+                                <ProfileEmploymentExperienceComponent />
                                 break;
                             case ProfileTab.Links:
                                 <ProfileLinksComponent />
