@@ -4,7 +4,18 @@ namespace Frontend.Extensions;
 
 public static class AuthenticationStateExtensions
 {
-    public static string? GetPersonId(
+    public static Guid? GetPersonId(
         this AuthenticationState state
-    ) => state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    )
+    {
+        var id = state.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (!Guid.TryParse(id, out var guid))
+            return null;
+
+        return guid;
+    }
 }
