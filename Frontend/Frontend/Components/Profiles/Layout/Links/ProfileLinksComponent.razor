@@ -1,5 +1,6 @@
 ﻿@using Diploma.Models.PersonUris
 @using Diploma.Models.Shared
+
 @inject IBackendHttpClientFactory HttpClientFactory
 
 <div class="card shadow-sm mb-4">
@@ -156,10 +157,9 @@
     <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
         <div class="modal-dialog">
             <div class="modal-content">
-                <!-- Zmiana koloru nagłówka dynamicznie w zależności od trybu -->
                 <div class="modal-header @(_isEditing ? "bg-warning text-dark" : "")">
                     <h5 class="modal-title">@(_isEditing ? "Edytuj link" : "Dodaj nowy link")</h5>
-                    <button type="button" class="btn-close @(_isEditing ? "" : "")" @onclick="CloseModal"></button>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
                 </div>
 
                 <EditForm Model="_currentModel" OnValidSubmit="SaveLinkAsync">
@@ -172,20 +172,20 @@
                             <div class="mb-3">
                                 <label class="form-label">Adres URI</label>
                                 <InputText class="form-control" @bind-Value="_currentModel.Uri" placeholder="https://..." />
-                                <ValidationMessage For="() => _currentModel.Uri" />
+                                <ValidationMessage For="@(() => _currentModel.Uri)" />
                             </div>
                         }
 
                         <div class="mb-3">
                             <label class="form-label">Nazwa</label>
                             <InputText class="form-control" @bind-Value="_currentModel.Name" placeholder="np. GitHub" />
-                            <ValidationMessage For="() => _currentModel.Name" />
+                            <ValidationMessage For="@(() => _currentModel.Name)" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Opis</label>
                             <InputTextArea class="form-control" rows="3" @bind-Value="_currentModel.Description" placeholder="np. Mój główny profil z repozytoriami"></InputTextArea>
-                            <ValidationMessage For="() => _currentModel.Description" />
+                            <ValidationMessage For="@(() => _currentModel.Description)" />
                         </div>
                     </div>
                     <div class="modal-footer">

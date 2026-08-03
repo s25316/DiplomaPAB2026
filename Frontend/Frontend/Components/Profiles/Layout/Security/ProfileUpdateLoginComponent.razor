@@ -1,4 +1,5 @@
 ﻿@using Diploma.Models.Persons.Authentication
+
 @inject IBackendHttpClientFactory HttpClientFactory
 
 <div class="card shadow-sm">
@@ -56,13 +57,13 @@
                 <div class="mb-3">
                     <label for="newLogin" class="form-label">Nowy login</label>
                     <InputText id="newLogin" class="form-control" @bind-Value="_model.NewLogin" />
-                    <ValidationMessage For="() => _model.NewLogin" />
+                    <ValidationMessage For="@(() => _model.NewLogin)" />
                 </div>
 
                 <div class="mb-3">
                     <label for="code" class="form-label">Kod weryfikacyjny z e-maila</label>
                     <InputText id="code" class="form-control" @bind-Value="_model.Code" />
-                    <ValidationMessage For="() => _model.Code" />
+                    <ValidationMessage For="@(() => _model.Code)" />
                 </div>
 
                 <div class="d-flex gap-2">

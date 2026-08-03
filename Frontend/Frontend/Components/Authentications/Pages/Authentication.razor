@@ -1,50 +1,56 @@
 ﻿@page "/authentication"
-@using Frontend.Components.Authentications.Layout
+@using Frontend.Components.Authentications
 
-<div class="container mt-5" style="max-width: 500px;">
+<div class="container auth-container">
+    <div class="card shadow-sm border-0">
+        <!-- Ciemny nagłówek karty w stylu reszty aplikacji -->
+        <div class="card-header bg-dark text-white text-center py-3">
+            <h4 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Panel Użytkownika</h4>
+        </div>
 
-    <div class="btn-group w-100 mb-4" role="group">
-        <button type="button" 
-                class="btn @(_currentView == AuthView.Login ? "btn-primary" : "btn-outline-primary")" 
-                @onclick="() => _currentView = AuthView.Login">
-            Zaloguj się
-        </button>
-        <button type="button" 
-                class="btn @(_currentView == AuthView.Register ? "btn-primary" : "btn-outline-primary")" 
-                @onclick="() => _currentView = AuthView.Register">
-            Zarejestruj się
-        </button>
-        <button type="button"
-                     class="btn @(_currentView == AuthView.ForgotPassword ? "btn-primary" : "btn-outline-primary")"
-                     @onclick="() => _currentView = AuthView.ForgotPassword">
-        Odzyskaj hasło
-    </button>
+        <div class="card-body bg-light p-4">
+            <!-- Przyciski przełączania widoków -->
+            <div class="btn-group w-100 mb-4 shadow-sm" role="group">
+                <button type="button"
+                        class="btn @(_currentView == AuthView.Login ? "btn-primary" : "btn-outline-primary")"
+                        @onclick="() => _currentView = AuthView.Login">
+                    Zaloguj się
+                </button>
+                <button type="button"
+                        class="btn @(_currentView == AuthView.Register ? "btn-primary" : "btn-outline-primary")"
+                        @onclick="() => _currentView = AuthView.Register">
+                    Zarejestruj się
+                </button>
+                <button type="button"
+                        class="btn @(_currentView == AuthView.ForgotPassword ? "btn-primary" : "btn-outline-primary")"
+                        @onclick="() => _currentView = AuthView.ForgotPassword">
+                    Odzyskaj hasło
+                </button>
+            </div>
+
+            <!-- Dynamiczna treść wybranego widoku -->
+            @switch (_currentView)
+            {
+                case AuthView.Login:
+                    <LoginInComponent OnSwitchToRegister="() => _currentView = AuthView.Register"
+                                      OnSwitchToForgotPassword="() => _currentView = AuthView.ForgotPassword" />
+                    break;
+
+                case AuthView.Register:
+                    <RegistrationComponent OnRegistered="() => _currentView = AuthView.Login" />
+                    break;
+
+                case AuthView.ForgotPassword:
+                    <ForgotPasswordComponent OnSwitchToLogin="() => _currentView = AuthView.Login" />
+                    break;
+            }
+        </div>
     </div>
-
-    @switch (_currentView)
-    {
-        case AuthView.Login:
-            <LoginInComponent 
-                OnSwitchToRegister="() => _currentView = AuthView.Register" 
-                OnSwitchToForgotPassword="() => _currentView = AuthView.ForgotPassword" />
-            break;
-
-        case AuthView.Register:
-            <RegistrationComponent 
-                OnRegistered="() => _currentView = AuthView.Login" />
-            break;
-
-        case AuthView.ForgotPassword:
-            <ForgotPasswordComponent 
-                OnSwitchToLogin="() => _currentView = AuthView.Login" />
-            break;
-    }
 </div>
 
 @code {
     private enum AuthView { Login, Register, Activate, ForgotPassword }
     private AuthView _currentView = AuthView.Login;
-    
 
     private void HandleSuccessfulRegistration()
     {

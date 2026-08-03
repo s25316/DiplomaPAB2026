@@ -1,30 +1,32 @@
 ﻿@using Diploma.Models.Persons.Authentication
 
-<h3>Logowanie do systemu</h3>
+<div class="container mt-5" style="max-width: 500px;">
+    <h3>Logowanie do systemu</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="mb-3">
-        <label>Login:</label>
-        <InputText @bind-Value="loginModel.Login" class="form-control" />
-        <ValidationMessage For="@(() => loginModel.Login)" />
-    </div>
+        <div class="mb-3">
+            <label>Login:</label>
+            <InputText @bind-Value="loginModel.Login" class="form-control" />
+            <ValidationMessage For="@(() => loginModel.Login)" />
+        </div>
 
-    <div class="mb-3">
-        <label>Hasło:</label>
-        <InputText type="password" @bind-Value="loginModel.Password" class="form-control" />
-        <ValidationMessage For="@(() => loginModel.Password)" />
-    </div>
+        <div class="mb-3">
+            <label>Hasło:</label>
+            <InputText type="password" @bind-Value="loginModel.Password" class="form-control" />
+            <ValidationMessage For="@(() => loginModel.Password)" />
+        </div>
 
-    <button type="submit" class="btn btn-success">Zaloguj się</button>
-</EditForm>
+        <button type="submit" class="btn btn-success">Zaloguj się</button>
+    </EditForm>
+</div>
 
 @code {
     [Parameter] public EventCallback OnSwitchToRegister { get; set; }

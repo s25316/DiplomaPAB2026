@@ -197,11 +197,11 @@
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label">Rok startu</label>
-                                    <InputNumber class="form-control" @bind-Value="_editFormModel.StartYear" />
+                                    <InputNumber class="form-control" @bind-Value="@_editFormModel.StartYear" />
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Semestr startu</label>
-                                    <InputSelect class="form-select" @bind-Value="_editFormModel.StartSemestrId">
+                                    <InputSelect class="form-select" @bind-Value="@_editFormModel.StartSemestrId">
                                         <option value="0">-- Wybierz semestr --</option>
                                         @if (_semesters != null)
                                         {
@@ -227,11 +227,11 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Rok końca</label>
-                                        <InputNumber class="form-control" @bind-Value="_editFormModel.EndYear" />
+                                        <InputNumber class="form-control" @bind-Value="@_editFormModel.EndYear" />
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Semestr końca</label>
-                                        <InputSelect class="form-select" @bind-Value="_editFormModel.EndSemestrId">
+                                        <InputSelect class="form-select" @bind-Value="@_editFormModel.EndSemestrId">
                                             <option value="0">-- Wybierz semestr --</option>
                                             @if (_semesters != null)
                                             {
