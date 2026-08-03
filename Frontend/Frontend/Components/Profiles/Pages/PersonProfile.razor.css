@@ -1,0 +1,33 @@
+/* Style izolowane dla strony profilu */
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
+
+.list-group-item {
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* Domyślny aktywny element listy - szary */
+.list-group-item.active {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: #fff !important;
+}
+
+/* Wyjątek dla aktywnego elementu Usuń konto - czerwony */
+.list-group-item.text-danger.active {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+}

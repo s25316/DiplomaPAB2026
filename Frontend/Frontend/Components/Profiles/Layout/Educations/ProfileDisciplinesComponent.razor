@@ -75,6 +75,7 @@
             if (response.IsSuccessStatusCode)
             {
                 _disciplines = await response.Content.ReadFromJsonAsync<IEnumerable<EducationDisciplineDto>>();
+                _disciplines = _disciplines?.ToHashSet().ToList() ?? [];
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {

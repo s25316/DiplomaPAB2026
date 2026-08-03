@@ -2,7 +2,7 @@
 @inject IBackendHttpClientFactory HttpClientFactory
 
 <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-dark text-white">
         <h5 class="mb-0"><i class="bi bi-person me-2"></i>Dane i Login</h5>
     </div>
     <div class="card-body">
@@ -72,7 +72,6 @@
     private string? _successMessage;
     private string? _errorMessage;
 
-    // Model formularza z walidacją dla Blazora
     public class PersonUpdateIdentityDataRequestModel
     {
         [System.ComponentModel.DataAnnotations.Required(ErrorMessage = "Imię jest wymagane.")]
@@ -98,12 +97,10 @@
             if (client is null)
                 return;
 
-            // Odpowiednik endpointu [HttpGet("identity")]
             using var response = await client.GetAsync("api/person/profile/identity");
 
             if (response.IsSuccessStatusCode)
             {
-                // API zwraca obiekt typu PersonIdentityDataDto (wewnątrz PersonIdentityDataQueryResult.Success)
                 var dto = await response.Content.ReadFromJsonAsync<PersonIdentityDataDto>();
                 if (dto is not null)
                 {
@@ -146,14 +143,12 @@
             if (client is null)
                 return;
 
-            // Tworzymy strukturę żądania zgodną z PersonUpdateIdentityDataRequest
             var requestBody = new
             {
                 Name = _model.Name,
                 Surname = _model.Surname
             };
 
-            // Odpowiednik endpointu [HttpPost("identity")]
             using var response = await client.PostAsJsonAsync("api/person/profile/identity", requestBody);
 
             if (response.IsSuccessStatusCode)

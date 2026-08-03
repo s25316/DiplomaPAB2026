@@ -2,130 +2,141 @@
 @using Diploma.Models.Shared
 @inject IBackendHttpClientFactory HttpClientFactory
 
-<div class="card shadow-sm">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i> Linki </h5>
-    </div>
-    <div class="card-body">
+<div class="container my-4">
+    <h3>Linki</h3>
+    <hr />
 
-        @if (!string.IsNullOrEmpty(_errorMessage))
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
-                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
-            </div>
-        }
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+            <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+        </div>
+    }
 
-        <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
-        <div class="row mb-3 align-items-center">
-            <div class="col-md-6 d-flex gap-2 align-items-center">
-                <label class="form-label mb-0 text-nowrap">Sortuj:</label>
-                <select class="form-select form-select-sm" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
-                    <option value="@PersonUriQueryParameters.PersonUriOrderBy.Name">Nazwa</option>
-                    <option value="@PersonUriQueryParameters.PersonUriOrderBy.CreatedAt">Data utworzenia</option>
-                </select>
-                <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
-                    <option value="@Order.Ascending">Rosnąco</option>
-                    <option value="@Order.Descending">Malejąco</option>
-                </select>
-            </div>
-            <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
-                <label class="form-label mb-0 text-nowrap">Na stronie:</label>
-                <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
+    <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
+    <div class="card mb-4 shadow-sm border-0">
+        <div class="card-body bg-light rounded">
+            <div class="row align-items-center g-3">
+                <div class="col-md-7 d-flex flex-wrap gap-2 align-items-center">
+                    <label class="form-label mb-0 text-nowrap">Sortuj:</label>
+                    <select class="form-select form-select-sm w-auto" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
+                        <option value="@PersonUriQueryParameters.PersonUriOrderBy.Name">Nazwa</option>
+                        <option value="@PersonUriQueryParameters.PersonUriOrderBy.CreatedAt">Data utworzenia</option>
+                    </select>
+                    <select class="form-select form-select-sm w-auto" @value="_selectedOrder" @onchange="OnOrderChanged">
+                        <option value="@Order.Ascending">Rosnąco</option>
+                        <option value="@Order.Descending">Malejąco</option>
+                    </select>
+                </div>
+                <div class="col-md-5 d-flex justify-content-md-end align-items-center gap-2">
+                    <label class="form-label mb-0 text-nowrap">Na stronie:</label>
+                    <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
             </div>
         </div>
+    </div>
 
-        @if (_isLoading)
-        {
-            <div class="text-center py-4">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="text-muted mt-2">Ładowanie linków...</p>
-            </div>
-        }
-        else if (_links == null || !_links.Any())
-        {
-            <div class="text-center text-muted py-4">
-                <p class="mb-0">Brak dodanych linków.</p>
-            </div>
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 40px;"></th>
-                            <th>Nazwa</th>
-                            <th>Adres URI</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var link in _links)
-                        {
-                            var isExpanded = _expandedRowIds.Contains(link.UriId);
+    <!-- SEKCJA: Lista wpisów linków w formacie blokowym -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-dark text-white">
+            <strong>Lista linków</strong>
+        </div>
+        <div class="card-body bg-light">
+            @if (_isLoading)
+            {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2">Ładowanie linków...</p>
+                </div>
+            }
+            else if (_links == null || !_links.Any())
+            {
+                <p class="text-muted mb-0">Brak dodanych linków.</p>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var link in _links)
+                    {
+                        var isExpanded = _expandedRowIds.Contains(link.UriId);
 
-                            <!-- Główny wiersz -->
-                            <tr @onclick="() => ToggleRow(link.UriId)" style="cursor: pointer;" class="@(isExpanded ? "table-active" : "")">
-                                <td class="text-center">
-                                    <i class="bi @(isExpanded ? "bi-chevron-down" : "bi-chevron-right") text-muted"></i>
-                                </td>
-                                <td><strong>@link.Name</strong></td>
-                                <td>
-                                    <a href="@link.Uri" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block text-decoration-none" style="max-width: 300px;" @onclick:stopPropagation="true">
-                                        @link.Uri <i class="bi bi-box-arrow-up-right small ms-1"></i>
-                                    </a>
-                                </td>
-                            </tr>
-
-                            <!-- Rozwijany wiersz z opisem -->
-                            @if (isExpanded)
-                            {
-                                <tr class="table-light">
-                                    <td></td>
-                                    <td colspan="2" class="p-3">
-                                        <div class="card border-0 shadow-sm bg-white p-3">
-                                            <span class="fw-bold text-muted small mb-1"><i class="bi bi-card-text me-1"></i> Opis:</span>
-                                            <div class="text-dark" style="white-space: pre-line;">
-                                                @(!string.IsNullOrWhiteSpace(link.Description) ? link.Description : "Brak opisu dla tego linku.")
+                        <div class="col-12">
+                            <div class="card shadow-sm @(isExpanded ? "border-primary" : "border-0")">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <!-- Główny układ: Nazwa i Adres URI -->
+                                        <div class="col-md-9 clickable-area" @onclick="() => ToggleRow(link.UriId)">
+                                            <h5 class="text-dark mb-1">
+                                                <i class="bi bi-link-45deg me-1 text-secondary"></i> <strong>@link.Name</strong>
+                                            </h5>
+                                            <div class="mb-2">
+                                                <a href="@link.Uri" target="_blank" rel="noopener noreferrer" class="text-primary text-decoration-none text-break" @onclick:stopPropagation="true">
+                                                    @link.Uri <i class="bi bi-box-arrow-up-right small ms-1"></i>
+                                                </a>
                                             </div>
                                         </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
 
-            <!-- Paginacja -->
-            @if (_totalPages > 1)
-            {
-                <nav class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
-                    <ul class="pagination pagination-sm mb-0">
-                        <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
-                        </li>
-                        @for (int i = 1; i <= _totalPages; i++)
-                        {
-                            var pageNumber = i;
-                            <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
-                                <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                        <!-- Przycisk szczegółów -->
+                                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                                            <button class="btn btn-info btn-sm text-white" @onclick="() => ToggleRow(link.UriId)">
+                                                @(isExpanded ? "Ukryj" : "Szczegóły")
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rozwijana sekcja szczegółów (opis) -->
+                                    @if (isExpanded)
+                                    {
+                                        <hr class="my-3 text-muted" />
+                                        <div class="card bg-white border-info shadow-sm mt-3">
+                                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                                                <span>Szczegóły linku</span>
+                                                <button class="btn-close btn-close-white btn-sm" @onclick="() => ToggleRow(link.UriId)"></button>
+                                            </div>
+                                            <div class="card-body">
+                                                <h6 class="text-primary fw-bold"><i class="bi bi-card-text me-1"></i> Opis</h6>
+                                                <div class="text-dark p-3 bg-light rounded" style="white-space: pre-line;">
+                                                    @(!string.IsNullOrWhiteSpace(link.Description) ? link.Description : "Brak opisu dla tego linku.")
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Paginacja -->
+                @if (_totalPages > 1)
+                {
+                    <nav class="d-flex justify-content-between align-items-center mt-4">
+                        <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
                             </li>
-                        }
-                        <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
-                        </li>
-                    </ul>
-                </nav>
+                            @for (int i = 1; i <= _totalPages; i++)
+                            {
+                                var pageNumber = i;
+                                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                </li>
+                            }
+                            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                            </li>
+                        </ul>
+                    </nav>
+                }
             }
-        }
-
+        </div>
     </div>
 </div>
 
@@ -134,10 +145,8 @@
     private bool _isLoading = true;
     private string? _errorMessage;
 
-    // Obsługa rozwijania wierszy
     private HashSet<Guid> _expandedRowIds = new();
 
-    // Parametry filtrowania/paginacji/sortowania
     private PersonUriQueryParameters.PersonUriOrderBy _selectedOrderBy = PersonUriQueryParameters.PersonUriOrderBy.Name;
     private Order _selectedOrder = Order.Ascending;
     private int _currentPage = 1;
@@ -240,6 +249,7 @@
     {
         if (page < 1 || page > _totalPages || page == _currentPage) return;
         _currentPage = page;
+        _expandedRowIds.Clear();
         await LoadLinksAsync();
     }
 }

@@ -2,8 +2,8 @@
 @inject IBackendHttpClientFactory HttpClientFactory
 
 <div class="card shadow-sm">
-    <div class="card-header bg-primary text-white">
-        <h5 class="mb-0"><i class="bi bg-dark me-2"></i>Podgląd Profilu</h5>
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Podgląd Profilu</h5>
     </div>
     <div class="card-body">
 
@@ -49,7 +49,7 @@
 
             <div class="mb-3">
                 <label class="form-label text-muted small fw-bold">Podsumowanie / Biografia</label>
-                <div class="form-control-plaintext border rounded p-3 bg-light" style="white-space: pre-line; min-height: 80px;">
+                <div class="form-control-plaintext border rounded p-3 bg-light summary-box">
                     @(!string.IsNullOrWhiteSpace(_model.Summary) ? _model.Summary : "Brak podsumowania.")
                 </div>
             </div>

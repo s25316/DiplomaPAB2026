@@ -1,0 +1,10 @@
+/* Style izolowane dla komponentu przywracania konta */
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.card-header {
+    border-top-left-radius: 0.5rem !important;
+    border-top-right-radius: 0.5rem !important;
+}
