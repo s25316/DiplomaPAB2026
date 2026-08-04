@@ -1,6 +1,6 @@
-﻿using Diploma.API.Extensions;
+﻿using Diploma.API.Controllers.Services;
+using Diploma.API.Extensions;
 using Diploma.Application.Persons.Commands.Profile.UseCases;
-using Diploma.Application.Persons.Queries.Profile.UseCases;
 using Diploma.Models.Persons.Profile;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,10 @@ namespace Diploma.API.Controllers.PersonProfile;
 
 [Route("api/person/profile")]
 [ApiController]
-public class PersonProfileDataController(IMediator mediator) : ControllerBase
+public class PersonProfileDataController(
+    IMediator mediator,
+    IPersonsService personsService
+    ) : ControllerBase
 {
     [Authorize]
     [HttpPost("identity")]
@@ -43,18 +46,7 @@ public class PersonProfileDataController(IMediator mediator) : ControllerBase
         if (!User.TryGetNameIdentifier(out var personId))
             return Unauthorized();
 
-        var result = await mediator.Send(new PersonGetIdentityDataHandler.Request
-        {
-            PersonId = personId.Value,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonIdentityDataQueryResult.Success success => Ok(success.Response),
-            PersonIdentityDataQueryResult.Failure.NotFound => NotFound(),
-            PersonIdentityDataQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonIdentityDataQueryResult)}: {result.GetType()}"),
-        };
+        return await personsService.GetIdentityDataAsync(personId.Value, cancellationToken);
     }
 
 
@@ -89,17 +81,6 @@ public class PersonProfileDataController(IMediator mediator) : ControllerBase
         if (!User.TryGetNameIdentifier(out var personId))
             return Unauthorized();
 
-        var result = await mediator.Send(new PersonGetProfileDataHandler.Request
-        {
-            PersonId = personId.Value,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonProfileDataQueryResult.Success success => Ok(success.Response),
-            PersonProfileDataQueryResult.Failure.NotFound => NotFound(),
-            PersonProfileDataQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonProfileDataQueryResult)}: {result.GetType()}"),
-        };
+        return await personsService.GetProfileDataAsync(personId.Value, cancellationToken);
     }
 }

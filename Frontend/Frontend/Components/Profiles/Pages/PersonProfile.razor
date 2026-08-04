@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 
+@inject AuthenticationStateProvider AuthenticationState
 
 <AuthorizeView>
     <Authorized>
@@ -66,7 +67,7 @@
                         @switch (_activeTab)
                         {
                             case ProfileTab.Overview:
-                                <ProfileOverviewComponent />
+                                <ProfileOverviewComponent PersonId="_personId" />
                                 break;
                             case ProfileTab.Details:
                                 <ProfileDetailsComponent />
@@ -114,4 +115,11 @@
     }
 
     private ProfileTab _activeTab = ProfileTab.Overview;
+    private Guid _personId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationState.GetAuthenticationStateAsync();
+        _personId = state.GetPersonId() ?? Guid.Empty;
+    }
 }

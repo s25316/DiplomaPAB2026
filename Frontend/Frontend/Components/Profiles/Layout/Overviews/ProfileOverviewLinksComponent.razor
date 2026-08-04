@@ -142,6 +142,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid PersonId { get; set; }
+
     private List<PersonUriDto> _links = new();
     private bool _isLoading = true;
     private string? _errorMessage;
@@ -155,9 +158,12 @@
     private int _totalCount = 0;
     private int _totalPages = 1;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadLinksAsync();
+        if (PersonId != Guid.Empty)
+        {
+            await LoadLinksAsync();
+        }
     }
 
     private void ToggleRow(Guid uriId)
@@ -182,7 +188,7 @@
             using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            var url = $"api/person/profile/urls?OrderBy={(int)_selectedOrderBy}&Order={(int)_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
+            var url = $"api/persons/{PersonId}/uris?OrderBy={(int)_selectedOrderBy}&Order={(int)_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
 
             var response = await client.GetAsync(url);
 
@@ -199,7 +205,7 @@
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                _errorMessage = "Profil jest nieaktywny.";
+                _errorMessage = "Brak dostępu do linków tej osoby.";
             }
             else
             {

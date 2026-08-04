@@ -1,14 +1,15 @@
 ﻿
-<ProfileOverviewDataComponent/>
-<br/>
-<ProfileOverviewDisciplinesComponent/>
-<br/>
-<ProfileOverviewEducationExperienceComponent/>
-<br/>
-<ProfileOverviewEmploymentExperienceComponent />
-<br/>
-<ProfileOverviewLinksComponent/>
+<ProfileOverviewDataComponent PersonId="PersonId" />
+<br />
+<ProfileOverviewDisciplinesComponent PersonId="PersonId" />
+<br />
+<ProfileOverviewEducationExperienceComponent PersonId="PersonId" />
+<br />
+<ProfileOverviewEmploymentExperienceComponent PersonId="PersonId" />
+<br />
+<ProfileOverviewLinksComponent PersonId="PersonId" />
 
 @code {
-
+    [Parameter]
+    public Guid PersonId { get; set; }
 }

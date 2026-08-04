@@ -2,10 +2,9 @@
 
 @inject IBackendHttpClientFactory ClientFactory
 
-
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-dark text-white">
-        <strong>Moje dyscypliny naukowe</strong>
+        <strong>Dyscypliny naukowe</strong>
     </div>
     <div class="card-body">
         @if (!string.IsNullOrEmpty(_errorMessage))
@@ -69,6 +68,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid PersonId { get; set; }
+
     private List<EducationDisciplineDto>? _disciplines;
     private bool _isLoading = true;
     private string? _errorMessage;
@@ -81,9 +83,12 @@
         _disciplines == null ? Enumerable.Empty<EducationDisciplineDto>()
         : _disciplines.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadDisciplinesAsync();
+        if (PersonId != Guid.Empty)
+        {
+            await LoadDisciplinesAsync();
+        }
     }
 
     private async Task LoadDisciplinesAsync()
@@ -99,7 +104,7 @@
                 return;
             }
 
-            var response = await client.GetAsync("api/person/profile/educations/disciplines");
+            var response = await client.GetAsync($"api/persons/{PersonId}/education/disciplines");
 
             if (response.IsSuccessStatusCode)
             {
@@ -109,6 +114,10 @@
                 if (_disciplines.Any())
                 {
                     _totalPages = (int)Math.Ceiling(_disciplines.Count / (double)_pageSize);
+                }
+                else
+                {
+                    _totalPages = 1;
                 }
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

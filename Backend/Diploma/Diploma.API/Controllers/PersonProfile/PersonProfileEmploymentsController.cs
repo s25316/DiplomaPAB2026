@@ -1,6 +1,6 @@
-﻿using Diploma.API.Extensions;
+﻿using Diploma.API.Controllers.Services;
+using Diploma.API.Extensions;
 using Diploma.Application.PersonEmployments.Commands.UseCases;
-using Diploma.Application.PersonEmployments.Queries.UseCases;
 using Diploma.Models.PersonEmployments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,10 @@ namespace Diploma.API.Controllers.PersonProfile;
 [Authorize]
 [Route("api/person/profile/employments")]
 [ApiController]
-public class PersonProfileEmploymentsController(IMediator mediator) : ControllerBase
+public class PersonProfileEmploymentsController(
+    IMediator mediator,
+    IPersonsService personsService
+    ) : ControllerBase
 {
     [Authorize]
     [HttpGet()]
@@ -22,20 +25,9 @@ public class PersonProfileEmploymentsController(IMediator mediator) : Controller
         if (!User.TryGetNameIdentifier(out var personId))
             return Unauthorized();
 
-        var result = await mediator.Send(new PersonEmploymentGetHandler.Request
-        {
-            PersonId = personId.Value,
-            Model = queryParameters,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonEmploymentQueryResult.Success success => Ok(success.Response),
-            PersonEmploymentQueryResult.Failure.NotFound => NotFound(),
-            PersonEmploymentQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonEmploymentQueryResult)}: {result.GetType()}"),
-        };
+        return await personsService.GetEmploymentsAsync(personId.Value, queryParameters, cancellationToken);
     }
+
 
     [Authorize]
     [HttpPost()]

@@ -166,6 +166,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid PersonId { get; set; }
+
     private Dictionary<string, Full> _companyDictionary = new();
     private List<PersonEmploymentDto> _employments = new();
     private bool _isLoading = true;
@@ -180,9 +183,12 @@
     private int _totalCount = 0;
     private int _totalPages = 1;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadEmploymentsAsync();
+        if (PersonId != Guid.Empty)
+        {
+            await LoadEmploymentsAsync();
+        }
     }
 
     private void ToggleRow(Guid employmentId)
@@ -207,7 +213,7 @@
             using var client = await HttpClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            var url = $"api/person/profile/employments?OrderBy={(int)_selectedOrderBy}&Order={(int)_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
+            var url = $"api/persons/{PersonId}/employments?OrderBy={(int)_selectedOrderBy}&Order={(int)_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
             var response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -229,7 +235,7 @@
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                _errorMessage = "Profil jest nieaktywny.";
+                _errorMessage = "Brak dostępu do historii zatrudnienia tej osoby.";
             }
             else
             {

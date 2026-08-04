@@ -1,5 +1,6 @@
 ﻿using Base.Models.ValueObjects.Regony;
 using Diploma.API.Configurators;
+using Diploma.API.Controllers.Services;
 using Diploma.API.Extensions;
 using Diploma.API.GraphQL;
 using Diploma.Application;
@@ -35,6 +36,8 @@ public class Program
         builder.Services.AddApplicationConfiguration();
         builder.Services.AddDomainConfiguration();
         builder.Services.AddJwtAuthorization(builder);
+
+        builder.Services.AddTransient<IPersonsService, PersonsService>();
 
 
         builder.Services.AddReverseProxy().LoadFromMemory(

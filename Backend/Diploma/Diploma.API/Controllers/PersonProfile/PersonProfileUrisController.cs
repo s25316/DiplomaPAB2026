@@ -1,6 +1,6 @@
-﻿using Diploma.API.Extensions;
+﻿using Diploma.API.Controllers.Services;
+using Diploma.API.Extensions;
 using Diploma.Application.PersonUris.Commands.UseCases;
-using Diploma.Application.PersonUris.Queries.UseCases;
 using Diploma.Models.PersonUris;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,10 @@ namespace Diploma.API.Controllers.PersonProfile;
 [Authorize]
 [Route("api/person/profile/urls")]
 [ApiController]
-public class PersonProfileUrisController(IMediator mediator) : ControllerBase
+public class PersonProfileUrisController(
+    IMediator mediator,
+    IPersonsService personsService
+    ) : ControllerBase
 {
     [Authorize]
     [HttpGet()]
@@ -22,19 +25,7 @@ public class PersonProfileUrisController(IMediator mediator) : ControllerBase
         if (!User.TryGetNameIdentifier(out var personId))
             return Unauthorized();
 
-        var result = await mediator.Send(new PersonUriGetHandler.Request
-        {
-            PersonId = personId.Value,
-            Model = queryParameters,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonUriQueryResult.Success success => Ok(success.Response),
-            PersonUriQueryResult.Failure.NotFound => NotFound(),
-            PersonUriQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonUriQueryResult)}: {result.GetType()}"),
-        };
+        return await personsService.GetUrisAsync(personId.Value, queryParameters, cancellationToken);
     }
 
 

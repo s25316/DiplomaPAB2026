@@ -1,6 +1,6 @@
-﻿using Diploma.API.Extensions;
+﻿using Diploma.API.Controllers.Services;
+using Diploma.API.Extensions;
 using Diploma.Application.PersonEducations.Commands.UseCases;
-using Diploma.Application.PersonEducations.Queries.UseCases;
 using Diploma.Models.Dictionaries;
 using Diploma.Models.PersonEducations;
 using Diploma.Shared.Semesters;
@@ -13,7 +13,10 @@ namespace Diploma.API.Controllers.PersonProfile;
 [Authorize]
 [Route("api/person/profile/educations")]
 [ApiController]
-public class PersonProfileEducationsController(IMediator mediator) : ControllerBase
+public class PersonProfileEducationsController(
+    IMediator mediator,
+    IPersonsService personsService
+    ) : ControllerBase
 {
     [AllowAnonymous]
     [HttpGet("semesters")]
@@ -29,6 +32,17 @@ public class PersonProfileEducationsController(IMediator mediator) : ControllerB
 
 
     [Authorize]
+    [HttpGet("disciplines")]
+    public async Task<IActionResult> GetDisciplinesAsync(
+        CancellationToken cancellationToken)
+    {
+        if (!User.TryGetNameIdentifier(out var personId))
+            return Unauthorized();
+
+        return await personsService.GetEducationDisciplinesAsync(personId.Value, cancellationToken);
+    }
+
+    [Authorize]
     [HttpGet()]
     public async Task<IActionResult> GetAsync(
         [FromQuery] PersonEducationQueryParameters queryParameters,
@@ -37,41 +51,7 @@ public class PersonProfileEducationsController(IMediator mediator) : ControllerB
         if (!User.TryGetNameIdentifier(out var personId))
             return Unauthorized();
 
-        var result = await mediator.Send(new PersonEducationGetHandler.Request
-        {
-            PersonId = personId.Value,
-            Model = queryParameters,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonEducationQueryResult.Success success => Ok(success.Response),
-            PersonEducationQueryResult.Failure.NotFound => NotFound(),
-            PersonEducationQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonEducationQueryResult)}: {result.GetType()}"),
-        };
-    }
-
-    [Authorize]
-    [HttpGet("disciplines")]
-    public async Task<IActionResult> GetDisciplinesAsync(
-        CancellationToken cancellationToken)
-    {
-        if (!User.TryGetNameIdentifier(out var personId))
-            return Unauthorized();
-
-        var result = await mediator.Send(new PersonDisciplineGetHandler.Request
-        {
-            PersonId = personId.Value,
-        }, cancellationToken);
-
-        return result switch
-        {
-            PersonDisciplineQueryResult.Success success => Ok(success.Response),
-            PersonDisciplineQueryResult.Failure.NotFound => NotFound(),
-            PersonDisciplineQueryResult.Failure.ProfileInactive => Forbid(),
-            _ => throw new NotImplementedException($"Unknown type of {nameof(PersonDisciplineQueryResult)}: {result.GetType()}"),
-        };
+        return await personsService.GetEducationHistoryAsync(personId.Value, queryParameters, cancellationToken);
     }
 
     [Authorize]

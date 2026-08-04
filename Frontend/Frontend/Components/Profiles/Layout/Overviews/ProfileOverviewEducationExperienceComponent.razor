@@ -34,7 +34,12 @@
                 <div class="row g-3">
                     @foreach (var edu in _paginatedEducations)
                     {
-                        _courseDictionary.TryGetValue(edu.EducationCourseId, out var course);
+                        Course? course = null;
+                        if (_courseDictionary is not null && _courseDictionary.TryGetValue(edu.EducationCourseId, out var educationCourse))
+                        {
+                            course = educationCourse;
+                        }
+                                                                ;
                         var institutionName = "-";
                         if (course != null && _institutionDictionary != null && _institutionDictionary.TryGetValue(course.InstitutionUuid, out var institution))
                         {
@@ -157,6 +162,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid PersonId { get; set; }
+
     private List<PersonEducationDto>? _educations;
     private Dictionary<Guid, Course>? _courseDictionary;
     private Dictionary<Guid, Institution>? _institutionDictionary;
@@ -176,9 +184,12 @@
         _educations == null ? Enumerable.Empty<PersonEducationDto>()
         : _educations.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadEducationsAsync();
+        if (PersonId != Guid.Empty)
+        {
+            await LoadEducationsAsync();
+        }
     }
 
     private async Task LoadEducationsAsync()
@@ -189,12 +200,16 @@
             if (client is null) return;
 
             _errorMessage = null;
-            var response = await client.GetFromJsonAsync<List<PersonEducationDto>>("api/person/profile/educations?OrderBy=1&Order=1");
+            var response = await client.GetFromJsonAsync<List<PersonEducationDto>>($"api/persons/{PersonId}/education?OrderBy=1&Order=1");
             _educations = response ?? new List<PersonEducationDto>();
 
             if (_educations.Any())
             {
                 _totalPages = (int)Math.Ceiling(_educations.Count / (double)_pageSize);
+            }
+            else
+            {
+                _totalPages = 1;
             }
 
             if (!_educations.Any()) return;

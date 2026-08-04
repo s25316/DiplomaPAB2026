@@ -1,6 +1,5 @@
 ﻿@using Diploma.Models.Persons.Profile
 
-@inject AuthenticationStateProvider AuthenticationState
 @inject IBackendHttpClientFactory HttpClientFactory
 @inject IJSRuntime JS
 
@@ -73,6 +72,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid PersonId { get; set; }
+
     private CombinedProfileModel _model = new();
     private bool _isLoadingData = true;
     private bool _copied = false;
@@ -87,9 +89,13 @@
         public string? Summary { get; set; }
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await LoadAllProfileDataAsync();
+        if (PersonId != Guid.Empty)
+        {
+            _model.PersonId = PersonId;
+            await LoadAllProfileDataAsync();
+        }
     }
 
     private async Task LoadAllProfileDataAsync()
@@ -103,8 +109,9 @@
             if (client is null)
                 return;
 
-            var identityResponseTask = client.GetAsync("api/person/profile/identity");
-            var profileResponseTask = client.GetAsync("api/person/profile/profile");
+            // Używamy nowych ścieżek z przekazanym PersonId
+            var identityResponseTask = client.GetAsync($"api/persons/{PersonId}/identity");
+            var profileResponseTask = client.GetAsync($"api/persons/{PersonId}/profile");
 
             await Task.WhenAll(identityResponseTask, profileResponseTask);
 
@@ -124,7 +131,12 @@
             }
             else if (identityResponse.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                _errorMessage = "Twój profil jest nieaktywny.";
+                _errorMessage = "Profil użytkownika jest nieaktywny.";
+                hasError = true;
+            }
+            else if (identityResponse.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _errorMessage = "Nie znaleziono danych osobowych.";
                 hasError = true;
             }
 
@@ -139,20 +151,13 @@
             }
             else if (!hasError && profileResponse.StatusCode == System.Net.HttpStatusCode.Forbidden)
             {
-                _errorMessage = "Twój profil jest nieaktywny.";
+                _errorMessage = "Profil użytkownika jest nieaktywny.";
                 hasError = true;
             }
 
             if (!hasError && !identityResponse.IsSuccessStatusCode && !profileResponse.IsSuccessStatusCode)
             {
                 _errorMessage = "Nie udało się pobrać danych podglądu profilu.";
-            }
-
-            var state = await AuthenticationState.GetAuthenticationStateAsync();
-            var personid = state?.GetPersonId();
-            if (personid.HasValue)
-            {
-                _model.PersonId = personid.Value;
             }
         }
         catch (Exception)
