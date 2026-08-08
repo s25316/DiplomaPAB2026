@@ -1,7 +1,6 @@
 ﻿using Diploma.Database.Models.Persons;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectVisibilities;
+using Diploma.Database.Models.Projects.ProjectManagers;
+using Diploma.Database.Models.Projects.ProjectRoles;
 
 namespace Diploma.Database.Models.Projects.ProjectEvents;
 
@@ -21,8 +20,11 @@ public class ProjectEvent
     public virtual Project Project { get; set; } = null!;
 
 
-    public virtual ProjectData? ProjectData { get; set; } = null;
-    public virtual ProjectVisibility? ProjectVisibility { get; set; } = null;
     public virtual ProjectManager? GrantProjectManager { get; set; } = null;
     public virtual ProjectManager? RevokeProjectManager { get; set; } = null;
+    public virtual ProjectRole? ProjectRole { get; set; } = null;
+    public virtual ProjectRoleEducationCourseDiscipline? AddProjectRoleEducationCourseDiscipline { get; set; } = null;
+    public virtual ProjectRoleEducationCourseDiscipline? RemoveProjectRoleEducationCourseDiscipline { get; set; } = null;
+    public virtual ProjectRoleEducationInstitution? AddProjectRoleEducationInstitution { get; set; } = null;
+    public virtual ProjectRoleEducationInstitution? RemoveProjectRoleEducationInstitution { get; set; } = null;
 }

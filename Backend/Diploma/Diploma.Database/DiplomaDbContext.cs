@@ -5,9 +5,9 @@ using Diploma.Database.Models.Persons.PersonEvents.Audits;
 using Diploma.Database.Models.Persons.PersonOperations;
 using Diploma.Database.Models.Projects;
 using Diploma.Database.Models.Projects.ProjectEvents;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectVisibilities;
+using Diploma.Database.Models.Projects.ProjectManagers;
+using Diploma.Database.Models.Projects.ProjectRoles;
+using Diploma.Database.Models.Projects.Recruitments;
 using Diploma.Database.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,9 +50,16 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
     public DbSet<ProjectEvent> ProjectEvents { get; set; }
     public DbSet<ProjectEventType> ProjectEventTypes { get; set; }
 
-    public DbSet<ProjectData> ProjectDatas { get; set; }
     public DbSet<ProjectManager> ProjectManagers { get; set; }
     public DbSet<ProjectManagerType> ProjectManagerTypes { get; set; }
-    public DbSet<ProjectVisibility> ProjectVisibilities { get; set; }
-    public DbSet<ProjectVisibilityType> ProjectVisibilityTypes { get; set; }
+
+    public DbSet<ProjectRole> ProjectRoles { get; set; }
+    public DbSet<ProjectRoleEducationCourseDiscipline> ProjectRoleEducationCourseDisciplines { get; set; }
+    public DbSet<ProjectRoleEducationInstitution> ProjectRoleEducationInstitutions { get; set; }
+
+
+    public DbSet<Recruitment> Recruitments { get; set; }
+    public DbSet<RecruitmentMessage> RecruitmentMessages { get; set; }
+    public DbSet<RecruitmentProjectRole> RecruitmentProjectRoles { get; set; }
+    public DbSet<RecruitmentStatus> RecruitmentStatuses { get; set; }
 }

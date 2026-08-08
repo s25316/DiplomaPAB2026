@@ -5,9 +5,9 @@ using Diploma.Database.Models.Persons.PersonEvents.Audits;
 using Diploma.Database.Models.Persons.PersonOperations;
 using Diploma.Database.Models.Projects;
 using Diploma.Database.Models.Projects.ProjectEvents;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
-using Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectVisibilities;
+using Diploma.Database.Models.Projects.ProjectManagers;
+using Diploma.Database.Models.Projects.ProjectRoles;
+using Diploma.Database.Models.Projects.Recruitments;
 using Diploma.Database.Models.Shared;
 using Diploma.Database.MsSql.Configurations.Educations;
 using Diploma.Database.MsSql.Configurations.Persons;
@@ -16,9 +16,9 @@ using Diploma.Database.MsSql.Configurations.Persons.PersonEvents.Audits;
 using Diploma.Database.MsSql.Configurations.Persons.PersonOperations;
 using Diploma.Database.MsSql.Configurations.Projects;
 using Diploma.Database.MsSql.Configurations.Projects.ProjectEvents;
-using Diploma.Database.MsSql.Configurations.Projects.ProjectEvents.Audits;
-using Diploma.Database.MsSql.Configurations.Projects.ProjectEvents.Audits.ProjectManagers;
-using Diploma.Database.MsSql.Configurations.Projects.ProjectEvents.Audits.ProjectVisibilities;
+using Diploma.Database.MsSql.Configurations.Projects.ProjectManagers;
+using Diploma.Database.MsSql.Configurations.Projects.ProjectRoles;
+using Diploma.Database.MsSql.Configurations.Projects.Recruitments;
 using Diploma.Database.MsSql.Configurations.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,11 +89,17 @@ public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbCont
         modelBuilder.ApplyConfiguration<ProjectEvent>(new ProjectEventEFConfiguration());
         modelBuilder.ApplyConfiguration<ProjectEventType>(new ProjectEventTypeEFConfiguration());
 
-        modelBuilder.ApplyConfiguration<ProjectData>(new ProjectDataEFConfiguration());
         modelBuilder.ApplyConfiguration<ProjectManager>(new ProjectManagerEFConfiguration());
         modelBuilder.ApplyConfiguration<ProjectManagerType>(new ProjectManagerTypeEFConfiguration());
-        modelBuilder.ApplyConfiguration<ProjectVisibility>(new ProjectVisibilityEFConfiguration());
-        modelBuilder.ApplyConfiguration<ProjectVisibilityType>(new ProjectVisibilityTypeEFConfiguration());
+
+        modelBuilder.ApplyConfiguration<ProjectRole>(new ProjectRoleEFConfiguration());
+        modelBuilder.ApplyConfiguration<ProjectRoleEducationCourseDiscipline>(new ProjectRoleEducationCourseDisciplineEFConfiguration());
+        modelBuilder.ApplyConfiguration<ProjectRoleEducationInstitution>(new ProjectRoleEducationInstitutionEFConfiguration());
+
+        modelBuilder.ApplyConfiguration<Recruitment>(new RecruitmentEFConfiguration());
+        modelBuilder.ApplyConfiguration<RecruitmentMessage>(new RecruitmentMessageEFConfiguration());
+        modelBuilder.ApplyConfiguration<RecruitmentProjectRole>(new RecruitmentProjectRoleEFConfiguration());
+        modelBuilder.ApplyConfiguration<RecruitmentStatus>(new RecruitmentStatusEFConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

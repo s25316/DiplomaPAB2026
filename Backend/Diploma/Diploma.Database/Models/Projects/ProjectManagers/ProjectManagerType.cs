@@ -1,4 +1,4 @@
-﻿namespace Diploma.Database.Models.Projects.ProjectEvents.Audits.ProjectManagers;
+﻿namespace Diploma.Database.Models.Projects.ProjectManagers;
 
 public class ProjectManagerType
 {

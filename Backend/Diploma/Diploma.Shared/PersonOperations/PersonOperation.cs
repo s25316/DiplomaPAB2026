@@ -45,17 +45,17 @@ public sealed class PersonOperation
        ?? throw new NotImplementedException($"Invalid {nameof(PersonOperation)} Id: {id}");
 
 
-    public static readonly PersonOperation ProfileCreatedAndActivation = new(PersonOperationKind.ProfileCreatedAndActivation, "");
-    public static readonly PersonOperation ProfileActivated = new(PersonOperationKind.ProfileActivated, "");
-    public static readonly PersonOperation ProfileRemovedAndSendRestoringLink = new(PersonOperationKind.ProfileRemovedAndSendRestoringLink, "");
-    public static readonly PersonOperation ProfileRestored = new(PersonOperationKind.ProfileRestored, "");
-    public static readonly PersonOperation ProfileAnonymized = new(PersonOperationKind.ProfileAnonymized, "");
+    public static readonly PersonOperation ProfileCreatedAndActivation = new(PersonOperationKind.ProfileCreatedAndActivation, "Utworzenie profilu i wysłanie linku aktywacyjnego");
+    public static readonly PersonOperation ProfileActivated = new(PersonOperationKind.ProfileActivated, "Aktywacja profilu");
+    public static readonly PersonOperation ProfileRemovedAndSendRestoringLink = new(PersonOperationKind.ProfileRemovedAndSendRestoringLink, "Usunięcie profilu i wysłanie linku przywracającego");
+    public static readonly PersonOperation ProfileRestored = new(PersonOperationKind.ProfileRestored, "Przywrócenie profilu");
+    public static readonly PersonOperation ProfileAnonymized = new(PersonOperationKind.ProfileAnonymized, "Anonimizacja profilu");
 
-    public static readonly PersonOperation LogInSucess = new(PersonOperationKind.LogInSucess, "");
-    public static readonly PersonOperation LogInUnsucess = new(PersonOperationKind.LogInUnsucess, "");
+    public static readonly PersonOperation LogInSucess = new(PersonOperationKind.LogInSucess, "Udane logowanie");
+    public static readonly PersonOperation LogInUnsucess = new(PersonOperationKind.LogInUnsucess, "Nieudane logowanie");
 
-    public static readonly PersonOperation InitiateUpdatingLogin = new(PersonOperationKind.InitiateUpdatingLogin, "");
-    public static readonly PersonOperation UpdatedLogin = new(PersonOperationKind.UpdatedLogin, "");
-    public static readonly PersonOperation InitiateUpdatingPassword = new(PersonOperationKind.InitiateUpdatingPassword, "");
-    public static readonly PersonOperation UpdatedPassword = new(PersonOperationKind.UpdatedPassword, "");
+    public static readonly PersonOperation InitiateUpdatingLogin = new(PersonOperationKind.InitiateUpdatingLogin, "Rozpoczęcie procedury zmiany loginu");
+    public static readonly PersonOperation UpdatedLogin = new(PersonOperationKind.UpdatedLogin, "Zaktualizowanie loginu");
+    public static readonly PersonOperation InitiateUpdatingPassword = new(PersonOperationKind.InitiateUpdatingPassword, "Rozpoczęcie procedury zmiany hasła");
+    public static readonly PersonOperation UpdatedPassword = new(PersonOperationKind.UpdatedPassword, "Zaktualizowanie hasła");
 }

@@ -1,6 +1,7 @@
 ﻿using Diploma.Database.Models.Projects.ProjectEvents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedProjectEvent = Diploma.Shared.ProjectEvents.ProjectEvent;
 
 namespace Diploma.Database.MsSql.Configurations.Projects.ProjectEvents;
 
@@ -22,7 +23,15 @@ public class ProjectEventTypeEFConfiguration : IEntityTypeConfiguration<ProjectE
             .HasMany(k => k.ProjectEvents)
             .WithOne(k => k.ProjectEventType)
             .HasForeignKey(k => k.ProjectEventTypeId)
-            .HasConstraintName($"{nameof(ProjectEvent)}_{nameof(ProjectEventType)}_FK")
-            .OnDelete(DeleteBehavior.Restrict);
+            .HasConstraintName($"{nameof(ProjectEventType)}_{nameof(ProjectEvent)}_FK")
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+        var data = SharedProjectEvent.All.Select(i => new ProjectEventType
+        {
+            ProjectEventTypeId = i.Id,
+            Name = i.Name,
+        });
+        builder.HasData(data);
     }
 }
