@@ -1,7 +1,7 @@
 ﻿using Diploma.Database.Models.Projects.ProjectManagers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedProjectManager = Diploma.Shared.ProjectManagers.ProjectManager;
+using SharedProjectManager = Diploma.Shared.ProjectManagerRoles.ProjectManagerRole;
 
 namespace Diploma.Database.MsSql.Configurations.Projects.ProjectManagers;
 

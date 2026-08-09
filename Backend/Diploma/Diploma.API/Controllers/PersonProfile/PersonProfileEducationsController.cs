@@ -74,7 +74,7 @@ public class PersonProfileEducationsController(
             PersonEducationCreateResult.Success => Created(),
             PersonEducationCreateResult.Failure.NotFound => NotFound(),
             PersonEducationCreateResult.Failure.Forbidden => Forbid(),
-            PersonEducationCreateResult.Failure.OverLimit overLimit => Conflict(),
+            PersonEducationCreateResult.Failure.OverLimit overLimit => Conflict(overLimit.MaxCount),
             PersonEducationCreateResult.Failure.NotFoundCourse notFoundCourse => NotFound(),
             PersonEducationCreateResult.Failure.NotFoundCourseInstance notFoundCourseInstance => NotFound(),
             PersonEducationCreateResult.Failure.InvalidCourseDates invalidCourseDates => BadRequest(),

@@ -25,6 +25,9 @@ using Diploma.Domain.Persons.Events.Authentication;
 using Diploma.Domain.Persons.Events.Lifecycle;
 using Diploma.Domain.Persons.Events.Profile;
 using Diploma.Domain.PersonUris.Aggregates;
+using Diploma.Domain.ProjectManagers.Aggregates;
+using Diploma.Domain.ProjectRoles.Aggregates;
+using Diploma.Domain.Projects.Aggregates;
 using Diploma.Infrastructure.Companies.Repositories;
 using Diploma.Infrastructure.Companies.Services;
 using Diploma.Infrastructure.Configurations;
@@ -51,7 +54,11 @@ using Diploma.Infrastructure.Persons.Lifecycle.MessageGenerators;
 using Diploma.Infrastructure.Persons.Profile.EventPublishers;
 using Diploma.Infrastructure.PersonUris.QueryServices;
 using Diploma.Infrastructure.PersonUris.Repositories;
+using Diploma.Infrastructure.ProjectManagers.Repositories;
+using Diploma.Infrastructure.ProjectRoles.Repositories;
+using Diploma.Infrastructure.Projects.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
+using Diploma.Infrastructure.QueryBuilders.Projects;
 using Diploma.Infrastructure.Services.Database;
 using Diploma.Infrastructure.Services.Generators;
 using Diploma.Infrastructure.Services.Repositories;
@@ -115,6 +122,8 @@ public static class Configuration
         services.AddTransient<PersonUriQueryBuilder>();
         services.AddTransient<PersonEmploymentQueryBuilder>();
         services.AddTransient<PersonEducationQueryBuilder>();
+        services.AddTransient<ProjectManagerQueryBuilder>();
+        services.AddTransient<ProjectQueryBuilder>();
 
         // APPLICATION SERVICES
 
@@ -178,6 +187,11 @@ public static class Configuration
 
         services.AddPersonEventPublishers();
         services.AddPersonMessageGenerators();
+
+        // PROJECT
+        services.AddTransient<IProjectRepository, ProjectRepository>();
+        services.AddTransient<IProjectManagerRepository, ProjectManagerRepository>();
+        services.AddTransient<IProjectRoleRepository, ProjectRoleRepository>();
 
         return services;
     }

@@ -41,14 +41,14 @@ public sealed class ProjectEvent
     public static ProjectEvent FromId(int id) => All.FirstOrDefault(v => v.Id == id)
         ?? throw new NotImplementedException($"Invalid {nameof(ProjectEvent)} Id: {id}");
 
-    public static readonly ProjectEvent ProjectCreated = new(ProjectEventKind.ProjectCreated, "");
-    public static readonly ProjectEvent ProjectUpdated = new(ProjectEventKind.ProjectUpdated, "");
-    public static readonly ProjectEvent ProjectRemoved = new(ProjectEventKind.ProjectRemoved, "");
+    public static readonly ProjectEvent ProjectCreated = new(ProjectEventKind.ProjectCreated, "Projekt został utworzony");
+    public static readonly ProjectEvent ProjectUpdated = new(ProjectEventKind.ProjectUpdated, "Dane projektu zostały zaktualizowane");
+    public static readonly ProjectEvent ProjectRemoved = new(ProjectEventKind.ProjectRemoved, "Projekt został usunięty");
 
-    public static readonly ProjectEvent ProjectRoleCreated = new(ProjectEventKind.ProjectRoleCreated, "");
-    public static readonly ProjectEvent ProjectRoleUpdated = new(ProjectEventKind.ProjectRoleUpdated, "");
-    public static readonly ProjectEvent ProjectRoleRemoved = new(ProjectEventKind.ProjectRoleRemoved, "");
+    public static readonly ProjectEvent ProjectRoleCreated = new(ProjectEventKind.ProjectRoleCreated, "Rola w projekcie została utworzona");
+    public static readonly ProjectEvent ProjectRoleUpdated = new(ProjectEventKind.ProjectRoleUpdated, "Rola w projekcie została zaktualizowana");
+    public static readonly ProjectEvent ProjectRoleRemoved = new(ProjectEventKind.ProjectRoleRemoved, "Rola w projekcie została usunięta");
 
-    public static readonly ProjectEvent GrandRole = new(ProjectEventKind.GrandRole, "");
-    public static readonly ProjectEvent RevokeRole = new(ProjectEventKind.RevokeRole, "");
+    public static readonly ProjectEvent GrandRole = new(ProjectEventKind.GrandRole, "Przyznano rolę użytkownikowi");
+    public static readonly ProjectEvent RevokeRole = new(ProjectEventKind.RevokeRole, "Odebrano rolę użytkownikowi");
 }
