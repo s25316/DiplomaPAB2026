@@ -1,4 +1,5 @@
-﻿using Diploma.Domain.Persons.Aggregates;
+﻿using Diploma.Application.Interfaces.Database;
+using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.PersonUris.Aggregates;
 using Diploma.Models.PersonUris;
 using MediatR;
@@ -6,6 +7,7 @@ using MediatR;
 namespace Diploma.Application.PersonUris.Commands.UseCases;
 
 public class PersonUriCreateHandler(
+    IUnitOfWorkFactory unitOfWorkFactory,
     IPersonRepository personRepository,
     IPersonUriRepository uriRepository
     ) : IRequestHandler<PersonUriCreateHandler.Request, PersonUriCreateResult>
@@ -19,6 +21,7 @@ public class PersonUriCreateHandler(
 
     public async Task<PersonUriCreateResult> Handle(Request request, CancellationToken cancellationToken)
     {
+        using var unitOfWork = await unitOfWorkFactory.CreateAsync();
         var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
 
         if (!personResult.HasValue)
@@ -37,6 +40,7 @@ public class PersonUriCreateHandler(
         );
 
         await uriRepository.CreateAsync(uri, cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
         return new PersonUriCreateResult.Success();
     }
 }

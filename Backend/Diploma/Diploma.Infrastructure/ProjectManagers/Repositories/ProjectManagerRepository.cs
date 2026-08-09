@@ -79,7 +79,7 @@ public class ProjectManagerRepository(
 
         var projectEvent = new DatabaseProjectEvent
         {
-            CreatedAt = DateTimeOffset.Now,
+            CreatedAt = item.Grant,
             PersonId = personId.Value,
             ProjectId = item.ProjectId.Value,
             ProjectEventTypeId = ProjectEvent.GrandRole.Id,

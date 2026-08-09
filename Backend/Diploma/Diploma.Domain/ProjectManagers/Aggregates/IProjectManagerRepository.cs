@@ -21,8 +21,8 @@ public interface IProjectManagerRepository
 {
     Task<IEnumerable<ProjectManager>> GetAsync(
         ProjectId projectId,
-
         CancellationToken cancellationToken = default);
+
     Task<IEnumerable<ProjectManager>> GetAsync(
         PersonId personId,
         ProjectId projectId,

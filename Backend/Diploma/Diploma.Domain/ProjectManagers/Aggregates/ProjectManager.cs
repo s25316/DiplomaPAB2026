@@ -18,4 +18,19 @@ public partial class ProjectManager : BaseEntity<ProjectManagerId>
 
     public DateTimeOffset Grant { get; protected set; }
     public DateTimeOffset? Revoke { get; protected set; }
+
+
+    public static ProjectManager Create(
+        PersonId personId,
+        ProjectId projectId,
+        ProjectManagerRole projectManagerRole)
+    {
+        var item = new ProjectManager();
+        item.ProjectId = projectId;
+        item.PersonId = personId;
+        item.ProjectManagerRole = projectManagerRole;
+        item.Grant = DateTimeOffset.Now;
+
+        return item;
+    }
 }

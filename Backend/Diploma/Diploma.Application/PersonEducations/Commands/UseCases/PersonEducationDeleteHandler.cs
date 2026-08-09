@@ -1,4 +1,5 @@
-﻿using Diploma.Domain.PersonEducations.Aggregates;
+﻿using Diploma.Application.Interfaces.Database;
+using Diploma.Domain.PersonEducations.Aggregates;
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Models.PersonEducations;
 using MediatR;
@@ -6,6 +7,7 @@ using MediatR;
 namespace Diploma.Application.PersonEducations.Commands.UseCases;
 
 public class PersonEducationDeleteHandler(
+    IUnitOfWorkFactory unitOfWorkFactory,
     IPersonRepository personRepository,
     IPersonEducationService service
     ) : IRequestHandler<PersonEducationDeleteHandler.Request, PersonEducationDeleteResult>
@@ -19,6 +21,7 @@ public class PersonEducationDeleteHandler(
 
     public async Task<PersonEducationDeleteResult> Handle(Request request, CancellationToken cancellationToken)
     {
+        using var unitOfWork = await unitOfWorkFactory.CreateAsync();
         var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
 
         if (!personResult.HasValue)
@@ -36,6 +39,7 @@ public class PersonEducationDeleteHandler(
 
         var education = educationResult.Value;
         var result = await service.DeleteAsync(education, cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
 
         return result switch
         {

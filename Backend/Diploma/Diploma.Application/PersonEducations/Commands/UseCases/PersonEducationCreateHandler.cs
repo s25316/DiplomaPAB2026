@@ -1,4 +1,5 @@
-﻿using Diploma.Domain.PersonEducations.Aggregates;
+﻿using Diploma.Application.Interfaces.Database;
+using Diploma.Domain.PersonEducations.Aggregates;
 using Diploma.Domain.PersonEducations.ValueObjects;
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Models.PersonEducations;
@@ -8,6 +9,7 @@ using MediatR;
 namespace Diploma.Application.PersonEducations.Commands.UseCases;
 
 public class PersonEducationCreateHandler(
+    IUnitOfWorkFactory unitOfWorkFactory,
     IPersonRepository personRepository,
     IPersonEducationService service
     ) : IRequestHandler<PersonEducationCreateHandler.Request, PersonEducationCreateResult>
@@ -21,6 +23,7 @@ public class PersonEducationCreateHandler(
 
     public async Task<PersonEducationCreateResult> Handle(Request request, CancellationToken cancellationToken)
     {
+        using var unitOfWork = await unitOfWorkFactory.CreateAsync();
         var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
 
         if (!personResult.HasValue)
@@ -42,6 +45,7 @@ public class PersonEducationCreateHandler(
         );
 
         var result = await service.CreateAsync(personEmployment, cancellationToken);
+        await unitOfWork.CommitAsync(cancellationToken);
 
         return result switch
         {
