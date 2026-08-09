@@ -123,6 +123,7 @@ public static class Configuration
         services.AddTransient<PersonEmploymentQueryBuilder>();
         services.AddTransient<PersonEducationQueryBuilder>();
         services.AddTransient<ProjectManagerQueryBuilder>();
+        services.AddTransient<ProjectRoleQueryBuilder>();
         services.AddTransient<ProjectQueryBuilder>();
 
         // APPLICATION SERVICES

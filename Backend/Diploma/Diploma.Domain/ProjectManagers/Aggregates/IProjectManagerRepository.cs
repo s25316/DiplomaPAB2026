@@ -19,6 +19,10 @@ public abstract record ProjectManagerResult
 
 public interface IProjectManagerRepository
 {
+    Task<OptionalResult<ProjectManager>> GetAsync(
+        ProjectManagerId projectManagerId,
+        CancellationToken cancellationToken = default);
+
     Task<IEnumerable<ProjectManager>> GetAsync(
         ProjectId projectId,
         CancellationToken cancellationToken = default);

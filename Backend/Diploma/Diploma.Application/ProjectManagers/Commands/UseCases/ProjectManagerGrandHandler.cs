@@ -2,46 +2,45 @@
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.ProjectManagers.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
-using Diploma.Models.Projects;
+using Diploma.Models.ProjectManagers;
 using Diploma.Shared.ProjectManagerRoles;
 using MediatR;
 
-namespace Diploma.Application.Projects.Commands.UseCases;
+namespace Diploma.Application.ProjectManagers.Commands.UseCases;
 
-public class ProjectUpdateHandler(
+public class ProjectManagerGrandHandler(
     IUnitOfWorkFactory unitOfWorkFactory,
     IPersonRepository personRepository,
     IProjectRepository projectRepository,
     IProjectManagerRepository managerRepository
-    ) : IRequestHandler<ProjectUpdateHandler.Request, ProjectUpdateResult>
+    ) : IRequestHandler<ProjectManagerGrandHandler.Request, ProjectManagerGrandResult>
 {
-    public sealed record Request : IRequest<ProjectUpdateResult>
+    public sealed record Request : IRequest<ProjectManagerGrandResult>
     {
         public required Guid PersonId { get; init; }
         public required Guid ProjectId { get; init; }
-        public required ProjectUpdateRequest Model { get; init; }
+        public required ProjectManagerGrandRequest Model { get; init; }
     }
 
 
     private static readonly IEnumerable<ProjectManagerRole> availableRoles = [
         ProjectManagerRole.Creator,
         ProjectManagerRole.Admin,
-        ProjectManagerRole.Moderator,
+        ProjectManagerRole.RoleManager,
         ];
 
-
-    public async Task<ProjectUpdateResult> Handle(Request request, CancellationToken cancellationToken)
+    public async Task<ProjectManagerGrandResult> Handle(Request request, CancellationToken cancellationToken)
     {
         using var unitOfWork = await unitOfWorkFactory.CreateAsync(cancellationToken);
         var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
 
         if (!personResult.HasValue)
-            return new ProjectUpdateResult.Failure.NotFound();
+            return new ProjectManagerGrandResult.Failure.NotFound();
 
         var person = personResult.Value;
 
         if (!person.HasActive)
-            return new ProjectUpdateResult.Failure.Forbidden();
+            return new ProjectManagerGrandResult.Failure.Forbidden();
 
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
@@ -55,33 +54,24 @@ public class ProjectUpdateHandler(
             .Count();
 
         if (countRoles == 0)
-            return new ProjectUpdateResult.Failure.Forbidden();
+            return new ProjectManagerGrandResult.Failure.Forbidden();
 
         var projectResult = await projectRepository.GetAsync(request.ProjectId, cancellationToken);
 
         if (!projectResult.HasValue)
-            return new ProjectUpdateResult.Failure.NotFound();
+            return new ProjectManagerGrandResult.Failure.NotFound();
 
         var project = projectResult.Value;
 
-        if (project.Title == request.Model.Title &&
-            project.Description == request.Model.Description &&
-            project.IsVisible == request.Model.IsVisible)
-        {
-            return new ProjectUpdateResult.Success();
-        }
-
-        project.Title = request.Model.Title;
-        project.Description = request.Model.Description;
-        project.ChangeVisibility(request.Model.IsVisible);
-
-        await projectRepository.UpdateAsync(
+        ArgumentNullException.ThrowIfNull(project.Id);
+        var projectManager = ProjectManager.Create(
             request.PersonId,
-            project,
-            cancellationToken
-        );
+            project.Id,
+            ProjectManagerRole.Creator);
+
+        await managerRepository.GrantAsync(request.PersonId, projectManager, cancellationToken);
 
         await unitOfWork.CommitAsync(cancellationToken);
-        return new ProjectUpdateResult.Success();
+        return new ProjectManagerGrandResult.Success();
     }
 }

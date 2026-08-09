@@ -1,5 +1,6 @@
 ﻿using Diploma.Database;
 using Diploma.Domain.Persons.Aggregates;
+using Diploma.Domain.ProjectManagers.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
 using Diploma.Infrastructure.QueryBuilders.Base;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,12 @@ public class ProjectManagerQueryBuilder(DiplomaDbContext context) : BaseQueryBui
     .Where(i => i.RevokeEventId == null)
     )
 {
+    public ProjectManagerQueryBuilder WithProjectManagerId(ProjectManagerId item)
+    {
+        With(query => query.Where(i => i.ProjectManagerId == item.Value));
+        return this;
+    }
+
     public ProjectManagerQueryBuilder WithProjectId(ProjectId item)
     {
         With(query => query.Where(i => i.GrantEvent.PersonId == item.Value));

@@ -17,6 +17,29 @@ public class ProjectManagerRepository(
     ProjectManagerQueryBuilder builder
     ) : IProjectManagerRepository
 {
+    public async Task<OptionalResult<ProjectManager>> GetAsync(
+        ProjectManagerId projectManagerId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = builder
+            .WithProjectManagerId(projectManagerId)
+            .Build();
+
+        var databaseItem = await query.FirstOrDefaultAsync(cancellationToken);
+
+        if (databaseItem is null)
+            return OptionalResult<ProjectManager>.NotFound();
+
+        var item = Map(databaseItem);
+
+        var isProjectExist = await IsProjectExistAsync(item.ProjectId, cancellationToken);
+
+        if (!isProjectExist)
+            return OptionalResult<ProjectManager>.NotFound();
+
+        return OptionalResult.Success(item);
+    }
+
     public async Task<IEnumerable<ProjectManager>> GetAsync(
         ProjectId projectId,
         CancellationToken cancellationToken = default)
@@ -159,4 +182,5 @@ public class ProjectManagerRepository(
         .WithRevoke(item.RevokeEvent?.CreatedAt)
         .WithProjectManagerRole(ProjectManagerRole.FromId(item.ProjectManagerTypeId))
         .Build();
+
 }

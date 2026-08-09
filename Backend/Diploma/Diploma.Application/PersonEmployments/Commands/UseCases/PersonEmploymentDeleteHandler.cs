@@ -21,7 +21,7 @@ public class PersonEmploymentDeleteHandler(
 
     public async Task<PersonEmploymentDeleteResult> Handle(Request request, CancellationToken cancellationToken)
     {
-        using var unitOfWork = await unitOfWorkFactory.CreateAsync();
+        using var unitOfWork = await unitOfWorkFactory.CreateAsync(cancellationToken);
         var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
 
         if (!personResult.HasValue)
