@@ -158,20 +158,10 @@ public class ProjectManagerRepository(
         var project = await context
             .Projects
             .AsNoTracking()
-            .Where(i => i.ProjectId == projectId.Value && i.Previous == null)
+            .Where(i => i.ProjectId == projectId.Value && i.RemovedAt == null)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (project is null)
-            return false;
-
-
-        var projectRemoved = await context
-            .ProjectEvents
-            .AsNoTracking()
-            .Where(i => i.ProjectId == projectId.Value && i.ProjectEventTypeId == ProjectEvent.ProjectRemoved.Id)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        return projectRemoved is null;
+        return project is not null;
     }
 
     private static ProjectManager Map(DatabaseProjectManager item) => new ProjectManager.Builder()

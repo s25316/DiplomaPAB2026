@@ -9,10 +9,10 @@ public sealed record ProjectId : BaseEntityId<Guid>
 }
 public partial class Project : BaseEntity<ProjectId>
 {
-    public ProjectId LastSnapshotId { get; protected set; } = null!;
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public bool IsVisible { get; protected set; } = false;
+    public DateTimeOffset CreatedAt { get; protected set; }
 
 
     public void ChangeVisibility(bool? value)
@@ -25,7 +25,9 @@ public partial class Project : BaseEntity<ProjectId>
         var item = new Project
         {
             Title = title,
-            Description = description
+            Description = description,
+            IsVisible = false,
+            CreatedAt = DateTimeOffset.Now,
         };
 
         return item;

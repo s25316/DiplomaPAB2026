@@ -32,15 +32,24 @@ public class ProjectManagerGrandHandler(
     public async Task<ProjectManagerGrandResult> Handle(Request request, CancellationToken cancellationToken)
     {
         using var unitOfWork = await unitOfWorkFactory.CreateAsync(cancellationToken);
-        var personResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
+        var personManagerResult = await personRepository.GetAsync(request.PersonId, cancellationToken);
+        var personFutureMangerResult = await personRepository.GetAsync(request.Model.PersonId, cancellationToken);
 
-        if (!personResult.HasValue)
+        if (!personManagerResult.HasValue)
             return new ProjectManagerGrandResult.Failure.NotFound();
 
-        var person = personResult.Value;
+        if (!personFutureMangerResult.HasValue)
+            return new ProjectManagerGrandResult.Failure.NotFound();
 
-        if (!person.HasActive)
+        var personManager = personManagerResult.Value;
+        var personFutureManger = personFutureMangerResult.Value;
+
+        if (!personManager.HasActive)
             return new ProjectManagerGrandResult.Failure.Forbidden();
+
+        if (!personFutureManger.HasActive)
+            return new ProjectManagerGrandResult.Failure.Forbidden();
+
 
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
@@ -56,6 +65,7 @@ public class ProjectManagerGrandHandler(
         if (countRoles == 0)
             return new ProjectManagerGrandResult.Failure.Forbidden();
 
+
         var projectResult = await projectRepository.GetAsync(request.ProjectId, cancellationToken);
 
         if (!projectResult.HasValue)
@@ -65,7 +75,7 @@ public class ProjectManagerGrandHandler(
 
         ArgumentNullException.ThrowIfNull(project.Id);
         var projectManager = ProjectManager.Create(
-            request.PersonId,
+            request.Model.PersonId,
             project.Id,
             ProjectManagerRole.Creator);
 

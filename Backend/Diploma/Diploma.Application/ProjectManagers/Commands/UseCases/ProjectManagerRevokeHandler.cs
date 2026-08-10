@@ -51,6 +51,9 @@ public class ProjectManagerRevokeHandler(
 
         var personManager = personManagerResult.Value;
 
+        if (personManager.ProjectManagerRole == ProjectManagerRole.Creator)
+            return new ProjectManagerRevokeResult.Failure.Forbidden();
+
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
             personManager.ProjectId,

@@ -1,22 +1,17 @@
 ﻿using Diploma.Database.Models.Projects.ProjectEvents;
+using Diploma.Database.Models.Projects.ProjectRoles;
 
 namespace Diploma.Database.Models.Projects;
 
 public class Project
 {
     public Guid ProjectId { get; set; }
-    public string Title { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public bool IsVisible { get; set; } = false;
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset? RemovedAt { get; set; }
 
+    public Guid LastProjectDataId { get; set; }
+    public virtual ProjectData LastProjectData { get; set; } = null!;
 
-    public Guid? RootId { get; set; } = null;
-    public virtual Project? Root { get; set; } = null;
-    public virtual ICollection<Project> History { get; set; } = [];
-
-    public Guid? NextId { get; set; }
-    public virtual Project? Next { get; set; } = null;
-    public virtual Project? Previous { get; set; } = null;
-
+    public virtual ICollection<ProjectRole> ProjectRoles { get; set; } = [];
     public virtual ICollection<ProjectEvent> ProjectEvents { get; set; } = [];
 }

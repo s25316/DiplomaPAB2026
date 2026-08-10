@@ -1,4 +1,6 @@
-﻿namespace Diploma.Database.Models.Educations;
+﻿using Diploma.Database.Models.Projects.ProjectRoles;
+
+namespace Diploma.Database.Models.Educations;
 
 public class EducationDiscipline
 {
@@ -7,4 +9,6 @@ public class EducationDiscipline
 
 
     public virtual ICollection<EducationCourseDiscipline> EducationCourseDisciplines { get; set; } = [];
+    public virtual ICollection<ProjectRoleEducationDiscipline> ProjectRoleEducationDisciplines { get; set; } = [];
+
 }

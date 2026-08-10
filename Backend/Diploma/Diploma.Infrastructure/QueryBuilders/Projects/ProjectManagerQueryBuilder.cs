@@ -3,6 +3,7 @@ using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.ProjectManagers.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
 using Diploma.Infrastructure.QueryBuilders.Base;
+using Diploma.Shared.ProjectEvents;
 using Microsoft.EntityFrameworkCore;
 using DatabaseProjectManager = Diploma.Database.Models.Projects.ProjectManagers.ProjectManager;
 
@@ -14,6 +15,10 @@ public class ProjectManagerQueryBuilder(DiplomaDbContext context) : BaseQueryBui
     .AsNoTracking()
     .Include(i => i.GrantEvent)
     .Where(i => i.RevokeEventId == null)
+    .Where(i => context.ProjectEvents.Count(pe =>
+        pe.ProjectEventTypeId == ProjectEvent.ProjectRemoved.Id &&
+        pe.ProjectId == i.GrantEvent.ProjectId
+    ) == 0)
     )
 {
     public ProjectManagerQueryBuilder WithProjectManagerId(ProjectManagerId item)
@@ -24,7 +29,7 @@ public class ProjectManagerQueryBuilder(DiplomaDbContext context) : BaseQueryBui
 
     public ProjectManagerQueryBuilder WithProjectId(ProjectId item)
     {
-        With(query => query.Where(i => i.GrantEvent.PersonId == item.Value));
+        With(query => query.Where(i => i.GrantEvent.ProjectId == item.Value));
         return this;
     }
 

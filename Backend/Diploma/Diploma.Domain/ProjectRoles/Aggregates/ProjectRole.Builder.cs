@@ -13,12 +13,6 @@ public partial class ProjectRole
             return this;
         }
 
-        public Builder WithLastSnapshotId(ProjectRoleId item)
-        {
-            With(i => i.LastSnapshotId = item);
-            return this;
-        }
-
         public Builder WithProjectId(ProjectId item)
         {
             With(i => i.ProjectId = item);
@@ -40,6 +34,12 @@ public partial class ProjectRole
         public Builder WithIsAvailableRecruitment(bool item)
         {
             With(i => i.IsAvailableRecruitment = item);
+            return this;
+        }
+
+        public Builder WithCreatedAt(DateTimeOffset item)
+        {
+            With(i => i.CreatedAt = item);
             return this;
         }
     }

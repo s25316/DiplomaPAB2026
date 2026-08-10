@@ -1,4 +1,4 @@
-﻿using Diploma.Database.Models.Projects.ProjectEvents;
+﻿using Diploma.Database.Models.Projects;
 using Diploma.Database.Models.Projects.ProjectRoles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -20,22 +20,10 @@ public class ProjectRoleEFConfiguration : IEntityTypeConfiguration<ProjectRole>
 
 
         builder
-            .HasOne(k => k.ProjectEvent)
-            .WithOne(k => k.ProjectRole)
-            .HasForeignKey<ProjectRole>(k => k.ProjectEventId)
-            .HasConstraintName($"{nameof(ProjectRole)}_{nameof(ProjectEvent)}_FK")
-            .OnDelete(DeleteBehavior.Restrict);
-        builder
-           .HasOne(k => k.Root)
-           .WithMany(k => k.History)
-           .HasForeignKey(k => k.RootId)
-           .HasConstraintName($"{nameof(ProjectRole)}_{nameof(ProjectRole)}_ROOT_FK")
-           .OnDelete(DeleteBehavior.Restrict);
-        builder
-            .HasOne(k => k.Next)
-            .WithOne(k => k.Previous)
-            .HasForeignKey<ProjectRole>(k => k.NextId)
-            .HasConstraintName($"{nameof(ProjectRole)}_{nameof(ProjectRole)}_NEXT_FK")
+            .HasOne(k => k.Project)
+            .WithMany(k => k.ProjectRoles)
+            .HasForeignKey(k => k.ProjectId)
+            .HasConstraintName($"{nameof(ProjectRole)}_{nameof(Project)}_FK")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

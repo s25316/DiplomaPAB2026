@@ -46,6 +46,7 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
 
 
     public DbSet<Project> Projects { get; set; }
+    public DbSet<ProjectData> ProjectDatas { get; set; }
 
     public DbSet<ProjectEvent> ProjectEvents { get; set; }
     public DbSet<ProjectEventType> ProjectEventTypes { get; set; }
@@ -54,7 +55,8 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
     public DbSet<ProjectManagerType> ProjectManagerTypes { get; set; }
 
     public DbSet<ProjectRole> ProjectRoles { get; set; }
-    public DbSet<ProjectRoleEducationCourseDiscipline> ProjectRoleEducationCourseDisciplines { get; set; }
+    public DbSet<ProjectRoleData> ProjectRoleDatas { get; set; }
+    public DbSet<ProjectRoleEducationDiscipline> ProjectRoleEducationDisciplines { get; set; }
     public DbSet<ProjectRoleEducationInstitution> ProjectRoleEducationInstitutions { get; set; }
 
 

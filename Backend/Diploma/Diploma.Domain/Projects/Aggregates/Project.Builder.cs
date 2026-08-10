@@ -12,12 +12,6 @@ public partial class Project
             return this;
         }
 
-        public Builder WithLastSnapshotId(ProjectId item)
-        {
-            With(i => i.LastSnapshotId = item);
-            return this;
-        }
-
         public Builder WithTitle(string item)
         {
             With(i => i.Title = item);
@@ -33,6 +27,12 @@ public partial class Project
         public Builder WithIsVisible(bool item)
         {
             With(i => i.IsVisible = item);
+            return this;
+        }
+
+        public Builder WithCreatedAt(DateTimeOffset item)
+        {
+            With(i => i.CreatedAt = item);
             return this;
         }
     }

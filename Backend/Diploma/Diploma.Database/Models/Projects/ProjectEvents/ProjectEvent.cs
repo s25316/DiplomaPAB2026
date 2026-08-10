@@ -22,9 +22,13 @@ public class ProjectEvent
 
     public virtual ProjectManager? GrantProjectManager { get; set; } = null;
     public virtual ProjectManager? RevokeProjectManager { get; set; } = null;
-    public virtual ProjectRole? ProjectRole { get; set; } = null;
-    public virtual ProjectRoleEducationCourseDiscipline? AddProjectRoleEducationCourseDiscipline { get; set; } = null;
-    public virtual ProjectRoleEducationCourseDiscipline? RemoveProjectRoleEducationCourseDiscipline { get; set; } = null;
+
+    public virtual ProjectData? ProjectData { get; set; } = null;
+    public virtual ProjectRoleData? ProjectRoleData { get; set; } = null;
+
+    public virtual ProjectRoleEducationDiscipline? AddProjectRoleEducationCourseDiscipline { get; set; } = null;
+    public virtual ProjectRoleEducationDiscipline? RemoveProjectRoleEducationCourseDiscipline { get; set; } = null;
+
     public virtual ProjectRoleEducationInstitution? AddProjectRoleEducationInstitution { get; set; } = null;
     public virtual ProjectRoleEducationInstitution? RemoveProjectRoleEducationInstitution { get; set; } = null;
 }

@@ -10,11 +10,11 @@ public record ProjectRoleId : BaseEntityId<Guid>
 }
 public partial class ProjectRole : BaseEntity<ProjectRoleId>
 {
-    public ProjectRoleId LastSnapshotId { get; protected set; } = null!;
     public ProjectId ProjectId { get; protected set; } = null!;
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public bool IsAvailableRecruitment { get; protected set; } = false;
+    public DateTimeOffset CreatedAt { get; protected set; } = DateTimeOffset.Now;
 
 
     public void ChangeAvailableRecruitment(bool? value)

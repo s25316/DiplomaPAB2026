@@ -85,6 +85,7 @@ public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbCont
 
 
         modelBuilder.ApplyConfiguration<Project>(new ProjectEFConfiguration());
+        modelBuilder.ApplyConfiguration<ProjectData>(new ProjectDataEFConfiguration());
 
         modelBuilder.ApplyConfiguration<ProjectEvent>(new ProjectEventEFConfiguration());
         modelBuilder.ApplyConfiguration<ProjectEventType>(new ProjectEventTypeEFConfiguration());
@@ -93,7 +94,8 @@ public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbCont
         modelBuilder.ApplyConfiguration<ProjectManagerType>(new ProjectManagerTypeEFConfiguration());
 
         modelBuilder.ApplyConfiguration<ProjectRole>(new ProjectRoleEFConfiguration());
-        modelBuilder.ApplyConfiguration<ProjectRoleEducationCourseDiscipline>(new ProjectRoleEducationCourseDisciplineEFConfiguration());
+        modelBuilder.ApplyConfiguration<ProjectRoleData>(new ProjectRoleDataEFConfiguration());
+        modelBuilder.ApplyConfiguration<ProjectRoleEducationDiscipline>(new ProjectRoleEducationDisciplineEFConfiguration());
         modelBuilder.ApplyConfiguration<ProjectRoleEducationInstitution>(new ProjectRoleEducationInstitutionEFConfiguration());
 
         modelBuilder.ApplyConfiguration<Recruitment>(new RecruitmentEFConfiguration());
