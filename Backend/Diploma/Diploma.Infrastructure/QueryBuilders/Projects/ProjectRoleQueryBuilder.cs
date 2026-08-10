@@ -14,6 +14,7 @@ public class ProjectRoleQueryBuilder(DiplomaDbContext context) : BaseQueryBuilde
     .Include(i => i.LastProjectRoleData)
     .Include(i => i.Project)
     .Where(i => i.RemovedAt == null)
+    .Where(i => i.LastProjectRoleData != null)
     .Where(i => i.Project.RemovedAt == null)
     )
 {

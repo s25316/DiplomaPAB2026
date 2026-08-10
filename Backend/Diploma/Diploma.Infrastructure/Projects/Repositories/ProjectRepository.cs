@@ -32,9 +32,9 @@ public class ProjectRepository(
 
         var domain = new Project.Builder()
             .WithId(item.ProjectId)
-            .WithTitle(item.LastProjectData.Title)
-            .WithDescription(item.LastProjectData.Description)
-            .WithIsVisible(item.LastProjectData.IsVisible)
+            .WithTitle(item.LastProjectData?.Title ?? string.Empty)
+            .WithDescription(item.LastProjectData?.Description ?? string.Empty)
+            .WithIsVisible(item.LastProjectData?.IsVisible ?? false)
             .WithCreatedAt(item.CreatedAt)
             .Build();
 
@@ -59,6 +59,10 @@ public class ProjectRepository(
             ProjectEventTypeId = ProjectEvent.ProjectCreated.Id,
         };
 
+        await context.Projects.AddAsync(project, cancellationToken);
+        await context.ProjectEvents.AddAsync(projectEvent, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
         var data = new ProjectData
         {
             Title = item.Title,
@@ -69,9 +73,7 @@ public class ProjectRepository(
 
         project.LastProjectData = data;
 
-        await context.Projects.AddAsync(project, cancellationToken);
         await context.ProjectDatas.AddAsync(data, cancellationToken);
-        await context.ProjectEvents.AddAsync(projectEvent, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         item.Id = project.ProjectId;
@@ -109,7 +111,7 @@ public class ProjectRepository(
             ProjectEvent = projectEvent,
         };
 
-        project.LastProjectData.Next = data;
+        project.LastProjectData?.Next = data;
         project.LastProjectData = data;
 
 

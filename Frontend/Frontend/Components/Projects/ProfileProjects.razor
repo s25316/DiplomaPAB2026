@@ -1,0 +1,257 @@
+﻿@page "/profile/projects"
+@using Diploma.Models.Projects
+@using Diploma.Models.Shared
+
+@inject IBackendHttpClientFactory ClientFactory
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Moje projekty</h2>
+        <!-- Przycisk otwierający modal -->
+        <button class="btn btn-success" @onclick="OpenCreateModal">
+            + Dodaj projekt
+        </button>
+    </div>
+
+    <!-- Panel filtrowania i sortowania -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Sortuj według:</label>
+                    <select class="form-select" @bind="selectedOrderBy">
+                        <option value="1">Tytuł</option>
+                        <option value="2">Data utworzenia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Kierunek:</label>
+                    <select class="form-select" @bind="selectedOrder">
+                        <option value="1">Rosnąco (Ascending)</option>
+                        <option value="2">Malejąco (Descending)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-dark w-100" @onclick="LoadProjects">
+                        Odśwież / Filtruj
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sekcja zawartości (lista projektów) -->
+    @if (isLoading)
+    {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+            <p class="text-muted mt-2">Pobieranie projektów...</p>
+        </div>
+    }
+    else if (projects == null || !projects.Any())
+    {
+        <div class="alert alert-warning text-center" role="alert">
+            Brak projektów spełniających kryteria.
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            @foreach (var project in projects)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-dark fw-bold">@project.Title</h5>
+                            <p class="card-text text-muted flex-grow-1">@project.Description</p>
+
+                            <div class="mb-3">
+                                <span class="badge @(project.IsVisible ? "bg-success" : "bg-secondary") me-1">
+                                    @(project.IsVisible ? "Widoczny" : "Ukryty")
+                                </span>
+                                <span class="badge @(project.IsAvailableRecruitment ? "bg-info text-dark" : "bg-light text-dark border")">
+                                    @(project.IsAvailableRecruitment ? "Rekrutacja otwarta" : "Rekrutacja zamknięta")
+                                </span>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                                <small class="text-muted">Utworzono: @project.CreatedAt.ToString("yyyy-MM-dd HH:mm")</small>
+                                <span class="badge bg-dark">ID: @project.ProjectId.ToString()[..8]...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- MODAL DO TWORZENIA PROJEKTU -->
+@if (isCreateModalOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Utwórz nowy projekt</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateModal"></button>
+                </div>
+
+                <EditForm Model="createModel" OnValidSubmit="HandleCreateProject">
+                    <DataAnnotationsValidator />
+
+                    <div class="modal-body">
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @errorMessage
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label">Tytuł</label>
+                            <InputText class="form-control" @bind-Value="createModel.Title" placeholder="Wpisz tytuł projektu..." />
+                            <ValidationMessage For="() => createModel.Title" class="text-danger small" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Opis</label>
+                            <InputTextArea class="form-control" rows="4" @bind-Value="createModel.Description" placeholder="Wpisz opis projektu..." />
+                            <ValidationMessage For="() => createModel.Description" class="text-danger small" />
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseCreateModal">Anuluj</button>
+                        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                <span class="ms-1">Zapisywanie...</span>
+                            }
+                            else
+                            {
+                                <span>Utwórz</span>
+                            }
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<ProjectDto> projects = new();
+    private bool isLoading = true;
+
+    // Stany filtrów
+    private int selectedOrderBy = 2;
+    private int selectedOrder = 2;
+    private int currentPage = 1;
+    private int itemsPerPage = 100;
+
+    // Stany dla modalu tworzenia projektu
+    private bool isCreateModalOpen = false;
+    private bool isSubmitting = false;
+    private string? errorMessage;
+    private ProjectCreateFormModel createModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProjects();
+    }
+
+    private async Task LoadProjects()
+    {
+        isLoading = true;
+        try
+        {
+            var url = $"api/projects?OrderBy={selectedOrderBy}&Order={selectedOrder}&Pagination.Page={currentPage}&Pagination.ItemsPerPage={itemsPerPage}";
+
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            var result = await client.GetFromJsonAsync<Response<ProjectDto>>(url);
+
+            if (result?.Items != null)
+            {
+                projects = result.Items.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas pobierania projektów: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void OpenCreateModal()
+    {
+        createModel = new(); // Reset formularza
+        errorMessage = null;
+        isCreateModalOpen = true;
+    }
+
+    private void CloseCreateModal()
+    {
+        isCreateModalOpen = false;
+    }
+
+    private async Task HandleCreateProject()
+    {
+        isSubmitting = true;
+        errorMessage = null;
+
+        try
+        {
+            var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null)
+                return;
+
+            // Mapowanie modelu formularza na ProjectCreateRequest oczekiwany przez backend
+            var request = new ProjectCreateRequest
+            {
+                Title = createModel.Title,
+                Description = createModel.Description
+            };
+
+            var response = await client.PostAsJsonAsync("api/projects", request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                CloseCreateModal();
+                await LoadProjects(); // Odśwież listę po pomyślnym dodaniu
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = !string.IsNullOrEmpty(errorContent) ? errorContent : "Wystąpił błąd podczas tworzenia projektu.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Błąd sieci: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    // Model pomocniczy dla formularza (z modyfikowalnymi właściwościami get/set pod komponenty Blazora)
+    private class ProjectCreateFormModel
+    {
+        [Required(ErrorMessage = "Tytuł jest wymagany.")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Opis jest wymagany.")]
+        public string Description { get; set; } = string.Empty;
+    }
+}

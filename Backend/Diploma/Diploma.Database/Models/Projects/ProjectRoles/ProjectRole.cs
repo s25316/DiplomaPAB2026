@@ -12,8 +12,8 @@ public class ProjectRole
     public Guid ProjectId { get; set; }
     public virtual Project Project { get; set; } = null!;
 
-    public Guid LastProjectRoleDataId { get; set; }
-    public virtual ProjectRoleData LastProjectRoleData { get; set; } = null!;
+    public Guid? LastProjectRoleDataId { get; set; }
+    public virtual ProjectRoleData? LastProjectRoleData { get; set; } = null;
 
     public virtual ICollection<ProjectRoleData> ProjectRoleDatas { get; set; } = [];
     public virtual ICollection<ProjectRoleEducationInstitution> ProjectRoleEducationInstitutions { get; set; } = [];

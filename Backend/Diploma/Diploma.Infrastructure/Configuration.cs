@@ -10,6 +10,7 @@ using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTok
 using Diploma.Application.Persons.Commands.Interfaces;
 using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
 using Diploma.Application.PersonUris.Queries.Interfaces;
+using Diploma.Application.Projects.Queries.Interfaces;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
@@ -56,6 +57,7 @@ using Diploma.Infrastructure.PersonUris.QueryServices;
 using Diploma.Infrastructure.PersonUris.Repositories;
 using Diploma.Infrastructure.ProjectManagers.Repositories;
 using Diploma.Infrastructure.ProjectRoles.Repositories;
+using Diploma.Infrastructure.Projects.QueryServices;
 using Diploma.Infrastructure.Projects.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.QueryBuilders.Projects;
@@ -193,6 +195,8 @@ public static class Configuration
         services.AddTransient<IProjectRepository, ProjectRepository>();
         services.AddTransient<IProjectManagerRepository, ProjectManagerRepository>();
         services.AddTransient<IProjectRoleRepository, ProjectRoleRepository>();
+
+        services.AddTransient<IProjectQueryService, ProjectQueryService>();
 
         return services;
     }

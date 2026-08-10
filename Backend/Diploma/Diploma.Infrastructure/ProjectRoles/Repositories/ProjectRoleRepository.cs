@@ -34,9 +34,9 @@ public class ProjectRoleRepository(
 
         var domain = new ProjectRole.Builder()
             .WithId(item.ProjectRoleId)
-            .WithTitle(item.LastProjectRoleData.Title)
-            .WithDescription(item.LastProjectRoleData.Description)
-            .WithIsAvailableRecruitment(item.LastProjectRoleData.IsAvailableRecruitment)
+            .WithTitle(item.LastProjectRoleData?.Title ?? string.Empty)
+            .WithDescription(item.LastProjectRoleData?.Description ?? string.Empty)
+            .WithIsAvailableRecruitment(item.LastProjectRoleData?.IsAvailableRecruitment ?? false)
             .WithCreatedAt(item.CreatedAt)
             .Build();
 
@@ -77,6 +77,10 @@ public class ProjectRoleRepository(
             CreatedAt = item.CreatedAt
         };
 
+        await context.ProjectRoles.AddAsync(projectRole, cancellationToken);
+        await context.ProjectEvents.AddAsync(projectEvent, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+
         var data = new ProjectRoleData
         {
             Title = item.Title,
@@ -88,14 +92,10 @@ public class ProjectRoleRepository(
 
         projectRole.LastProjectRoleData = data;
 
-        await context.ProjectRoles.AddAsync(projectRole, cancellationToken);
         await context.ProjectRoleDatas.AddAsync(data, cancellationToken);
-        await context.ProjectEvents.AddAsync(projectEvent, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         item.Id = projectRole.ProjectRoleId;
-
-        throw new NotImplementedException();
     }
 
     public async Task<ExistingResult> UpdateAsync(
@@ -136,7 +136,7 @@ public class ProjectRoleRepository(
             ProjectRole = projectRole,
         };
 
-        projectRole.LastProjectRoleData.Next = data;
+        projectRole.LastProjectRoleData?.Next = data;
         projectRole.LastProjectRoleData = data;
 
         await context.ProjectRoleDatas.AddAsync(data, cancellationToken);

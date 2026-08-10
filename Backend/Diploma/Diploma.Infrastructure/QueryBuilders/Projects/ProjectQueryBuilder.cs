@@ -15,10 +15,14 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
     .AsNoTracking()
     .Include(i => i.LastProjectData)
     .Where(i => i.RemovedAt == null)
+    .Where(i => i.LastProjectData != null)
     )
 {
     public ProjectQueryBuilder WithProjectIds(IEnumerable<Guid> items)
     {
+        if (!items.Any())
+            return this;
+
         With(query => query.Where(i => items.Contains(i.ProjectId)));
         return this;
     }
@@ -34,7 +38,7 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
         if (item == null || item == false)
             return this;
 
-        With(query => query.Where(i => i.LastProjectData.IsVisible == item));
+        With(query => query.Where(i => i.LastProjectData != null && i.LastProjectData.IsVisible == item));
         return this;
     }
 
@@ -46,8 +50,10 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
         With(query => query.Where(i =>
             context.ProjectManagers
                 .Include(i => i.GrantEvent)
-                .Where(pr => pr.PersonId == item.Value && pr.RevokeEventId == null)
-                .Any(pr => i.ProjectId == pr.GrantEvent.ProjectId)
+                .Any(pr => pr.PersonId == item.Value
+                   && pr.RevokeEventId == null
+                   && pr.GrantEvent != null
+                   && pr.GrantEvent.ProjectId == i.ProjectId)
         ));
         return this;
     }
@@ -73,8 +79,8 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
             return orderBy switch
             {
                 ProjectOrderBy.Title => order == Order.Ascending
-                    ? query.OrderBy(i => i.LastProjectData.Title)
-                    : query.OrderByDescending(i => i.LastProjectData.Title),
+                    ? query.OrderBy(i => i.LastProjectData!.Title)
+                    : query.OrderByDescending(i => i.LastProjectData!.Title),
 
                 _ => order == Order.Ascending
                     ? query.OrderBy(i => i.CreatedAt)
