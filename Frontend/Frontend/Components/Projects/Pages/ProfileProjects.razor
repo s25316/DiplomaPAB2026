@@ -3,8 +3,6 @@
 @using Diploma.Models.Projects
 @using Diploma.Models.Shared
 
-@inject IBackendHttpClientFactory ClientFactory
-
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0"><i class="bi bi-kanban me-2"></i> Moje projekty </h5>
@@ -72,63 +70,13 @@
             <div class="row g-3">
                 @foreach (var project in _projects)
                 {
-                    var isSelected = _selectedProjectId == project.ProjectId;
-
                     <div class="col-12">
-                        <div class="card shadow-sm @(isSelected ? "border-primary" : "border-0")">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-
-                                    <!-- Główny układ: Tytuł, statusy i skrócone info -->
-                                    <div class="col-md-8" style="cursor: pointer;" @onclick="() => ToggleDetails(project.ProjectId)">
-                                        <h5 class="text-dark mb-1">
-                                            <i class="bi bi-folder2-open me-1 text-secondary"></i> <strong>@project.Title</strong>
-                                        </h5>
-                                        <div class="mb-2">
-                                            <span class="badge @(project.IsVisible ? "bg-success" : "bg-secondary") me-1">
-                                                @(project.IsVisible ? "Publiczny" : "Prywatny")
-                                            </span>
-                                            <span class="badge @(project.IsAvailableRecruitment ? "bg-info text-dark" : "bg-light text-dark border")">
-                                                @(project.IsAvailableRecruitment ? "Rekrutacja otwarta" : "Rekrutacja zamknięta")
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Przyciski akcji -->
-                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                        <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => ToggleDetails(project.ProjectId)">
-                                            @(isSelected ? "Ukryj" : "Szczegóły")
-                                        </button>
-                                        <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(project)">Edytuj</button>
-                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteProjectAsync(project.ProjectId)">Usuń</button>
-                                    </div>
-                                </div>
-
-                                <!-- Rozwijana sekcja szczegółów bezpośrednio w bloku -->
-                                @if (isSelected)
-                                {
-                                    <hr class="my-3 text-muted" />
-                                    <div class="card bg-white border-info shadow-sm mt-3">
-                                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
-                                            <span>Szczegóły projektu</span>
-                                            <button class="btn-close btn-close-white btn-sm" @onclick="CloseDetails"></button>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <h6 class="text-primary fw-bold">Opis</h6>
-                                                <p class="text-dark mb-3" style="white-space: pre-line;">
-                                                    @(!string.IsNullOrWhiteSpace(project.Description) ? project.Description : "Brak opisu dla tego projektu.")
-                                                </p>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center pt-2 border-top text-muted small">
-                                                <span>Utworzono: @project.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
-                                                <code>ID: @project.ProjectId</code>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
+                        <ProjectCardComponent Project="project"
+                                     IsSelected="(_selectedProjectId == project.ProjectId)"
+                                     OnToggleDetails="ToggleDetails"
+                                     OnCloseDetails="CloseDetails"
+                                     OnEdit="OpenEditModal"
+                                     OnDelete="DeleteProjectAsync" />
                     </div>
                 }
             </div>
@@ -160,60 +108,16 @@
 </div>
 
 <!-- MODAL DODAWANIA / EDYCJI -->
-@if (_isModalOpen)
-{
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header @(_isEditing ? "bg-warning text-dark" : "")">
-                    <h5 class="modal-title">@(_isEditing ? "Edytuj projekt" : "Utwórz nowy projekt")</h5>
-                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
-                </div>
-
-                <EditForm Model="_currentModel" OnValidSubmit="SaveProjectAsync">
-                    <DataAnnotationsValidator />
-                    <div class="modal-body">
-                        <ValidationSummary class="text-danger mb-3" />
-
-                        <div class="mb-3">
-                            <label class="form-label">Tytuł</label>
-                            <InputText class="form-control" @bind-Value="_currentModel.Title" placeholder="Wpisz tytuł projektu..." />
-                            <ValidationMessage For="@(() => _currentModel.Title)" />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Opis</label>
-                            <InputTextArea class="form-control" rows="4" @bind-Value="_currentModel.Description" placeholder="Wpisz opis projektu..." />
-                            <ValidationMessage For="@(() => _currentModel.Description)" />
-                        </div>
-
-                        @if (_isEditing)
-                        {
-                            <div class="mb-3 form-check form-switch">
-                                <InputCheckbox class="form-check-input" @bind-Value="_currentModel.IsVisible" id="isVisibleCheck" />
-                                <label class="form-check-label fw-bold" for="isVisibleCheck">
-                                    @(_currentModel.IsVisible ? "Projekt publiczny (Upubliczniony)" : "Projekt prywatny (Ukryty)")
-                                </label>
-                            </div>
-                        }
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @onclick="CloseModal">Anuluj</button>
-                        <button type="submit" class="btn @(_isEditing ? "btn-success" : "btn-primary")" disabled="@_isSaving">
-                            @if (_isSaving)
-                            {
-                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
-                            }
-                            Zapisz
-                        </button>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
-}
+<ProjectModalComponent IsOpen="_isModalOpen"
+              IsEditing="_isEditing"
+              IsSaving="_isSaving"
+              Model="_currentModel"
+              OnClose="CloseModal"
+              OnSubmit="SaveProjectAsync" />
 
 @code {
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+
     private List<ProjectDto> _projects = new();
     private bool _isLoading = true;
     private bool _isSaving = false;
@@ -232,18 +136,7 @@
     private bool _isModalOpen = false;
     private bool _isEditing = false;
     private Guid _selectedEditProjectId;
-    private ProjectFormModel _currentModel = new();
-
-    public class ProjectFormModel
-    {
-        [Required(ErrorMessage = "Tytuł jest wymagany.")]
-        public string Title { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Opis jest wymagany.")]
-        public string Description { get; set; } = string.Empty;
-
-        public bool IsVisible { get; set; } = true;
-    }
+    private ProjectModalComponent.ProjectFormModel _currentModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -355,7 +248,7 @@
     {
         _isEditing = true;
         _selectedEditProjectId = dto.ProjectId;
-        _currentModel = new ProjectFormModel
+        _currentModel = new ProjectModalComponent.ProjectFormModel
         {
             Title = dto.Title,
             Description = dto.Description,
@@ -458,25 +351,5 @@
         {
             _errorMessage = "Wystąpił błąd połączenia z serwerem.";
         }
-    }
-
-    private class ProjectCreateFormModel
-    {
-        [Required(ErrorMessage = "Tytuł jest wymagany.")]
-        public string Title { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Opis jest wymagany.")]
-        public string Description { get; set; } = string.Empty;
-    }
-
-    private class ProjectEditFormModel
-    {
-        [Required(ErrorMessage = "Tytuł jest wymagany.")]
-        public string Title { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Opis jest wymagany.")]
-        public string Description { get; set; } = string.Empty;
-
-        public bool IsVisible { get; set; }
     }
 }

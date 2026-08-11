@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\Backend\RADON\RADON.Models\RADON.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\Projects\Layout\" />
-  </ItemGroup>
-
 </Project>

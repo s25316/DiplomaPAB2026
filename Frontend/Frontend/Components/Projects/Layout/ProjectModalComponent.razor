@@ -1,0 +1,75 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header @(IsEditing ? "bg-warning text-dark" : "")">
+                    <h5 class="modal-title">@(IsEditing ? "Edytuj projekt" : "Utwórz nowy projekt")</h5>
+                    <button type="button" class="btn-close" @onclick="OnClose"></button>
+                </div>
+
+                <EditForm Model="Model" OnValidSubmit="OnSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <ValidationSummary class="text-danger mb-3" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Tytuł</label>
+                            <InputText class="form-control" @bind-Value="Model.Title" placeholder="Wpisz tytuł projektu..." />
+                            <ValidationMessage For="@(() => Model.Title)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Opis</label>
+                            <InputTextArea class="form-control" rows="4" @bind-Value="Model.Description" placeholder="Wpisz opis projektu..." />
+                            <ValidationMessage For="@(() => Model.Description)" />
+                        </div>
+
+                        @if (IsEditing)
+                        {
+                            <div class="mb-3 form-check form-switch">
+                                <InputCheckbox class="form-check-input" @bind-Value="Model.IsVisible" id="isVisibleCheck" />
+                                <label class="form-check-label fw-bold" for="isVisibleCheck">
+                                    @(Model.IsVisible ? "Projekt publiczny (Upubliczniony)" : "Projekt prywatny (Ukryty)")
+                                </label>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="OnClose">Anuluj</button>
+                        <button type="submit" class="btn @(IsEditing ? "btn-success" : "btn-primary")" disabled="@IsSaving">
+                            @if (IsSaving)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            }
+                            Zapisz
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public bool IsEditing { get; set; }
+    [Parameter] public bool IsSaving { get; set; }
+    [Parameter, EditorRequired] public ProjectFormModel Model { get; set; } = new();
+
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnSubmit { get; set; }
+
+    public class ProjectFormModel
+    {
+        [Required(ErrorMessage = "Tytuł jest wymagany.")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Opis jest wymagany.")]
+        public string Description { get; set; } = string.Empty;
+
+        public bool IsVisible { get; set; } = true;
+    }
+}
