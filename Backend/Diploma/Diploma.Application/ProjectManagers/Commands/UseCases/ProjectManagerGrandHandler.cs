@@ -50,19 +50,25 @@ public class ProjectManagerGrandHandler(
         if (!personFutureManger.HasActive)
             return new ProjectManagerGrandResult.Failure.Forbidden();
 
+        if (!personFutureManger.HasIdentityData)
+            return new ProjectManagerGrandResult.Failure.FutureMangerEmptyIdentityData();
+
 
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
             request.ProjectId,
             cancellationToken);
 
-        var countRoles = personRoles
+        var roles = personRoles
             .Select(i => i.ProjectManagerRole)
             .ToHashSet()
-            .Intersect(availableRoles)
-            .Count();
+            .Intersect(availableRoles);
 
-        if (countRoles == 0)
+        if (!roles.Any())
+            return new ProjectManagerGrandResult.Failure.Forbidden();
+
+        var minRoleId = roles.Min(i => i.Id);
+        if (minRoleId > ProjectManagerRole.Admin.Id && request.Model.RoleId <= ProjectManagerRole.Admin.Id)
             return new ProjectManagerGrandResult.Failure.Forbidden();
 
 
@@ -77,7 +83,7 @@ public class ProjectManagerGrandHandler(
         var projectManager = ProjectManager.Create(
             request.Model.PersonId,
             project.Id,
-            ProjectManagerRole.Creator);
+            ProjectManagerRole.FromId(request.Model.RoleId));
 
         await managerRepository.GrantAsync(request.PersonId, projectManager, cancellationToken);
 

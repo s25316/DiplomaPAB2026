@@ -8,7 +8,7 @@ public sealed record ProjectManagerGrandRequest
     public required Guid PersonId { get; init; }
 
     [Required]
-    [Range(1, 5)]
+    [Range(2, 5)]
     public required int RoleId { get; init; }
 }
 
@@ -19,5 +19,6 @@ public abstract record ProjectManagerGrandResult
     {
         public sealed record NotFound : Failure;
         public sealed record Forbidden : Failure;
+        public sealed record FutureMangerEmptyIdentityData : Failure;
     };
 }

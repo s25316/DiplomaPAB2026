@@ -7,177 +7,172 @@
 @inject IBackendHttpClientFactory HttpClientFactory
 @inject IRegonService RegonService
 
-<div class="container my-4 employment-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="mb-0"><i class="bi bi-briefcase me-2"></i>Historia Zatrudnienia</h3>
+<div class="card shadow-sm mb-4 employment-container">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>Historia Zatrudnienia</h5>
         <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
             <i class="bi bi-plus-lg me-1"></i> Dodaj zatrudnienie
         </button>
     </div>
-    <hr />
+    <div class="card-body bg-light">
 
-    @if (!string.IsNullOrEmpty(_successMessage))
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
-            <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
-        </div>
-    }
+        @if (!string.IsNullOrEmpty(_successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+            </div>
+        }
 
-    @if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
-            <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
-        </div>
-    }
+        @if (!string.IsNullOrEmpty(_errorMessage))
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+            </div>
+        }
 
-    <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
-    <div class="card mb-4 shadow-sm border-0">
-        <div class="card-body bg-light rounded">
-            <div class="row align-items-center g-3">
-                <div class="col-md-7 d-flex flex-wrap gap-2 align-items-center">
-                    <label class="form-label mb-0 text-nowrap">Sortuj:</label>
-                    <select class="form-select form-select-sm w-auto" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
-                        <option value="@PersonEmploymentQueryParameters.PersonEmploymentOrderBy.From">Data rozpoczęcia</option>
-                        <option value="@PersonEmploymentQueryParameters.PersonEmploymentOrderBy.Position">Stanowisko</option>
-                    </select>
-                    <select class="form-select form-select-sm w-auto" @value="_selectedOrder" @onchange="OnOrderChanged">
-                        <option value="@Order.Descending">Malejąco</option>
-                        <option value="@Order.Ascending">Rosnąco</option>
-                    </select>
-                </div>
-                <div class="col-md-5 d-flex justify-content-md-end align-items-center gap-2">
-                    <label class="form-label mb-0 text-nowrap">Na stronie:</label>
-                    <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
-                </div>
+        <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
+        <div class="row mb-3 align-items-center">
+            <div class="col-md-7 d-flex flex-wrap gap-2 align-items-center">
+                <label class="form-label mb-0 text-nowrap">Sortuj:</label>
+                <select class="form-select form-select-sm w-auto" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
+                    <option value="@PersonEmploymentQueryParameters.PersonEmploymentOrderBy.From">Data rozpoczęcia</option>
+                    <option value="@PersonEmploymentQueryParameters.PersonEmploymentOrderBy.Position">Stanowisko</option>
+                </select>
+                <select class="form-select form-select-sm w-auto" @value="_selectedOrder" @onchange="OnOrderChanged">
+                    <option value="@Order.Descending">Malejąco</option>
+                    <option value="@Order.Ascending">Rosnąco</option>
+                </select>
+            </div>
+            <div class="col-md-5 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
+                <label class="form-label mb-0 text-nowrap">Na stronie:</label>
+                <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
             </div>
         </div>
-    </div>
 
-    <!-- SEKCJA: Lista wpisów zatrudnienia w formacie blokowym -->
-    <div class="card mb-4 shadow-sm border-0">
-        <div class="card-header bg-dark text-white">
-            <strong>Wpisy zatrudnienia</strong>
-        </div>
-        <div class="card-body bg-light">
-            @if (_isLoading)
-            {
-                <div class="text-center py-4">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="text-muted mt-2">Ładowanie historii zatrudnienia...</p>
-                </div>
-            }
-            else if (_employments == null || !_employments.Any())
-            {
-                <div class="text-center text-muted py-4">
-                    <p class="mb-0">Brak zapisanych wpisów zatrudnienia.</p>
-                </div>
-            }
-            else
-            {
-                <div class="row g-3">
-                    @foreach (var employment in _employments)
-                    {
-                        var isExpanded = _expandedRowIds.Contains(employment.EmploymentId);
-                        _companyDictionary.TryGetValue(employment.Regon, out var company);
-                        var companyName = company?.Institution?.Nazwa ?? "Brak nazwy";
+        @if (_isLoading)
+        {
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="text-muted mt-2">Ładowanie historii zatrudnienia...</p>
+            </div>
+        }
+        else if (_employments == null || !_employments.Any())
+        {
+            <div class="text-center text-muted py-4">
+                <p class="mb-0">Brak zapisanych wpisów zatrudnienia.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var employment in _employments)
+                {
+                    var isExpanded = _expandedRowIds.Contains(employment.EmploymentId);
+                    _companyDictionary.TryGetValue(employment.Regon, out var company);
+                    var companyName = company?.Institution?.Nazwa ?? "Brak nazwy";
 
-                        <div class="col-12">
-                            <div class="card shadow-sm @(isExpanded ? "border-primary" : "border-0")">
-                                <div class="card-body">
-                                    <div class="row align-items-center">
+                    <div class="col-12">
+                        <div class="card shadow-sm @(isExpanded ? "border-primary" : "border-0")">
+                            <div class="card-body">
+                                <div class="row align-items-center">
 
-                                        <!-- Informacje główne -->
-                                        <div class="col-md-8" style="cursor: pointer;" @onclick="() => ToggleRow(employment.EmploymentId)">
-                                            <h5 class="text-dark mb-1">
-                                                <i class="bi bi-building me-1 text-secondary"></i> <strong>@companyName</strong>
-                                            </h5>
-                                            <h6 class="text-primary mb-2">
-                                                <i class="bi bi-briefcase me-1"></i> @employment.Position
-                                            </h6>
-                                            <div class="d-flex flex-wrap gap-3 text-muted small">
-                                                <span><i class="bi bi-calendar-event me-1"></i>Od: <strong>@employment.From.ToString("yyyy-MM-dd")</strong></span>
-                                                <span><i class="bi bi-calendar-check me-1"></i>Do: <strong>@(employment.To.HasValue ? employment.To.Value.ToString("yyyy-MM-dd") : "Obecnie")</strong></span>
-                                                <span><i class="bi bi-card-heading me-1"></i>REGON: <code>@employment.Regon</code></span>
-                                            </div>
+                                    <!-- Informacje główne -->
+                                    <div class="col-md-8">
+                                        <h5 class="text-dark mb-1">
+                                            <i class="bi bi-building me-1 text-secondary"></i>
+                                            <a href="javascript:void(0)" class="text-decoration-none fw-bold" @onclick="() => ToggleRow(employment.EmploymentId)">
+                                                @companyName
+                                            </a>
+                                        </h5>
+                                        <h6 class="text-primary mb-2">
+                                            <i class="bi bi-briefcase me-1"></i>
+                                            <a href="javascript:void(0)" class="text-decoration-none" @onclick="() => ToggleRow(employment.EmploymentId)">
+                                                @employment.Position
+                                            </a>
+                                        </h6>
+                                        <div class="d-flex flex-wrap gap-3 text-muted small">
+                                            <span><i class="bi bi-calendar-event me-1"></i>Od: <strong>@employment.From.ToString("yyyy-MM-dd")</strong></span>
+                                            <span><i class="bi bi-calendar-check me-1"></i>Do: <strong>@(employment.To.HasValue ? employment.To.Value.ToString("yyyy-MM-dd") : "Obecnie")</strong></span>
+                                            <span><i class="bi bi-card-heading me-1"></i>REGON: <code>@employment.Regon</code></span>
                                         </div>
-
-                                        <!-- Przyciski akcji -->
-                                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                                            <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => ToggleRow(employment.EmploymentId)">
-                                                @(isExpanded ? "Ukryj" : "Szczegóły")
-                                            </button>
-                                            <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(employment)">Edytuj</button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteEmploymentAsync(employment.EmploymentId)">Usuń</button>
-                                        </div>
-
                                     </div>
 
-                                    <!-- Rozwijana sekcja szczegółów -->
-                                    @if (isExpanded)
-                                    {
-                                        <hr class="my-3 text-muted" />
-                                        <div class="card bg-white border-info shadow-sm mt-3">
-                                            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
-                                                <span>Szczegóły zatrudnienia</span>
-                                                <button class="btn-close btn-close-white btn-sm" @onclick="() => ToggleRow(employment.EmploymentId)"></button>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="mb-3">
-                                                    <h6 class="text-primary fw-bold">Opis stanowiska / Obowiązki</h6>
-                                                    <p class="text-dark mb-3" style="white-space: pre-line;">
-                                                        @(!string.IsNullOrWhiteSpace(employment.Description) ? employment.Description : "Brak opisu dla tego stanowiska.")
-                                                    </p>
-                                                </div>
+                                    <!-- Przyciski akcji -->
+                                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                        <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => ToggleRow(employment.EmploymentId)">
+                                            @(isExpanded ? "Ukryj" : "Szczegóły")
+                                        </button>
+                                        <button class="btn btn-warning btn-sm me-1" @onclick="() => OpenEditModal(employment)">Edytuj</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteEmploymentAsync(employment.EmploymentId)">Usuń</button>
+                                    </div>
 
-                                                @if (company != null)
-                                                {
-                                                    <div>
-                                                        <h6 class="text-primary fw-bold mb-2">Szczegóły pracodawcy (GUS)</h6>
-                                                        <div class="bg-light p-3 rounded border">
-                                                            <RegonInstitutionDetailsView Institution="company" />
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
                                 </div>
+
+                                <!-- Rozwijana sekcja szczegółów -->
+                                @if (isExpanded)
+                                {
+                                    <hr class="my-3 text-muted" />
+                                    <div class="card bg-white border-info shadow-sm mt-3">
+                                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                                            <span>Szczegóły zatrudnienia</span>
+                                            <button class="btn-close btn-close-white btn-sm" @onclick="() => ToggleRow(employment.EmploymentId)"></button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <h6 class="text-primary fw-bold">Opis stanowiska / Obowiązki</h6>
+                                                <p class="text-dark mb-3" style="white-space: pre-line;">
+                                                    @(!string.IsNullOrWhiteSpace(employment.Description) ? employment.Description : "Brak opisu dla tego stanowiska.")
+                                                </p>
+                                            </div>
+
+                                            @if (company != null)
+                                            {
+                                                <div>
+                                                    <h6 class="text-primary fw-bold mb-2">Szczegóły pracodawcy (GUS)</h6>
+                                                    <div class="bg-light p-3 rounded border">
+                                                        <RegonInstitutionDetailsView Institution="company" />
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
-                    }
-                </div>
-
-                <!-- Paginacja -->
-                @if (_totalPages > 1)
-                {
-                    <nav class="d-flex justify-content-between align-items-center mt-4 px-2">
-                        <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                                <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
-                            </li>
-                            @for (int i = 1; i <= _totalPages; i++)
-                            {
-                                var pageNumber = i;
-                                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
-                                    <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
-                                </li>
-                            }
-                            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                                <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
-                            </li>
-                        </ul>
-                    </nav>
+                    </div>
                 }
+            </div>
+
+            <!-- Paginacja -->
+            @if (_totalPages > 1)
+            {
+                <nav class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
+                    <ul class="pagination pagination-sm mb-0">
+                        <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                            <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
+                        </li>
+                        @for (int i = 1; i <= _totalPages; i++)
+                        {
+                            var pageNumber = i;
+                            <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                            </li>
+                        }
+                        <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                            <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                        </li>
+                    </ul>
+                </nav>
             }
-        </div>
+        }
     </div>
 </div>
 

@@ -33,6 +33,7 @@ public class ProjectManagersController(IMediator mediator) : ControllerBase
             ProjectManagerGrandResult.Success => Ok(),
             ProjectManagerGrandResult.Failure.NotFound => NotFound(),
             ProjectManagerGrandResult.Failure.Forbidden => Forbid(),
+            ProjectManagerGrandResult.Failure.FutureMangerEmptyIdentityData => BadRequest("Profil osoby dla której nadajemy urawnienia jest niekompletny"),
             _ => throw new NotImplementedException($"Unknown type of {nameof(ProjectManagerGrandResult)}: {result.GetType()}"),
         };
     }
