@@ -14,7 +14,7 @@ public class PersonRestoreLinkGenerator(
     IOptions<FrontendHostConfiguration> options
     ) : IPersonRestoreLinkGenerator
 {
-    private const string PATH_TEMPLATE = "api/person/profile/restore/";
+    private const string PATH_TEMPLATE = "restore/";
 
     public Uri Generate(PersonActivationLinkInput input)
     {

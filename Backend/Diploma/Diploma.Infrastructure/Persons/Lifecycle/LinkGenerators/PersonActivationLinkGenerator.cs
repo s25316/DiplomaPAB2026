@@ -14,7 +14,7 @@ public class PersonActivationLinkGenerator(
     IOptions<FrontendHostConfiguration> options
     ) : IPersonActivationLinkGenerator
 {
-    private const string PATH_TEMPLATE = "api/person/profile/activate/";
+    private const string PATH_TEMPLATE = "activation/";
 
 
     public Uri Generate(PersonActivationLinkInput input)
