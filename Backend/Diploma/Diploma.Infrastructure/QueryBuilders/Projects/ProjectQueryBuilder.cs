@@ -60,11 +60,17 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
 
     public ProjectQueryBuilder WithDisciplines(IList<string> items)
     {
+        if (!items.Any())
+            return this;
+
         return this;
     }
 
     public ProjectQueryBuilder WithInstitutions(IList<Guid> items)
     {
+        if (!items.Any())
+            return this;
+
         return this;
     }
 

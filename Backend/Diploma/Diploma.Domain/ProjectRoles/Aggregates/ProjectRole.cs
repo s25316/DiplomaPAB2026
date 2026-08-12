@@ -16,6 +16,19 @@ public partial class ProjectRole : BaseEntity<ProjectRoleId>
     public bool IsAvailableRecruitment { get; protected set; } = false;
     public DateTimeOffset CreatedAt { get; protected set; } = DateTimeOffset.Now;
 
+    public static ProjectRole Create(
+        ProjectId projectId,
+        string title,
+        string description)
+    {
+        var item = new ProjectRole();
+        item.ProjectId = projectId;
+        item.Title = title;
+        item.Description = description;
+        item.CreatedAt = DateTimeOffset.Now;
+
+        return item;
+    }
 
     public void ChangeAvailableRecruitment(bool? value)
     {

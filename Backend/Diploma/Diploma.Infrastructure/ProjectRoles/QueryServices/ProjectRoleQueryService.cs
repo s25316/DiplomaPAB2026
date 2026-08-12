@@ -1,30 +1,35 @@
-﻿using Diploma.Application.Projects.Queries.Interfaces;
+﻿using Diploma.Application.ProjectRoles.Queries.Interfaces;
 using Diploma.Database;
 using Diploma.Domain.Persons.Aggregates;
 using Diploma.Infrastructure.QueryBuilders.Projects;
-using Diploma.Models.Projects;
+using Diploma.Models.ProjectRoles;
 using Diploma.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Diploma.Infrastructure.Projects.QueryServices;
+namespace Diploma.Infrastructure.ProjectRoles.QueryServices;
 
-public class ProjectQueryService(
+public class ProjectRoleQueryService(
     DiplomaDbContext context,
-    ProjectQueryBuilder builder
-    ) : IProjectQueryService
+    ProjectRoleQueryBuilder builder
+    ) : IProjectRoleQueryService
 {
-    public async Task<Response<ProjectDto>> GetAsync(
+    public async Task<Response<ProjectRoleDto>> GetAsync(
         PersonId? personId,
+        bool isPersonItems,
         bool? isVisible,
-        ProjectQueryParameters queryParameters,
+        ProjectRoleQueryParameters queryParameters,
         CancellationToken cancellationToken = default)
     {
         builder
+            .WithProjectRoleIds(queryParameters.ProjectRoleIds)
             .WithProjectIds(queryParameters.ProjectIds)
-            .WithManagerPersonId(personId)
+
             .WithIsVisible(isVisible)
             .WithDisciplines(queryParameters.Disciplines)
             .WithInstitutions(queryParameters.Institutions);
+
+        if (isPersonItems)
+            builder.WithManagerPersonId(personId);
 
         var baseQuery = builder.Build();
         var totalCount = await baseQuery.CountAsync(cancellationToken);
@@ -33,9 +38,11 @@ public class ProjectQueryService(
             .WithOrderBy(queryParameters.Order, queryParameters.OrderBy, queryParameters.Pagination)
             .Build();
 
+
         var databaseItems = await query.Select(i => new
         {
             Item = i,
+
             Disciplines = context
                 .ProjectRoleEducationDisciplines
                 .Include(i => i.ProjectRole)
@@ -49,6 +56,7 @@ public class ProjectQueryService(
                     d.EducationDiscipline
                 })
                 .ToList(),
+
             Institutions = context
                 .ProjectRoleEducationInstitutions
                 .Include(i => i.ProjectRole)
@@ -61,35 +69,57 @@ public class ProjectQueryService(
                     d.EducationInstitutionId,
                 })
                 .ToList(),
+
             IsAvailableRecruitment = context
                 .ProjectRoles
                 .Include(d => d.LastProjectRoleData)
                 .Where(d => d.ProjectId == i.ProjectId)
                 .Where(d => d.RemovedAt == null)
                 .Any(d => d.LastProjectRoleData != null && d.LastProjectRoleData.IsAvailableRecruitment),
+
+            IsRecruted = context
+                .Recruitments
+                .Any(d =>
+                    personId != null &&
+                    d.PersonId == personId.Value &&
+                    d.RecruitmentProjectRoles.Any(r => r.ProjectRole.ProjectId == i.ProjectId)
+                ),
+
         }).ToListAsync(cancellationToken);
 
-        var items = databaseItems.Select(i => new ProjectDto
+
+        var items = databaseItems.Select(i => new ProjectRoleDto
         {
+            ProjectRoleId = i.Item.ProjectRoleId,
             ProjectId = i.Item.ProjectId,
             CreatedAt = i.Item.CreatedAt,
-            Title = i.Item.LastProjectData?.Title ?? string.Empty,
-            Description = i.Item.LastProjectData?.Description ?? string.Empty,
-            IsVisible = i.Item.LastProjectData?.IsVisible ?? false,
+            Title = i.Item.LastProjectRoleData?.Title ?? string.Empty,
+            Description = i.Item.LastProjectRoleData?.Description ?? string.Empty,
             IsAvailableRecruitment = i.IsAvailableRecruitment,
+            IsRecruted = i.IsRecruted,
+
             Disciplines = i.Disciplines
-            .Select(d => new Models.Dictionaries.DictionaryItem<string>
+            .Select(d => new ProjectRoleDto.ProjectRoleDiscipline
             {
-                Code = d.EducationDiscipline.Code,
-                Name = d.EducationDiscipline.Name,
+                ProjectRoleDisciplineId = d.ProjectRoleEducationDisciplineId,
+                Discipline = new Models.Dictionaries.DictionaryItem<string>
+                {
+                    Code = d.EducationDiscipline.Code,
+                    Name = d.EducationDiscipline.Name,
+                },
             }).ToHashSet().ToList(),
+
             EductionInstitutionIds = i.Institutions
-                .Select(d => d.EducationInstitutionId)
-                .ToHashSet()
-                .ToList(),
+            .Select(d => new ProjectRoleDto.ProjectRoleEductionInstitution
+            {
+                ProjectRoleEductionInstitutionId = d.ProjectRoleEducationInstitutionId,
+                EductionInstitutionId = d.EducationInstitutionId,
+            })
+            .ToHashSet()
+            .ToList(),
         }).ToList();
 
-        return new Response<ProjectDto>
+        return new Response<ProjectRoleDto>
         {
             Items = items,
             Pagination = new ResponsePagination

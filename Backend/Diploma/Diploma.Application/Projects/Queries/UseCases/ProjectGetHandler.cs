@@ -5,17 +5,19 @@ using MediatR;
 namespace Diploma.Application.Projects.Queries.UseCases;
 
 public class ProjectGetHandler(
-    IProjectQueryService projectQueryService
+    IProjectQueryService queryService
     ) : IRequestHandler<ProjectGetHandler.Request, ProjectQueryResult>
 {
     public sealed record Request : IRequest<ProjectQueryResult>
     {
+        public Guid? PersonId { get; init; }
         public required ProjectQueryParameters Model { get; init; }
     }
 
+
     public async Task<ProjectQueryResult> Handle(ProjectGetHandler.Request request, CancellationToken cancellationToken)
     {
-        var result = await projectQueryService.GetAsync(
+        var result = await queryService.GetAsync(
             null,
             true,
             request.Model,

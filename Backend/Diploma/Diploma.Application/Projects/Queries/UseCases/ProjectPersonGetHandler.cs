@@ -7,7 +7,7 @@ namespace Diploma.Application.Projects.Queries.UseCases;
 
 public class ProjectPersonGetHandler(
     IPersonRepository personRepository,
-    IProjectQueryService projectQueryService
+    IProjectQueryService queryService
     ) : IRequestHandler<ProjectPersonGetHandler.Request, ProjectQueryResult>
 {
     public sealed record Request : IRequest<ProjectQueryResult>
@@ -28,7 +28,7 @@ public class ProjectPersonGetHandler(
         if (!person.HasActive)
             return new ProjectQueryResult.Failure.ProfileInactive();
 
-        var result = await projectQueryService.GetAsync(
+        var result = await queryService.GetAsync(
             request.PersonId,
             false,
             request.Model,

@@ -3,117 +3,127 @@
 @using Diploma.Models.Projects
 @using Diploma.Models.Shared
 
-<div class="card shadow-sm mb-4">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-kanban me-2"></i> Moje projekty </h5>
-        <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
-            <i class="bi bi-plus-lg me-1"></i> Dodaj projekt
-        </button>
-    </div>
-    <div class="card-body bg-light">
-
-        @if (!string.IsNullOrEmpty(_successMessage))
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
-                <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+<AuthorizeView>
+    <Authorized>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-kanban me-2"></i> Moje projekty </h5>
+                <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
+                    <i class="bi bi-plus-lg me-1"></i> Dodaj projekt
+                </button>
             </div>
-        }
+            <div class="card-body bg-light">
 
-        @if (!string.IsNullOrEmpty(_errorMessage))
-        {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
-                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
-            </div>
-        }
+                @if (!string.IsNullOrEmpty(_successMessage))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>@_successMessage
+                        <button type="button" class="btn-close" @onclick="() => _successMessage = null"></button>
+                    </div>
+                }
 
-        <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
-        <div class="row mb-3 align-items-center">
-            <div class="col-md-6 d-flex gap-2 align-items-center">
-                <label class="form-label mb-0 text-nowrap">Sortuj:</label>
-                <select class="form-select form-select-sm" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
-                    <option value="1">Tytuł</option>
-                    <option value="2">Data utworzenia</option>
-                </select>
-                <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
-                    <option value="1">Rosnąco</option>
-                    <option value="2">Malejąco</option>
-                </select>
-            </div>
-            <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
-                <label class="form-label mb-0 text-nowrap">Na stronie:</label>
-                <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                </select>
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                        <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+                    </div>
+                }
+
+                <!-- Pasek narzędzi: Sortowanie i Liczba elementów na stronie -->
+                <div class="row mb-3 align-items-center">
+                    <div class="col-md-6 d-flex gap-2 align-items-center">
+                        <label class="form-label mb-0 text-nowrap">Sortuj:</label>
+                        <select class="form-select form-select-sm" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
+                            <option value="1">Tytuł</option>
+                            <option value="2">Data utworzenia</option>
+                        </select>
+                        <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
+                            <option value="1">Rosnąco</option>
+                            <option value="2">Malejąco</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
+                        <label class="form-label mb-0 text-nowrap">Na stronie:</label>
+                        <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                </div>
+
+                @if (_isLoading)
+                {
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="text-muted mt-2">Ładowanie projektów...</p>
+                    </div>
+                }
+                else if (_projects == null || !_projects.Any())
+                {
+                    <div class="text-center text-muted py-4">
+                        <p class="mb-0">Brak projektów spełniających kryteria.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var project in _projects)
+                        {
+                            <div class="col-12">
+                                <ProjectCardComponent Project="project"
+                                                      IsSelected="(_selectedProjectId == project.ProjectId)"
+                                                      OnToggleDetails="ToggleDetails"
+                                                      OnCloseDetails="CloseDetails"
+                                                      OnEdit="OpenEditModal"
+                                                      OnDelete="DeleteProjectAsync" />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Paginacja -->
+                    @if (_totalPages > 1)
+                    {
+                        <nav class="d-flex justify-content-between align-items-center mt-3">
+                            <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                    <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
+                                </li>
+                                @for (int i = 1; i <= _totalPages; i++)
+                                {
+                                    var pageNumber = i;
+                                    <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                                        <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                    </li>
+                                }
+                                <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                    <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                }
             </div>
         </div>
 
-        @if (_isLoading)
-        {
-            <div class="text-center py-4">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="text-muted mt-2">Ładowanie projektów...</p>
-            </div>
-        }
-        else if (_projects == null || !_projects.Any())
-        {
-            <div class="text-center text-muted py-4">
-                <p class="mb-0">Brak projektów spełniających kryteria.</p>
-            </div>
-        }
-        else
-        {
-            <div class="row g-3">
-                @foreach (var project in _projects)
-                {
-                    <div class="col-12">
-                        <ProjectCardComponent Project="project"
-                                     IsSelected="(_selectedProjectId == project.ProjectId)"
-                                     OnToggleDetails="ToggleDetails"
-                                     OnCloseDetails="CloseDetails"
-                                     OnEdit="OpenEditModal"
-                                     OnDelete="DeleteProjectAsync" />
-                    </div>
-                }
-            </div>
-
-            <!-- Paginacja -->
-            @if (_totalPages > 1)
-            {
-                <nav class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
-                    <ul class="pagination pagination-sm mb-0">
-                        <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
-                        </li>
-                        @for (int i = 1; i <= _totalPages; i++)
-                        {
-                            var pageNumber = i;
-                            <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
-                                <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
-                            </li>
-                        }
-                        <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
-                            <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
-                        </li>
-                    </ul>
-                </nav>
-            }
-        }
-    </div>
-</div>
-
-<!-- MODAL DODAWANIA / EDYCJI -->
-<ProjectModalComponent IsOpen="_isModalOpen"
-              IsEditing="_isEditing"
-              IsSaving="_isSaving"
-              Model="_currentModel"
-              OnClose="CloseModal"
-              OnSubmit="SaveProjectAsync" />
+        <!-- MODAL DODAWANIA / EDYCJI -->
+        <ProjectModalComponent IsOpen="_isModalOpen"
+                               IsEditing="_isEditing"
+                               IsSaving="_isSaving"
+                               Model="_currentModel"
+                               OnClose="CloseModal"
+                               OnSubmit="SaveProjectAsync" />
+    </Authorized>
+    <NotAuthorized>
+        <div class="container mt-5 text-center alert alert-warning">
+            <h4>Musisz się zalogować, aby uzyskać dostęp do profilu.</h4>
+            <a href="/authentication" class="btn btn-primary mt-3">Zaloguj się</a>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
@@ -295,11 +305,21 @@
                 response = await client.PostAsJsonAsync("api/projects", createRequest);
             }
 
+            var content = await response.Content.ReadAsStringAsync();
+
             if (response.IsSuccessStatusCode)
             {
                 _successMessage = _isEditing ? "Projekt został zaktualizowany." : "Projekt został utworzony.";
                 CloseModal();
                 await LoadProjectsAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest && !string.IsNullOrEmpty(content))
+            {
+                _errorMessage = content;
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Brak uprawnień.";
             }
             else
             {
