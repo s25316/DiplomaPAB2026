@@ -78,7 +78,8 @@
                                                       OnToggleDetails="ToggleDetails"
                                                       OnCloseDetails="CloseDetails"
                                                       OnEdit="OpenEditModal"
-                                                      OnDelete="DeleteProjectAsync" />
+                                                      OnDelete="DeleteProjectAsync"
+                                                      OnProjectUpdated="() => HandleProjectUpdated(project.ProjectId)" />
                             </div>
                         }
                     </div>
@@ -333,6 +334,40 @@
         finally
         {
             _isSaving = false;
+        }
+    }
+
+    private async Task HandleProjectUpdated(Guid projectId)
+    {
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            // Używamy endpointu z filtrowaniem po ID, aby pobrać świeży stan z bazy
+            var url = $"api/projects?ProjectIds={projectId}";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<Response<ProjectDto>>();
+                var updatedProject = result?.Items?.FirstOrDefault();
+
+                if (updatedProject != null)
+                {
+                    var index = _projects.FindIndex(p => p.ProjectId == projectId);
+                    if (index != -1)
+                    {
+                        // Podmieniamy cały obiekt na nowy z bazy (obejście ograniczenia 'init')
+                        _projects[index] = updatedProject;
+                        StateHasChanged();
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Opcjonalnie: obsługa błędu odświeżania
         }
     }
 

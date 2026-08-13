@@ -186,6 +186,7 @@
     [Parameter] public EventCallback OnCloseDetails { get; set; }
     [Parameter] public EventCallback<ProjectDto> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+    [Parameter] public EventCallback<ProjectDto> OnProjectUpdated { get; set; } 
 
     [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
 
@@ -238,7 +239,6 @@
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            // Pobieramy aktualne dane roli dla konkretnego projektu
             var url = $"api/projects/projectRoles?ProjectIds={Project.ProjectId}";
             var response = await client.GetAsync(url);
 
@@ -334,8 +334,6 @@
                 CloseRoleModal();
                 rolesLoaded = false;
                 await LoadProjectRolesAsync();
-
-                // Odświeżenie danych samego projektu w komponencie nadrzędnym (np. pobranie najnowszego DTO projektu z API)
                 await RefreshProjectDataAsync();
             }
             else
@@ -356,29 +354,7 @@
 
     private async Task RefreshProjectDataAsync()
     {
-        try
-        {
-            using var client = await ClientFactory.CreateAuthorizedClientAsync();
-            if (client is null) return;
-
-            var response = await client.GetAsync($"api/projects/{Project.ProjectId}");
-            if (response.IsSuccessStatusCode)
-            {
-                // Załóżmy, że endpoint zwraca bezpośrednio ProjectDto lub odpowiednik Success wrapper. 
-                // Dopasuj do tego, jak backend zwraca pojedynczy projekt (np. response.Content.ReadFromJsonAsync<ProjectDto>())
-                var updatedProject = await response.Content.ReadFromJsonAsync<ProjectDto>();
-                if (updatedProject != null)
-                {
-                    // Przekazujemy zaktualizowany obiekt wyżej do rodzica przez EventCallback OnEdit (lub dedykowany callback odświeżenia)
-                    // Wywołanie OnEdit zaktualizuje instancję projektu w liście rodzica.
-                    await OnEdit.InvokeAsync(updatedProject);
-                }
-            }
-        }
-        catch
-        {
-            // Opcjonalna obsługa błędu odświeżenia metadanych projektu
-        }
+        await OnProjectUpdated.InvokeAsync(Project);
     }
 
     private async Task DeleteRoleAsync(Guid projectRoleId)
@@ -395,6 +371,7 @@
             {
                 rolesLoaded = false;
                 await LoadProjectRolesAsync();
+                await RefreshProjectDataAsync();
             }
             else
             {
