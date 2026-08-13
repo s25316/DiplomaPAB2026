@@ -70,13 +70,6 @@ public class ProjectRoleQueryService(
                 })
                 .ToList(),
 
-            IsAvailableRecruitment = context
-                .ProjectRoles
-                .Include(d => d.LastProjectRoleData)
-                .Where(d => d.ProjectId == i.ProjectId)
-                .Where(d => d.RemovedAt == null)
-                .Any(d => d.LastProjectRoleData != null && d.LastProjectRoleData.IsAvailableRecruitment),
-
             IsRecruted = context
                 .Recruitments
                 .Any(d =>
@@ -95,7 +88,7 @@ public class ProjectRoleQueryService(
             CreatedAt = i.Item.CreatedAt,
             Title = i.Item.LastProjectRoleData?.Title ?? string.Empty,
             Description = i.Item.LastProjectRoleData?.Description ?? string.Empty,
-            IsAvailableRecruitment = i.IsAvailableRecruitment,
+            IsAvailableRecruitment = i.Item.LastProjectRoleData?.IsAvailableRecruitment ?? false,
             IsRecruted = i.IsRecruted,
 
             Disciplines = i.Disciplines

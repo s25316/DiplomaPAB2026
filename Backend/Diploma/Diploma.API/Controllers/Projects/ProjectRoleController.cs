@@ -1,7 +1,7 @@
 ﻿using Diploma.API.Extensions;
 using Diploma.Application.ProjectRoles.Commands.UseCases;
+using Diploma.Application.ProjectRoles.Queries.UseCases;
 using Diploma.Models.ProjectRoles;
-using Diploma.Models.Projects;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +12,27 @@ namespace Diploma.API.Controllers.Projects;
 [ApiController]
 public class ProjectRoleController(IMediator mediator) : ControllerBase
 {
-
     [Authorize]
-    [HttpGet()]
+    [HttpGet("projectRoles")]
     public async Task<IActionResult> GetAsync(
-        [FromQuery] ProjectQueryParameters queryParameters,
+        [FromQuery] ProjectRoleQueryParameters queryParameters,
         CancellationToken cancellationToken)
     {
-        return Ok();
+        if (!User.TryGetNameIdentifier(out var personId))
+            return Unauthorized();
+
+        var result = await mediator.Send(new ProjectRolePersonGetHandler.Request
+        {
+            PersonId = personId.Value,
+            Model = queryParameters,
+        }, cancellationToken);
+
+        return result switch
+        {
+            ProjectRoleQueryResult.Success success => Ok(success),
+            ProjectRoleQueryResult.Failure.NotFound => NotFound(),
+            _ => throw new NotImplementedException($"Unknown type of {nameof(ProjectRoleCreateResult)}: {result.GetType()}"),
+        };
     }
 
     [Authorize]

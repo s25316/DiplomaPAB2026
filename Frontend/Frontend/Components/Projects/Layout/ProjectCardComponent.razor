@@ -1,4 +1,7 @@
 ﻿@using Diploma.Models.Projects
+@using Diploma.Models.ProjectRoles
+@using Diploma.Models.Shared
+@using System.ComponentModel.DataAnnotations
 
 <div class="card shadow-sm @(IsSelected ? "border-primary" : "border-0")">
     <div class="card-body">
@@ -19,7 +22,7 @@
                 </div>
             </div>
 
-            <!-- Przyciski akcji -->
+            <!-- Przyciski akcji projektu -->
             <div class="col-md-4 text-md-end mt-3 mt-md-0">
                 <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
                     @(IsSelected ? "Ukryj" : "Szczegóły")
@@ -35,16 +38,70 @@
             <hr class="my-3 text-muted" />
             <div class="card bg-white border-info shadow-sm mt-3">
                 <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
-                    <span>Szczegóły projektu</span>
+                    <span>Szczegóły projektu i role</span>
                     <button class="btn-close btn-close-white btn-sm" @onclick="() => OnCloseDetails.InvokeAsync()"></button>
                 </div>
                 <div class="card-body">
+                    <!-- Opis projektu -->
                     <div class="mb-3">
                         <h6 class="text-primary fw-bold">Opis</h6>
                         <p class="text-dark mb-3" style="white-space: pre-line;">
                             @(!string.IsNullOrWhiteSpace(Project.Description) ? Project.Description : "Brak opisu dla tego projektu.")
                         </p>
                     </div>
+
+                    <!-- Sekcja ról w projekcie -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-primary fw-bold mb-0">Role w projekcie</h6>
+                            <button class="btn btn-sm btn-primary" @onclick="OpenCreateRoleModal">
+                                <i class="bi bi-plus-lg me-1"></i> Dodaj rolę
+                            </button>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(roleErrorMessage))
+                        {
+                            <div class="alert alert-danger py-1 px-2 small mb-2">@roleErrorMessage</div>
+                        }
+
+                        <!-- Lista ról -->
+                        @if (isLoadingRoles)
+                        {
+                            <div class="d-flex align-items-center text-muted py-2">
+                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                <span>Ładowanie ról...</span>
+                            </div>
+                        }
+                        else if (projectRoles.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var role in projectRoles)
+                                {
+                                    <div class="list-group-item py-2 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <h6 class="mb-0 fw-bold text-dark">@role.Title</h6>
+                                                <span class="badge @(role.IsAvailableRecruitment ? "bg-info text-dark" : "bg-light text-dark border")" style="font-size: 0.7rem;">
+                                                    @(role.IsAvailableRecruitment ? "Otwarta" : "Zamknięta")
+                                                </span>
+                                            </div>
+                                            <p class="mb-0 small text-muted">@role.Description</p>
+                                        </div>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-warning me-2 text-dark" @onclick="() => OpenEditRoleModal(role)">Edytuj</button>
+                                            <button class="btn btn-danger" @onclick="() => DeleteRoleAsync(role.ProjectRoleId)">Usuń</button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted small fst-italic mb-0">Brak zdefiniowanych ról dla tego projektu.</p>
+                        }
+                    </div>
+
+                    <!-- Stopka szczegółów -->
                     <div class="d-flex justify-content-between align-items-center pt-2 border-top text-muted small">
                         <span>Utworzono: @Project.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
                         <code>ID: @Project.ProjectId</code>
@@ -55,6 +112,72 @@
     </div>
 </div>
 
+<!-- MODAL DODAWANIA / EDYCJI ROLI -->
+@if (isRoleModalOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header @(isEditingRole ? "bg-warning text-dark" : "bg-primary text-white")">
+                    <h5 class="modal-title">
+                        <i class="bi @(isEditingRole ? "bi-pencil-square" : "bi-plus-circle") me-2"></i>
+                        @(isEditingRole ? "Edytuj rolę" : "Dodaj nową rolę")
+                    </h5>
+                    <button type="button" class="btn-close @(isEditingRole ? "" : "btn-close-white")" @onclick="CloseRoleModal"></button>
+                </div>
+
+                <EditForm Model="roleModel" OnValidSubmit="HandleSaveRole">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body bg-light">
+                        <ValidationSummary class="text-danger small mb-3" />
+
+                        @if (!string.IsNullOrEmpty(modalErrorMessage))
+                        {
+                            <div class="alert alert-danger py-2 px-3 small mb-3">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> @modalErrorMessage
+                            </div>
+                        }
+
+                        <div class="card border-0 shadow-sm p-3 mb-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-secondary">Tytuł</label>
+                                <InputText @bind-Value="roleModel.Title" class="form-control" placeholder="Wpisz tytuł roli..." />
+                                <ValidationMessage For="() => roleModel.Title" class="text-danger small" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-secondary">Opis</label>
+                                <InputTextArea @bind-Value="roleModel.Description" class="form-control" rows="3" placeholder="Wpisz opis roli..." />
+                                <ValidationMessage For="() => roleModel.Description" class="text-danger small" />
+                            </div>
+
+                            @if (isEditingRole)
+                            {
+                                <div class="mb-0 form-check form-switch">
+                                    <InputCheckbox class="form-check-input" @bind-Value="roleModel.IsAvailableRecruitment" id="roleRecruitmentCheckModal" />
+                                    <label class="form-check-label fw-bold small text-secondary" for="roleRecruitmentCheckModal">
+                                        @(roleModel.IsAvailableRecruitment ? "Rekrutacja otwarta" : "Rekrutacja zamknięta")
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-white">
+                        <button type="button" class="btn btn-secondary btn-sm" @onclick="CloseRoleModal">Anuluj</button>
+                        <button type="submit" class="btn @(isEditingRole ? "btn-success" : "btn-primary") btn-sm px-4" disabled="@isRoleSubmitting">
+                            @if (isRoleSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            Zapisz
+                        </button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     [Parameter, EditorRequired] public ProjectDto Project { get; set; } = default!;
     [Parameter] public bool IsSelected { get; set; }
@@ -63,4 +186,224 @@
     [Parameter] public EventCallback OnCloseDetails { get; set; }
     [Parameter] public EventCallback<ProjectDto> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+
+    private bool isLoadingRoles = false;
+    private bool rolesLoaded = false;
+    private Guid? lastLoadedProjectId;
+    private List<ProjectRoleDto> projectRoles = new();
+
+    private bool isRoleModalOpen = false;
+    private bool isEditingRole = false;
+    private bool isRoleSubmitting = false;
+    private Guid selectedEditRoleId;
+    private string? roleErrorMessage;
+    private string? modalErrorMessage;
+    private RoleFormModel roleModel = new();
+
+    public class RoleFormModel
+    {
+        [Required(ErrorMessage = "Tytuł jest wymagany.")]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Opis jest wymagany.")]
+        public string Description { get; set; } = string.Empty;
+
+        public bool IsAvailableRecruitment { get; set; } = true;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (lastLoadedProjectId != Project.ProjectId)
+        {
+            rolesLoaded = false;
+            projectRoles.Clear();
+            lastLoadedProjectId = Project.ProjectId;
+            isRoleModalOpen = false;
+        }
+
+        if (IsSelected && !rolesLoaded)
+        {
+            await LoadProjectRolesAsync();
+        }
+    }
+
+    private async Task LoadProjectRolesAsync()
+    {
+        isLoadingRoles = true;
+        roleErrorMessage = null;
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            // Pobieramy aktualne dane roli dla konkretnego projektu
+            var url = $"api/projects/projectRoles?ProjectIds={Project.ProjectId}";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ProjectRoleQueryResult.Success>();
+                if (result?.Response?.Items != null)
+                {
+                    projectRoles = result.Response.Items.ToList();
+                }
+                else
+                {
+                    projectRoles = new();
+                }
+            }
+        }
+        catch (Exception)
+        {
+            roleErrorMessage = "Nie udało się pobrać ról projektu.";
+        }
+        finally
+        {
+            isLoadingRoles = false;
+            rolesLoaded = true;
+        }
+    }
+
+    private void OpenCreateRoleModal()
+    {
+        isEditingRole = false;
+        roleModel = new();
+        isRoleModalOpen = true;
+        roleErrorMessage = null;
+        modalErrorMessage = null;
+    }
+
+    private void OpenEditRoleModal(ProjectRoleDto role)
+    {
+        isEditingRole = true;
+        selectedEditRoleId = role.ProjectRoleId;
+        roleModel = new RoleFormModel
+        {
+            Title = role.Title,
+            Description = role.Description,
+            IsAvailableRecruitment = role.IsAvailableRecruitment
+        };
+        isRoleModalOpen = true;
+        roleErrorMessage = null;
+        modalErrorMessage = null;
+    }
+
+    private void CloseRoleModal()
+    {
+        isRoleModalOpen = false;
+        modalErrorMessage = null;
+    }
+
+    private async Task HandleSaveRole()
+    {
+        isRoleSubmitting = true;
+        roleErrorMessage = null;
+        modalErrorMessage = null;
+
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            HttpResponseMessage response;
+
+            if (isEditingRole)
+            {
+                var updateRequest = new ProjectRoleUpdateRequest
+                {
+                    Title = roleModel.Title,
+                    Description = roleModel.Description,
+                    IsAvailableRecruitment = roleModel.IsAvailableRecruitment
+                };
+                response = await client.PutAsJsonAsync($"api/projects/projectRoles/{selectedEditRoleId}", updateRequest);
+            }
+            else
+            {
+                var createRequest = new ProjectRoleCreateRequest
+                {
+                    Title = roleModel.Title,
+                    Description = roleModel.Description
+                };
+                response = await client.PostAsJsonAsync($"api/projects/{Project.ProjectId}/projectRoles", createRequest);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                CloseRoleModal();
+                rolesLoaded = false;
+                await LoadProjectRolesAsync();
+
+                // Odświeżenie danych samego projektu w komponencie nadrzędnym (np. pobranie najnowszego DTO projektu z API)
+                await RefreshProjectDataAsync();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                modalErrorMessage = !string.IsNullOrWhiteSpace(errorContent) ? errorContent : "Wystąpił błąd podczas zapisu roli.";
+            }
+        }
+        catch (Exception)
+        {
+            modalErrorMessage = "Błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            isRoleSubmitting = false;
+        }
+    }
+
+    private async Task RefreshProjectDataAsync()
+    {
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var response = await client.GetAsync($"api/projects/{Project.ProjectId}");
+            if (response.IsSuccessStatusCode)
+            {
+                // Załóżmy, że endpoint zwraca bezpośrednio ProjectDto lub odpowiednik Success wrapper. 
+                // Dopasuj do tego, jak backend zwraca pojedynczy projekt (np. response.Content.ReadFromJsonAsync<ProjectDto>())
+                var updatedProject = await response.Content.ReadFromJsonAsync<ProjectDto>();
+                if (updatedProject != null)
+                {
+                    // Przekazujemy zaktualizowany obiekt wyżej do rodzica przez EventCallback OnEdit (lub dedykowany callback odświeżenia)
+                    // Wywołanie OnEdit zaktualizuje instancję projektu w liście rodzica.
+                    await OnEdit.InvokeAsync(updatedProject);
+                }
+            }
+        }
+        catch
+        {
+            // Opcjonalna obsługa błędu odświeżenia metadanych projektu
+        }
+    }
+
+    private async Task DeleteRoleAsync(Guid projectRoleId)
+    {
+        roleErrorMessage = null;
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var response = await client.DeleteAsync($"api/projects/projectRoles/{projectRoleId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                rolesLoaded = false;
+                await LoadProjectRolesAsync();
+            }
+            else
+            {
+                roleErrorMessage = "Nie udało się usunąć roli.";
+            }
+        }
+        catch (Exception)
+        {
+            roleErrorMessage = "Błąd połączenia z serwerem.";
+        }
+    }
 }

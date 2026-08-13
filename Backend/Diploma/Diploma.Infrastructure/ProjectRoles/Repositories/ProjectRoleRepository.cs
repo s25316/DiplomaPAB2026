@@ -38,6 +38,7 @@ public class ProjectRoleRepository(
             .WithDescription(item.LastProjectRoleData?.Description ?? string.Empty)
             .WithIsAvailableRecruitment(item.LastProjectRoleData?.IsAvailableRecruitment ?? false)
             .WithCreatedAt(item.CreatedAt)
+            .WithProjectId(item.ProjectId)
             .Build();
 
         return OptionalResult.Success(domain);
@@ -74,6 +75,7 @@ public class ProjectRoleRepository(
 
         var projectRole = new DatabaseProjectRole
         {
+            ProjectId = item.ProjectId,
             CreatedAt = item.CreatedAt
         };
 
