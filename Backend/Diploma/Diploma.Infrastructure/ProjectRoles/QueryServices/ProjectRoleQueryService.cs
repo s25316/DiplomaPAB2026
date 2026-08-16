@@ -47,7 +47,7 @@ public class ProjectRoleQueryService(
                 .ProjectRoleEducationDisciplines
                 .Include(i => i.ProjectRole)
                 .Include(i => i.EducationDiscipline)
-                .Where(d => d.ProjectRole.ProjectId == i.ProjectId)
+                .Where(d => d.ProjectRoleId == i.ProjectRoleId)
                 .Where(d => d.ProjectRole.RemovedAt == null)
                 .Where(d => d.RemoveProjectEventId == null)
                 .Select(d => new
@@ -60,7 +60,7 @@ public class ProjectRoleQueryService(
             Institutions = context
                 .ProjectRoleEducationInstitutions
                 .Include(i => i.ProjectRole)
-                .Where(d => d.ProjectRole.ProjectId == i.ProjectId)
+                .Where(d => d.ProjectRoleId == i.ProjectRoleId)
                 .Where(d => d.ProjectRole.RemovedAt == null)
                 .Where(d => d.RemoveProjectEventId == null)
                 .Select(d => new
