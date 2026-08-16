@@ -457,7 +457,6 @@
 
             if (response.IsSuccessStatusCode)
             {
-                // Jeśli usuwamy akurat tę, która była wyświetlana w szczegółach, zamknij widok szczegółów
                 await OnRoleUpdated.InvokeAsync(Role);
             }
             else
@@ -483,13 +482,11 @@
         _selectedInstitutionId = institutionId;
         _selectedInstitutionDetails = institution;
 
-        // Jeśli z jakiegoś powodu obiekt nie przeszedł w argumencie, spróbujmy go wyciągnąć ze słownika
         if (_selectedInstitutionDetails == null && _institutionDictionary.TryGetValue(institutionId, out var found))
         {
             _selectedInstitutionDetails = found;
         }
 
-        // Opcjonalnie: jeśli nadal jest null, moglibyśmy dociągnąć z API, ale zazwyczaj słownik je posiada
         await Task.CompletedTask;
     }
 
