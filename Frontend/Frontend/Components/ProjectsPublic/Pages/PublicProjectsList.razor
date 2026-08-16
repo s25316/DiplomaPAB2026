@@ -1,15 +1,19 @@
-﻿@page "/projects"
-@inject IBackendHttpClientFactory ClientFactory
+﻿@inject IBackendHttpClientFactory ClientFactory
+
 @using Diploma.Models.Projects
 @using Diploma.Models.Shared
 @using RADON.Models.Dictionaries.Responses
 @using RADON.Models.Institutions.Responses
 
 <div class="container py-4">
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
             <h5 class="mb-0"><i class="bi bi-kanban me-2"></i> Projekty publiczne</h5>
+            <button class="btn btn-outline-light btn-sm" @onclick="ToggleFilterPanel">
+                <i class="bi bi-funnel me-1"></i> @(_showFilters ? "Ukryj filtry" : "Pokaż filtry")
+            </button>
         </div>
+
         <div class="card-body bg-light">
 
             @if (!string.IsNullOrEmpty(_errorMessage))
@@ -20,118 +24,122 @@
                 </div>
             }
 
-            <!-- Pasek filtrów -->
-            <div class="card bg-white border-0 shadow-sm p-3 mb-3">
-                <div class="row g-3">
+            <!-- Rozwijany / Pionowy panel filtrów -->
+            @if (_showFilters)
+            {
+                <div class="card bg-white border shadow-sm p-3 mb-4">
+                    <div class="row g-3">
 
-                    <!-- Filtrowanie po wielu Dyscyplinach -->
-                    <div class="col-md-6">
-                        <label class="form-label small fw-bold text-secondary">
-                            <i class="bi bi-book me-1"></i> Dyscypliny:
-                        </label>
-                        @if (_isLoadingDisciplines)
-                        {
-                            <div class="d-flex align-items-center py-1">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="border rounded p-2 bg-light" style="max-height: 140px; overflow-y: auto;">
-                                @if (_availableDisciplines.Any())
-                                {
-                                    @foreach (var disc in _availableDisciplines)
+                        <!-- Dyscypliny (Pionowo - pełna szerokość) -->
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-secondary mb-1">
+                                <i class="bi bi-book me-1"></i> Dyscypliny naukowe:
+                            </label>
+                            @if (_isLoadingDisciplines)
+                            {
+                                <div class="d-flex align-items-center py-2">
+                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                    <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="border rounded p-2 bg-light" style="max-height: 160px; overflow-y: auto;">
+                                    @if (_availableDisciplines.Any())
                                     {
-                                        var isChecked = _selectedDisciplineCodes.Contains(disc.Code);
-                                        <div class="form-check form-check-sm mb-1">
-                                            <input class="form-check-input" type="checkbox" id="disc_@disc.Code"
-                                                   checked="@isChecked"
-                                                   @onchange="(e) => OnDisciplineCheckboxChanged(disc.Code, e.Value)" />
-                                            <label class="form-check-label small" for="disc_@disc.Code">
-                                                @disc.Name <span class="text-muted">(@disc.Code)</span>
-                                            </label>
-                                        </div>
+                                        @foreach (var disc in _availableDisciplines)
+                                        {
+                                            var isChecked = _selectedDisciplineCodes.Contains(disc.Code);
+                                            <div class="form-check form-check-sm mb-1">
+                                                <input class="form-check-input" type="checkbox" id="disc_@disc.Code"
+                                                       checked="@isChecked"
+                                                       @onchange="(e) => OnDisciplineCheckboxChanged(disc.Code, e.Value)" />
+                                                <label class="form-check-label small text-dark" for="disc_@disc.Code">
+                                                    @disc.Name <span class="text-muted">(@disc.Code)</span>
+                                                </label>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="small text-muted fst-italic">Brak dostępnych dyscyplin.</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Instytucje edukacyjne (Pionowo - pełna szerokość, pod dyscyplinami) -->
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label small fw-bold text-secondary mb-0">
+                                    <i class="bi bi-building me-1"></i> Instytucje edukacyjne:
+                                </label>
+                                <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddInstitutionFilter">
+                                    <i class="bi bi-plus-lg me-1"></i>@(_isAddingInstitutionFilter ? "Zamknij wyszukiwarkę" : "Wybierz z bazy RADON")
+                                </button>
+                            </div>
+
+                            @if (_isAddingInstitutionFilter)
+                            {
+                                <div class="card card-body bg-white p-2 mb-2 shadow-sm border">
+                                    <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionFilterSelected" />
+                                </div>
+                            }
+
+                            <div class="border rounded p-2 bg-light d-flex flex-wrap gap-1 align-items-center" style="min-height: 70px; max-height: 130px; overflow-y: auto;">
+                                @if (_selectedInstitutionIds.Any())
+                                {
+                                    @foreach (var instId in _selectedInstitutionIds)
+                                    {
+                                        var name = _institutionNames.TryGetValue(instId, out var n) ? n : instId.ToString().Substring(0, 8) + "...";
+                                        <span class="badge bg-white text-dark border d-inline-flex align-items-center gap-1 py-1.5 px-2 shadow-sm" style="font-size: 0.75rem;">
+                                            <i class="bi bi-building text-primary"></i> @name
+                                            <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => RemoveInstitutionFilter(instId)"></button>
+                                        </span>
                                     }
                                 }
                                 else
                                 {
-                                    <span class="small text-muted fst-italic">Brak dostępnych dyscyplin.</span>
+                                    <span class="text-muted small fst-italic w-100 text-center py-2">Brak wybranych instytucji (filtrowanie po wszystkich).</span>
                                 }
                             </div>
-                        }
+                        </div>
+
                     </div>
 
-                    <!-- Filtrowanie po wielu Instytucjach (z RadonInstitutionsComponent) -->
-                    <div class="col-md-6">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <label class="form-label small fw-bold text-secondary mb-0">
-                                <i class="bi bi-building me-1"></i> Instytucje edukacyjne:
-                            </label>
-                            <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddInstitutionFilter">
-                                <i class="bi bi-plus-lg me-1"></i>@(_isAddingInstitutionFilter ? "Zamknij" : "Wybierz instytucję")
+                    <!-- Pasek akcji filtrów -->
+                    <div class="row mt-3 pt-3 border-top g-2 align-items-center">
+                        <div class="col-sm-6 text-muted small">
+                            <span>Wybrane filtry: <strong>@(_selectedDisciplineCodes.Count)</strong> dyscyplin, <strong>@(_selectedInstitutionIds.Count)</strong> instytucji</span>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-sm-end gap-2">
+                            <button class="btn btn-outline-secondary btn-sm px-3" @onclick="ResetFilters">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Resetuj
+                            </button>
+                            <button class="btn btn-primary btn-sm px-4" @onclick="ApplyFilters">
+                                <i class="bi bi-search me-1"></i> Zastosuj filtry
                             </button>
                         </div>
-
-                        <!-- Panel wyboru instytucji -->
-                        @if (_isAddingInstitutionFilter)
-                        {
-                            <div class="card card-body bg-white p-2 mb-2 shadow-sm border">
-                                <span class="small text-muted mb-2">Wyszukaj i wybierz uczelnię z bazy RADON:</span>
-                                <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionFilterSelected" />
-                            </div>
-                        }
-
-                        <!-- Wybrane instytucje (Tagi) -->
-                        <div class="border rounded p-2 bg-light d-flex flex-wrap gap-1 align-items-center" style="min-height: 50px; max-height: 100px; overflow-y: auto;">
-                            @if (_selectedInstitutionIds.Any())
-                            {
-                                @foreach (var instId in _selectedInstitutionIds)
-                                {
-                                    var name = _institutionNames.TryGetValue(instId, out var n) ? n : instId.ToString().Substring(0, 8) + "...";
-                                    <span class="badge bg-white text-dark border d-inline-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
-                                        <i class="bi bi-building text-primary"></i> @name
-                                        <button type="button" class="btn-close" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => RemoveInstitutionFilter(instId)"></button>
-                                    </span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="text-muted small fst-italic">Brak wybranych instytucji (filtrowanie po wszystkich).</span>
-                            }
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Przyciski akcji filtrów -->
-                <div class="row mt-3">
-                    <div class="col-12 d-flex justify-content-end gap-2">
-                        <button class="btn btn-primary btn-sm px-4" @onclick="ApplyFilters">
-                            <i class="bi bi-search me-1"></i> Filtruj
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" @onclick="ResetFilters">
-                            <i class="bi bi-arrow-counterclockwise me-1"></i> Resetuj filtry
-                        </button>
                     </div>
                 </div>
-            </div>
+            }
 
             <!-- Pasek narzędzi: Sortowanie i Liczba elementów -->
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-6 d-flex gap-2 align-items-center">
-                    <label class="form-label mb-0 text-nowrap">Sortuj:</label>
-                    <select class="form-select form-select-sm" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-3 bg-white p-3 rounded shadow-sm">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-secondary small fw-bold text-nowrap"><i class="bi bi-sort-down me-1"></i>Sortuj:</span>
+                    <select class="form-select form-select-sm w-auto" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
                         <option value="1">Tytuł</option>
                         <option value="2">Data utworzenia</option>
                     </select>
-                    <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
+                    <select class="form-select form-select-sm w-auto" @value="_selectedOrder" @onchange="OnOrderChanged">
                         <option value="1">Rosnąco</option>
                         <option value="2">Malejąco</option>
                     </select>
                 </div>
-                <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
-                    <label class="form-label mb-0 text-nowrap">Na stronie:</label>
+
+                <div class="d-flex gap-2 align-items-center justify-content-md-end">
+                    <span class="text-secondary small fw-bold text-nowrap">Na stronie:</span>
                     <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
                         <option value="5">5</option>
                         <option value="10">10</option>
@@ -141,17 +149,19 @@
                 </div>
             </div>
 
+            <!-- Lista projektów -->
             @if (_isLoading)
             {
-                <div class="text-center py-4">
+                <div class="text-center py-5">
                     <div class="spinner-border text-primary" role="status"></div>
                     <p class="text-muted mt-2">Ładowanie projektów...</p>
                 </div>
             }
             else if (_projects == null || !_projects.Any())
             {
-                <div class="text-center text-muted py-4">
-                    <p class="mb-0">Brak publicznych projektów spełniających kryteria.</p>
+                <div class="text-center text-muted py-5 bg-white rounded shadow-sm">
+                    <i class="bi bi-inbox fs-1 text-secondary"></i>
+                    <p class="mb-0 mt-2">Brak publicznych projektów spełniających kryteria.</p>
                 </div>
             }
             else
@@ -171,8 +181,8 @@
                 <!-- Paginacja -->
                 @if (_totalPages > 1)
                 {
-                    <nav class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
+                    <nav class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-2">
+                        <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount projektów)</span>
                         <ul class="pagination pagination-sm mb-0">
                             <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
                                 <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
@@ -202,6 +212,8 @@
 
     private Guid? _selectedProjectId = null;
 
+    private bool _showFilters = true;
+
     // --- Filtry: Dyscypliny ---
     private List<DictionaryItem> _availableDisciplines = new();
     private bool _isLoadingDisciplines = false;
@@ -226,6 +238,11 @@
         await LoadProjectsAsync();
     }
 
+    private void ToggleFilterPanel()
+    {
+        _showFilters = !_showFilters;
+    }
+
     private async Task LoadAvailableDisciplinesAsync()
     {
         _isLoadingDisciplines = true;
@@ -244,7 +261,7 @@
         }
         catch
         {
-            // Ignoruj błąd ładowania słownika w tle
+            // Ignoruj błąd ładowania słownika
         }
         finally
         {
@@ -320,13 +337,11 @@
                 $"Pagination.ItemsPerPage={_itemsPerPage}"
             };
 
-            // Dodawanie wielu dyscyplin
             foreach (var code in _selectedDisciplineCodes)
             {
                 queryParams.Add($"Disciplines={Uri.EscapeDataString(code)}");
             }
 
-            // Dodawanie wielu instytucji
             foreach (var instId in _selectedInstitutionIds)
             {
                 queryParams.Add($"Institutions={instId}");

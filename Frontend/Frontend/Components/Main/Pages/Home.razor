@@ -1,7 +1,14 @@
 ﻿@page "/"
+@using Frontend.Components.ProjectsPublic.Pages
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Strona główna</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container py-4">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Witaj w systemie projektów akademickich</h1>
+        <p class="lead text-muted">Przeglądaj publiczne projekty i filtruj je według dyscyplin oraz instytucji.</p>
+    </div>
 
-Welcome to your new app.
+    <!-- Osadzenie komponentu z listą i filtrami projektów -->
+    <PublicProjectsList />
+</div>
