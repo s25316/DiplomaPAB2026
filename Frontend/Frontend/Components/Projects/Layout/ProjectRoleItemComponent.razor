@@ -97,7 +97,7 @@
                 {
                     <span class="badge bg-white text-primary border d-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
                         @discipline.Discipline?.Name
-                        <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => DeleteDisciplineAsync(discipline.ProjectRoleDisciplineId, discipline.Discipline.Code)"></button>
+                        <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => DeleteDisciplineAsync(discipline.ProjectRoleDisciplineId, discipline.Discipline.Code)" @onclick:stopPropagation="true"></button>
                     </span>
                 }
             }
@@ -117,19 +117,19 @@
             </button>
         </div>
 
-        <!-- Formularz/Wyszukiwarka dodawania instytucji (używająca RadonInstitutionsComponent) -->
+        <!-- Formularz/Wyszukiwarka dodawania instytucji -->
         @if (isAddingInstitution)
         {
             <div class="card card-body bg-white p-3 mb-2 shadow-sm border-0">
                 <h6 class="text-primary small fw-bold mb-2">Wybierz instytucję z bazy RADON:</h6>
                 <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionSelected" />
 
-                @if (_selectedInstitution != null)
+                @if (_selectedNewInstitution != null)
                 {
                     <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded mt-2 border">
                         <div>
-                            <span class="small fw-bold text-dark d-block">@_selectedInstitution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name</span>
-                            <span class="text-muted" style="font-size: 0.7rem;">UUID: @_selectedInstitution.InstitutionUuid</span>
+                            <span class="small fw-bold text-dark d-block">@_selectedNewInstitution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">UUID: @_selectedNewInstitution.InstitutionUuid</span>
                         </div>
                         <button class="btn btn-success btn-sm" @onclick="SaveInstitutionAsync" disabled="@isSubmittingInstitution">
                             @if (isSubmittingInstitution)
@@ -147,11 +147,25 @@
         <div class="d-flex flex-wrap gap-1 align-items-center">
             @if (Role.EductionInstitutionIds != null && Role.EductionInstitutionIds.Any())
             {
-                @foreach (var institution in Role.EductionInstitutionIds)
+                @foreach (var institutionLink in Role.EductionInstitutionIds)
                 {
-                    <span class="badge bg-white text-dark border d-flex align-items-center gap-1 py-1 px-2 font-monospace" style="font-size: 0.7rem;" title="ID: @institution.EductionInstitutionId">
-                        @institution.EductionInstitutionId
-                        <button type="button" class="btn-close" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => DeleteInstitutionAsync(institution.ProjectRoleEductionInstitutionId)"></button>
+                    var institutionId = institutionLink.EductionInstitutionId;
+                    var institutionName = institutionId.ToString().Substring(0, 8) + "...";
+                    Institution? institution = null;
+
+                    if (_institutionDictionary.TryGetValue(institutionId, out institution))
+                    {
+                        institutionName = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? institutionId.ToString();
+                    }
+
+                    var isInstSelected = _selectedInstitutionId == institutionId;
+
+                    <span class="badge bg-white text-dark border d-inline-flex align-items-center gap-1 py-1 px-2 @(isInstSelected ? "border-primary bg-light" : "")"
+                          style="font-size: 0.75rem; cursor: pointer;"
+                          title="Kliknij, aby zobaczyć szczegóły uczelni"
+                          @onclick="() => ToggleInstitutionDetails(institutionId, institution)">
+                        <i class="bi bi-building me-1 text-primary"></i> @institutionName
+                        <button type="button" class="btn-close" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => DeleteInstitutionAsync(institutionLink.ProjectRoleEductionInstitutionId)" @onclick:stopPropagation="true"></button>
                     </span>
                 }
             }
@@ -160,6 +174,29 @@
                 <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
             }
         </div>
+
+        <!-- Sekcja szczegółów wybranej instytucji uczelni -->
+        @if (_selectedInstitutionId.HasValue)
+        {
+            <div class="mt-3 pt-2 border-top">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="text-primary fw-bold mb-0 small"><i class="bi bi-info-circle me-1"></i>Szczegóły instytucji</h6>
+                    <button class="btn-close btn-sm" style="font-size: 0.6rem;" @onclick="CloseInstitutionDetails"></button>
+                </div>
+
+                @if (_selectedInstitutionDetails != null)
+                {
+                    <RadonInstitutionDetailsView Institution="_selectedInstitutionDetails" />
+                }
+                else
+                {
+                    <div class="text-center py-2">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span class="text-muted small ms-2">Ładowanie szczegółów uczelni...</span>
+                    </div>
+                }
+            </div>
+        }
     </div>
 
     <!-- Data utworzenia -->
@@ -172,6 +209,7 @@
 
 @code {
     [Parameter, EditorRequired] public ProjectRoleDto Role { get; set; } = default!;
+    [Parameter] public List<Institution> Institutions { get; set; } = default!;
     [Parameter] public EventCallback<ProjectRoleDto> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<ProjectRoleDto> OnRoleUpdated { get; set; }
@@ -190,7 +228,58 @@
     // --- Instytucje ---
     private bool isAddingInstitution = false;
     private bool isSubmittingInstitution = false;
-    private Institution? _selectedInstitution;
+    private string? _lastInstitutionIdsHash;
+    private int _lastInstitutionsListCount;
+    private Institution? _selectedNewInstitution;
+    private Dictionary<Guid, Institution> _institutionDictionary = new();
+
+    // --- Stan szczegółów wybranej instytucji z listy ---
+    private Guid? _selectedInstitutionId;
+    private Institution? _selectedInstitutionDetails;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        var currentInstitutionIdsHash = Role.EductionInstitutionIds != null
+            ? string.Join(",", Role.EductionInstitutionIds.Select(i => i.EductionInstitutionId).OrderBy(id => id))
+            : string.Empty;
+
+        var currentInstitutionsCount = Institutions?.Count ?? 0;
+
+        if (_lastInstitutionIdsHash != currentInstitutionIdsHash || _lastInstitutionsListCount != currentInstitutionsCount)
+        {
+            _lastInstitutionIdsHash = currentInstitutionIdsHash;
+            _lastInstitutionsListCount = currentInstitutionsCount;
+            BuildInstitutionDictionary();
+        }
+    }
+
+    private void BuildInstitutionDictionary()
+    {
+        _institutionDictionary.Clear();
+
+        if (Role.EductionInstitutionIds != null && Institutions != null)
+        {
+            var roleIdsSet = Role.EductionInstitutionIds.Select(i => i.EductionInstitutionId).ToHashSet();
+
+            foreach (var inst in Institutions)
+            {
+                var id = GetInstitutionId(inst);
+                if (roleIdsSet.Contains(id))
+                {
+                    _institutionDictionary[id] = inst;
+                }
+            }
+        }
+    }
+
+    private Guid GetInstitutionId(Institution i)
+    {
+        var prop = i.GetType().GetProperty("InstitutionUuid") ?? i.GetType().GetProperty("Id") ?? i.GetType().GetProperty("Uuid");
+        if (prop != null && prop.GetValue(i) is Guid g) return g;
+        return i.InstitutionUuid;
+    }
 
     private void ToggleAddDiscipline()
     {
@@ -303,22 +392,21 @@
         }
     }
 
-    // --- Logika Instytucji ---
     private void ToggleAddInstitution()
     {
         isAddingInstitution = !isAddingInstitution;
         actionError = null;
-        _selectedInstitution = null;
+        _selectedNewInstitution = null;
     }
 
     private void HandleInstitutionSelected(Institution institution)
     {
-        _selectedInstitution = institution;
+        _selectedNewInstitution = institution;
     }
 
     private async Task SaveInstitutionAsync()
     {
-        if (_selectedInstitution == null) return;
+        if (_selectedNewInstitution == null) return;
 
         isSubmittingInstitution = true;
         actionError = null;
@@ -328,10 +416,9 @@
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            // Tworzymy payload zgodny z obiektem ProjectRoleEducationInstitutionCreateRequest
             var requestBody = new
             {
-                EductioninstitutionId = _selectedInstitution.InstitutionUuid
+                EductioninstitutionId = _selectedNewInstitution.InstitutionUuid
             };
 
             var response = await client.PostAsJsonAsync($"api/projects/{Role.ProjectId}/projectRoles/{Role.ProjectRoleId}/institutions", requestBody);
@@ -339,7 +426,7 @@
             if (response.IsSuccessStatusCode)
             {
                 isAddingInstitution = false;
-                _selectedInstitution = null;
+                _selectedNewInstitution = null;
                 await OnRoleUpdated.InvokeAsync(Role);
             }
             else
@@ -370,6 +457,7 @@
 
             if (response.IsSuccessStatusCode)
             {
+                // Jeśli usuwamy akurat tę, która była wyświetlana w szczegółach, zamknij widok szczegółów
                 await OnRoleUpdated.InvokeAsync(Role);
             }
             else
@@ -381,5 +469,33 @@
         {
             actionError = "Błąd połączenia z serwerem.";
         }
+    }
+
+    // --- Metody zarządzania widokiem szczegółów przypisanej instytucji ---
+    private async Task ToggleInstitutionDetails(Guid institutionId, Institution? institution)
+    {
+        if (_selectedInstitutionId == institutionId)
+        {
+            CloseInstitutionDetails();
+            return;
+        }
+
+        _selectedInstitutionId = institutionId;
+        _selectedInstitutionDetails = institution;
+
+        // Jeśli z jakiegoś powodu obiekt nie przeszedł w argumencie, spróbujmy go wyciągnąć ze słownika
+        if (_selectedInstitutionDetails == null && _institutionDictionary.TryGetValue(institutionId, out var found))
+        {
+            _selectedInstitutionDetails = found;
+        }
+
+        // Opcjonalnie: jeśli nadal jest null, moglibyśmy dociągnąć z API, ale zazwyczaj słownik je posiada
+        await Task.CompletedTask;
+    }
+
+    private void CloseInstitutionDetails()
+    {
+        _selectedInstitutionId = null;
+        _selectedInstitutionDetails = null;
     }
 }

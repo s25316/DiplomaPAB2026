@@ -1,6 +1,10 @@
-﻿@using Diploma.Models.Projects
-@using Diploma.Models.ProjectRoles
+﻿@using Diploma.Models.ProjectRoles
+@using Diploma.Models.Projects
 @using Diploma.Models.Shared
+@using RADON.Models.Institutions.Responses
+
+@inject IRadonInstitutionService InstitutionService
+@inject IBackendHttpClientFactory ClientFactory
 
 <div class="card shadow-sm @(IsSelected ? "border-primary" : "border-0")">
     <div class="card-body">
@@ -73,12 +77,28 @@
                     <div class="mb-3 p-2 bg-light rounded border">
                         <span class="small fw-bold text-secondary d-block mb-1"><i class="bi bi-mortarboard me-1"></i>Instytucje edukacyjne projektu:</span>
                         <div class="d-flex flex-wrap gap-1 align-items-center">
-                            @if (Project.EductionInstitutionIds != null && Project.EductionInstitutionIds.Any())
+                            @if (!institutionsLoaded)
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                <span class="text-muted small ms-2">Ładowanie uczelni...</span>
+                            }
+                            else if (Project.EductionInstitutionIds != null && Project.EductionInstitutionIds.Any())
                             {
                                 @foreach (var institutionId in Project.EductionInstitutionIds)
                                 {
-                                    <span class="badge bg-white text-dark border font-monospace py-1 px-2" style="font-size: 0.7rem;" title="ID: @institutionId">
-                                        @institutionId.ToString().Substring(0, 8)...
+                                    var institutionName = institutionId.ToString().Substring(0, 8) + "...";
+                                    Institution? institution = null;
+
+                                    if (_institutionDictionary.TryGetValue(institutionId, out institution))
+                                    {
+                                        institutionName = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? institutionId.ToString();
+                                    }
+
+                                    var isInstSelected = _selectedInstitutionId == institutionId;
+
+                                    <span class="badge bg-white text-dark border py-1 px-2 d-inline-flex align-items-center @(isInstSelected ? "border-primary bg-light" : "")" style="font-size: 0.75rem; cursor: pointer;"
+                                          @onclick="() => ToggleInstitutionDetails(institutionId, institution)" title="Kliknij, aby zobaczyć szczegóły uczelni">
+                                        <i class="bi bi-building me-1 text-primary"></i> @institutionName
                                     </span>
                                 }
                             }
@@ -88,6 +108,30 @@
                             }
                         </div>
                     </div>
+
+                    <!-- Sekcja szczegółów wybranej instytucji uczelni -->
+                    @if (_selectedInstitutionId.HasValue)
+                    {
+                        <div class="mb-4">
+                            <hr class="text-muted" />
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-primary fw-bold mb-0">Uczelnia / Instytucja</h6>
+                                <button class="btn-close btn-sm" @onclick="CloseInstitutionDetails"></button>
+                            </div>
+
+                            @if (_selectedInstitution != null)
+                            {
+                                <RadonInstitutionDetailsView Institution="_selectedInstitution" />
+                            }
+                            else
+                            {
+                                <div class="text-center py-2">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                    <span class="text-muted small ms-2">Ładowanie szczegółów uczelni...</span>
+                                </div>
+                            }
+                        </div>
+                    }
 
                     <!-- Sekcja ról w projekcie -->
                     <div class="mb-4">
@@ -117,9 +161,10 @@
                                 @foreach (var role in projectRoles)
                                 {
                                     <ProjectRoleItemComponent Role="role"
+                                                              Institutions="_institutionsList"
                                                               OnEdit="OpenEditRoleModal"
                                                               OnDelete="DeleteRoleAsync"
-                                                              OnRoleUpdated="async (_) => { rolesLoaded = false; await LoadProjectRolesAsync(); await RefreshProjectDataAsync(); }" />
+                                                              OnRoleUpdated="async (_) => await ReloadAllDataAsync()" />
                                 }
                             </div>
                         }
@@ -158,12 +203,18 @@
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<ProjectDto> OnProjectUpdated { get; set; }
 
-    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
-
     private bool isLoadingRoles = false;
     private bool rolesLoaded = false;
+    private bool institutionsLoaded = false;
     private Guid? lastLoadedProjectId;
+    private string? _lastInstitutionIdsHash;
+
     private List<ProjectRoleDto> projectRoles = new();
+    private List<Institution> _institutionsList = new();
+    private Dictionary<Guid, Institution> _institutionDictionary = new();
+
+    private Guid? _selectedInstitutionId;
+    private Institution? _selectedInstitution;
 
     private bool isRoleModalOpen = false;
     private bool isEditingRole = false;
@@ -175,18 +226,67 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        var currentInstitutionIdsHash = Project.EductionInstitutionIds != null
+            ? string.Join(",", Project.EductionInstitutionIds.OrderBy(id => id))
+            : string.Empty;
+
         if (lastLoadedProjectId != Project.ProjectId)
         {
             rolesLoaded = false;
             projectRoles.Clear();
+            _selectedInstitutionId = null;
+            _selectedInstitution = null;
             lastLoadedProjectId = Project.ProjectId;
             isRoleModalOpen = false;
         }
 
-        if (IsSelected && !rolesLoaded)
+        if (lastLoadedProjectId != Project.ProjectId || _lastInstitutionIdsHash != currentInstitutionIdsHash)
         {
-            await LoadProjectRolesAsync();
+            institutionsLoaded = false;
+            _lastInstitutionIdsHash = currentInstitutionIdsHash;
+            _institutionsList.Clear();
+            _institutionDictionary.Clear();
         }
+
+        if (IsSelected)
+        {
+            if (!rolesLoaded)
+            {
+                await LoadProjectRolesAsync();
+            }
+            if (!institutionsLoaded)
+            {
+                await LoadInstitutionsAsync();
+            }
+        }
+    }
+
+    private async Task ReloadAllDataAsync()
+    {
+        rolesLoaded = false;
+        institutionsLoaded = false;
+        await LoadProjectRolesAsync();
+        await LoadInstitutionsAsync();
+        await RefreshProjectDataAsync();
+    }
+
+    private async Task ToggleInstitutionDetails(Guid institutionId, Institution? institution)
+    {
+        if (_selectedInstitutionId == institutionId)
+        {
+            CloseInstitutionDetails();
+        }
+        else
+        {
+            _selectedInstitutionId = institutionId;
+            _selectedInstitution = institution;
+        }
+    }
+
+    private void CloseInstitutionDetails()
+    {
+        _selectedInstitutionId = null;
+        _selectedInstitution = null;
     }
 
     private async Task LoadProjectRolesAsync()
@@ -222,6 +322,52 @@
         {
             isLoadingRoles = false;
             rolesLoaded = true;
+        }
+    }
+
+    private async Task LoadInstitutionsAsync()
+    {
+        if (Project.EductionInstitutionIds == null || !Project.EductionInstitutionIds.Any())
+        {
+            institutionsLoaded = true;
+            return;
+        }
+
+        try
+        {
+            var institutionIdsSet = Project.EductionInstitutionIds.ToHashSet();
+            var response = await InstitutionService.GetAsync(new RADON.Models.Institutions.QueryParameters
+            {
+                InstitutionUuids = institutionIdsSet,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = institutionIdsSet.Count
+                },
+                Order = RADON.Models.Shared.Order.Ascending,
+                OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+            });
+
+            if (response?.Items != null)
+            {
+                _institutionsList = response.Items.ToList();
+
+                _institutionDictionary = response.Items.ToDictionary(i =>
+                {
+                    var prop = i.GetType().GetProperty("InstitutionUuid") ?? i.GetType().GetProperty("Id") ?? i.GetType().GetProperty("Uuid");
+                    if (prop != null && prop.GetValue(i) is Guid g) return g;
+                    return i.InstitutionUuid;
+                });
+            }
+        }
+        catch (Exception)
+        {
+            // Opcjonalna obsługa błędu
+        }
+        finally
+        {
+            institutionsLoaded = true;
+            StateHasChanged();
         }
     }
 
@@ -291,9 +437,7 @@
             if (response.IsSuccessStatusCode)
             {
                 CloseRoleModal();
-                rolesLoaded = false;
-                await LoadProjectRolesAsync();
-                await RefreshProjectDataAsync();
+                await ReloadAllDataAsync();
             }
             else
             {
@@ -328,9 +472,7 @@
 
             if (response.IsSuccessStatusCode)
             {
-                rolesLoaded = false;
-                await LoadProjectRolesAsync();
-                await RefreshProjectDataAsync();
+                await ReloadAllDataAsync();
             }
             else
             {
