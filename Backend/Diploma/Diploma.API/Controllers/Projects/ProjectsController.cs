@@ -1,4 +1,5 @@
 ﻿using Diploma.API.Extensions;
+using Diploma.Application.Interfaces.Security;
 using Diploma.Application.Projects.Commands.UseCases;
 using Diploma.Application.Projects.Queries.UseCases;
 using Diploma.Models.Projects;
@@ -10,18 +11,28 @@ namespace Diploma.API.Controllers.Projects;
 
 [Route("api/projects")]
 [ApiController]
-public class ProjectsController(IMediator mediator) : ControllerBase
+public class ProjectsController(
+    IMediator mediator,
+    IJwtValidator validator,
+    IJwtNameIdentifierExtractor extractor
+    ) : ControllerBase
 {
     [HttpGet("all")]
     public async Task<IActionResult> GetAllAsync(
         [FromQuery] ProjectQueryParameters queryParameters,
         CancellationToken cancellationToken)
     {
+        Guid? personId = null;
+        if (Request.TryGetJwt(out var jwt) && validator.IsValid(jwt))
+        {
+            personId = extractor.Extract(jwt);
+        }
 
         var result = await mediator.Send(new ProjectGetHandler.Request
         {
+            PersonId = personId,
             Model = queryParameters,
-        });
+        }, cancellationToken);
         return result switch
         {
             ProjectQueryResult.Success success => Ok(success.Response),

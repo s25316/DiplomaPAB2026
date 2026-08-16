@@ -37,7 +37,7 @@ public sealed record ProjectDto
     public required DateTimeOffset CreatedAt { get; init; }
     public required bool IsVisible { get; init; }
     public required bool IsAvailableRecruitment { get; init; }
-    //public required bool? IsRecruted { get; init; }
+    public required bool? IsRecruted { get; init; }
 
     public required IList<DictionaryItem<string>> Disciplines { get; init; } = [];
     public required IList<Guid> EductionInstitutionIds { get; init; } = [];

@@ -1,4 +1,5 @@
 ﻿using Diploma.API.Extensions;
+using Diploma.Application.Interfaces.Security;
 using Diploma.Application.ProjectRoleDisciplines.Commands;
 using Diploma.Application.ProjectRoleEducationInstitutions.Commands;
 using Diploma.Application.ProjectRoles.Commands.UseCases;
@@ -6,6 +7,7 @@ using Diploma.Application.ProjectRoles.Queries.UseCases;
 using Diploma.Models.ProjectRoleDisciplines;
 using Diploma.Models.ProjectRoleEducationInstitutions;
 using Diploma.Models.ProjectRoles;
+using Diploma.Models.Projects;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,8 +16,36 @@ namespace Diploma.API.Controllers.Projects;
 
 [Route("api/projects")]
 [ApiController]
-public class ProjectRoleController(IMediator mediator) : ControllerBase
+public class ProjectRoleController(
+    IMediator mediator,
+    IJwtValidator validator,
+    IJwtNameIdentifierExtractor extractor
+    ) : ControllerBase
 {
+    [HttpGet("projectRoles/all")]
+    public async Task<IActionResult> GetAllAsync(
+        [FromQuery] ProjectRoleQueryParameters queryParameters,
+        CancellationToken cancellationToken)
+    {
+        Guid? personId = null;
+        if (Request.TryGetJwt(out var jwt) && validator.IsValid(jwt))
+        {
+            personId = extractor.Extract(jwt);
+        }
+
+        var result = await mediator.Send(new ProjectRoleGetHandler.Request
+        {
+            PersonId = personId,
+            Model = queryParameters,
+        }, cancellationToken);
+        return result switch
+        {
+            ProjectRoleQueryResult.Success success => Ok(success),
+            ProjectRoleQueryResult.Failure.NotFound => NotFound(),
+            _ => throw new NotImplementedException($"Unknown type of {nameof(ProjectQueryResult)}: {result.GetType()}"),
+        };
+    }
+
     [Authorize]
     [HttpGet("projectRoles")]
     public async Task<IActionResult> GetAsync(

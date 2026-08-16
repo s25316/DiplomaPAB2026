@@ -82,6 +82,13 @@ public class ProjectRoleQueryBuilder(DiplomaDbContext context) : BaseQueryBuilde
         if (!items.Any())
             return this;
 
+        With(query => query.Where(i => context
+            .ProjectRoleEducationDisciplines
+            .AsNoTracking()
+            .Where(d => d.RemoveProjectEventId == null)
+            .Where(d => items.Contains(d.EducationDisciplineCode))
+            .Any(d => d.ProjectRoleId == i.ProjectRoleId)
+        ));
         return this;
     }
 
@@ -90,6 +97,13 @@ public class ProjectRoleQueryBuilder(DiplomaDbContext context) : BaseQueryBuilde
         if (!items.Any())
             return this;
 
+        With(query => query.Where(i => context
+            .ProjectRoleEducationInstitutions
+            .AsNoTracking()
+            .Where(d => d.RemoveProjectEventId == null)
+            .Where(d => items.Contains(d.EducationInstitutionId))
+            .Any(d => d.ProjectRoleId == i.ProjectRoleId)
+        ));
         return this;
     }
 

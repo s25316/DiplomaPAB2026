@@ -18,8 +18,9 @@ public class ProjectGetHandler(
     public async Task<ProjectQueryResult> Handle(ProjectGetHandler.Request request, CancellationToken cancellationToken)
     {
         var result = await queryService.GetAsync(
-            null,
+            request.PersonId,
             true,
+            false,
             request.Model,
             cancellationToken);
 

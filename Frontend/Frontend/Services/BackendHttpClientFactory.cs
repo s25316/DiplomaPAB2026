@@ -7,6 +7,7 @@ namespace Frontend.Services;
 
 public interface IBackendHttpClientFactory
 {
+    Task<HttpClient> CreateClientAsync();
     Task<HttpClient> CreateUnAuthorizedClientAsync();
     Task<HttpClient?> CreateAuthorizedClientAsync();
 }
@@ -21,6 +22,23 @@ public class BackendHttpClientFactory(
     {
         var client = factory.CreateClient();
         client.BaseAddress = new Uri(options.Value.Uri);
+        return client;
+    }
+
+    public async Task<HttpClient> CreateClientAsync()
+    {
+        var client = await CreateUnAuthorizedClientAsync();
+        var isAuthenticated = await stateProvider.IsAuthenticatedAsync();
+        if (!isAuthenticated)
+            return client;
+
+        var jwtToken = await sessionService.GetJwtTokenAsync();
+        var refreshToken = await sessionService.GetRefreshTokenAsync();
+
+        if (jwtToken is null || refreshToken is null)
+            return client;
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken.Value);
         return client;
     }
 

@@ -1,0 +1,191 @@
+﻿@using Diploma.Models.ProjectRoles
+@using RADON.Models.Institutions.Responses
+
+<div class="list-group-item py-3">
+    <div class="d-flex justify-content-between align-items-start">
+        <div class="flex-grow-1 me-3">
+            <!-- Nagłówek roli i statusy -->
+            <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                <h6 class="mb-0 fw-bold text-dark">@Role.Title</h6>
+
+                <span class="badge @(Role.IsAvailableRecruitment ? "bg-info text-dark" : "bg-light text-dark border")" style="font-size: 0.7rem;">
+                    @(Role.IsAvailableRecruitment ? "Rekrutacja otwarta" : "Rekrutacja zamknięta")
+                </span>
+
+                @if (Role.IsRecruted.HasValue)
+                {
+                    <span class="badge @(Role.IsRecruted.Value ? "bg-success" : "bg-secondary")" style="font-size: 0.7rem;">
+                        @(Role.IsRecruted.Value ? "Zrekrutowany" : "Nie zrekrutowany")
+                    </span>
+                }
+            </div>
+
+            <!-- Opis roli -->
+            <p class="mb-2 small text-muted" style="white-space: pre-line;">
+                @(!string.IsNullOrWhiteSpace(Role.Description) ? Role.Description : "Brak opisu roli.")
+            </p>
+        </div>
+    </div>
+
+    <!-- Sekcja Dyscyplin (tylko odczyt) -->
+    <div class="mt-3 p-2 bg-light rounded border w-100">
+        <span class="small fw-bold text-secondary d-block mb-1"><i class="bi bi-book me-1"></i>Dyscypliny:</span>
+        <div class="d-flex flex-wrap gap-1 align-items-center">
+            @if (Role.Disciplines != null && Role.Disciplines.Any())
+            {
+                @foreach (var discipline in Role.Disciplines.OrderBy(i => i.Discipline.Name))
+                {
+                    <span class="badge bg-white text-primary border py-1 px-2" style="font-size: 0.75rem;">
+                        @discipline.Discipline?.Name
+                    </span>
+                }
+            }
+            else
+            {
+                <span class="text-muted small fst-italic">Brak przypisanych dyscyplin</span>
+            }
+        </div>
+    </div>
+
+    <!-- Sekcja Instytucji edukacyjnych (tylko odczyt) -->
+    <div class="mt-3 p-2 bg-light rounded border w-100">
+        <span class="small fw-bold text-secondary d-block mb-1"><i class="bi bi-mortarboard me-1"></i>Instytucje edukacyjne:</span>
+        <div class="d-flex flex-wrap gap-1 align-items-center">
+            @if (Role.EductionInstitutionIds != null && Role.EductionInstitutionIds.Any())
+            {
+                @foreach (var institutionLink in Role.EductionInstitutionIds)
+                {
+                    var institutionId = institutionLink.EductionInstitutionId;
+                    var institutionName = institutionId.ToString().Substring(0, 8) + "...";
+                    Institution? institution = null;
+
+                    if (_institutionDictionary.TryGetValue(institutionId, out institution))
+                    {
+                        institutionName = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? institutionId.ToString();
+                    }
+
+                    var isInstSelected = _selectedInstitutionId == institutionId;
+
+                    <span class="badge bg-white text-dark border d-inline-flex align-items-center py-1 px-2 @(isInstSelected ? "border-primary bg-light" : "")"
+                          style="font-size: 0.75rem; cursor: pointer;"
+                          title="Kliknij, aby zobaczyć szczegóły uczelni"
+                          @onclick="() => ToggleInstitutionDetails(institutionId, institution)">
+                        <i class="bi bi-building me-1 text-primary"></i> @institutionName
+                    </span>
+                }
+            }
+            else
+            {
+                <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
+            }
+        </div>
+
+        <!-- Szczegóły wybranej instytucji roli -->
+        @if (_selectedInstitutionId.HasValue)
+        {
+            <div class="mt-3 pt-2 border-top">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="text-primary fw-bold mb-0 small"><i class="bi bi-info-circle me-1"></i>Szczegóły instytucji</h6>
+                    <button class="btn-close btn-sm" style="font-size: 0.6rem;" @onclick="CloseInstitutionDetails"></button>
+                </div>
+
+                @if (_selectedInstitutionDetails != null)
+                {
+                    <RadonInstitutionDetailsView Institution="_selectedInstitutionDetails" />
+                }
+                else
+                {
+                    <div class="text-center py-2">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span class="text-muted small ms-2">Ładowanie szczegółów uczelni...</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Data utworzenia -->
+    <div class="d-flex justify-content-end align-items-center mt-2 pt-2 border-top">
+        <div class="text-muted small" style="font-size: 0.75rem;">
+            <i class="bi bi-clock me-1"></i>Utworzono: @Role.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public ProjectRoleDto Role { get; set; } = default!;
+    [Parameter] public List<Institution> Institutions { get; set; } = default!;
+
+    private Dictionary<Guid, Institution> _institutionDictionary = new();
+    private Guid? _selectedInstitutionId;
+    private Institution? _selectedInstitutionDetails;
+    private string? _lastInstitutionIdsHash;
+    private int _lastInstitutionsListCount;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        var currentInstitutionIdsHash = Role.EductionInstitutionIds != null
+            ? string.Join(",", Role.EductionInstitutionIds.Select(i => i.EductionInstitutionId).OrderBy(id => id))
+            : string.Empty;
+
+        var currentInstitutionsCount = Institutions?.Count ?? 0;
+
+        if (_lastInstitutionIdsHash != currentInstitutionIdsHash || _lastInstitutionsListCount != currentInstitutionsCount)
+        {
+            _lastInstitutionIdsHash = currentInstitutionIdsHash;
+            _lastInstitutionsListCount = currentInstitutionsCount;
+            BuildInstitutionDictionary();
+        }
+    }
+
+    private void BuildInstitutionDictionary()
+    {
+        _institutionDictionary.Clear();
+
+        if (Role.EductionInstitutionIds != null && Institutions != null)
+        {
+            var roleIdsSet = Role.EductionInstitutionIds.Select(i => i.EductionInstitutionId).ToHashSet();
+
+            foreach (var inst in Institutions)
+            {
+                var id = GetInstitutionId(inst);
+                if (roleIdsSet.Contains(id))
+                {
+                    _institutionDictionary[id] = inst;
+                }
+            }
+        }
+    }
+
+    private Guid GetInstitutionId(Institution i)
+    {
+        var prop = i.GetType().GetProperty("InstitutionUuid") ?? i.GetType().GetProperty("Id") ?? i.GetType().GetProperty("Uuid");
+        if (prop != null && prop.GetValue(i) is Guid g) return g;
+        return i.InstitutionUuid;
+    }
+
+    private void ToggleInstitutionDetails(Guid institutionId, Institution? institution)
+    {
+        if (_selectedInstitutionId == institutionId)
+        {
+            CloseInstitutionDetails();
+            return;
+        }
+
+        _selectedInstitutionId = institutionId;
+        _selectedInstitutionDetails = institution;
+
+        if (_selectedInstitutionDetails == null && _institutionDictionary.TryGetValue(institutionId, out var found))
+        {
+            _selectedInstitutionDetails = found;
+        }
+    }
+
+    private void CloseInstitutionDetails()
+    {
+        _selectedInstitutionId = null;
+        _selectedInstitutionDetails = null;
+    }
+}

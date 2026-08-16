@@ -1,0 +1,331 @@
+﻿@using Diploma.Models.ProjectRoles
+@using Diploma.Models.Projects
+@using Diploma.Models.Shared
+@using RADON.Models.Institutions.Responses
+
+@inject IRadonInstitutionService InstitutionService
+@inject IBackendHttpClientFactory ClientFactory
+
+<div class="card shadow-sm @(IsSelected ? "border-primary" : "border-0")">
+    <div class="card-body">
+        <div class="row align-items-center">
+
+            <!-- Główny układ: Tytuł, statusy -->
+            <div class="col-md-9" style="cursor: pointer;" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
+                <h5 class="text-dark mb-1">
+                    <i class="bi bi-folder2-open me-1 text-secondary"></i> <strong>@Project.Title</strong>
+                </h5>
+                <div class="mb-2">
+                    <span class="badge @(Project.IsVisible ? "bg-success" : "bg-secondary") me-1">
+                        @(Project.IsVisible ? "Publiczny" : "Prywatny")
+                    </span>
+                    <span class="badge @(Project.IsAvailableRecruitment ? "bg-info text-dark" : "bg-light text-dark border")">
+                        @(Project.IsAvailableRecruitment ? "Rekrutacja otwarta" : "Rekrutacja zamknięta")
+                    </span>
+                </div>
+            </div>
+
+            <!-- Przyciski akcji (tylko podgląd) -->
+            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-info btn-sm text-white w-100" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
+                    @(IsSelected ? "Ukryj szczegóły" : "Zobacz szczegóły")
+                </button>
+            </div>
+        </div>
+
+        <!-- Rozwijana sekcja szczegółów -->
+        @if (IsSelected)
+        {
+            <hr class="my-3 text-muted" />
+            <div class="card bg-white border-info shadow-sm mt-3">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center py-2">
+                    <span>Szczegóły projektu i role</span>
+                    <button class="btn-close btn-close-white btn-sm" @onclick="() => OnCloseDetails.InvokeAsync()"></button>
+                </div>
+                <div class="card-body">
+                    <!-- Opis projektu -->
+                    <div class="mb-3">
+                        <h6 class="text-primary fw-bold">Opis</h6>
+                        <p class="text-dark mb-3" style="white-space: pre-line;">
+                            @(!string.IsNullOrWhiteSpace(Project.Description) ? Project.Description : "Brak opisu dla tego projektu.")
+                        </p>
+                    </div>
+
+                    <!-- Dyscypliny projektu -->
+                    <div class="mb-3 p-2 bg-light rounded border">
+                        <span class="small fw-bold text-secondary d-block mb-1"><i class="bi bi-book me-1"></i>Dyscypliny projektu:</span>
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                            @if (Project.Disciplines != null && Project.Disciplines.Any())
+                            {
+                                @foreach (var discipline in Project.Disciplines.OrderBy(i => i.Name))
+                                {
+                                    <span class="badge bg-white text-primary border py-1 px-2" style="font-size: 0.75rem;">
+                                        @discipline.Name
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small fst-italic">Brak przypisanych dyscyplin</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Instytucje edukacyjne projektu -->
+                    <div class="mb-3 p-2 bg-light rounded border">
+                        <span class="small fw-bold text-secondary d-block mb-1"><i class="bi bi-mortarboard me-1"></i>Instytucje edukacyjne projektu:</span>
+                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                            @if (!institutionsLoaded)
+                            {
+                                <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+                                <span class="text-muted small ms-2">Ładowanie uczelni...</span>
+                            }
+                            else if (Project.EductionInstitutionIds != null && Project.EductionInstitutionIds.Any())
+                            {
+                                @foreach (var institutionId in Project.EductionInstitutionIds)
+                                {
+                                    var institutionName = institutionId.ToString().Substring(0, 8) + "...";
+                                    Institution? institution = null;
+
+                                    if (_institutionDictionary.TryGetValue(institutionId, out institution))
+                                    {
+                                        institutionName = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? institutionId.ToString();
+                                    }
+
+                                    var isInstSelected = _selectedInstitutionId == institutionId;
+
+                                    <span class="badge bg-white text-dark border py-1 px-2 d-inline-flex align-items-center @(isInstSelected ? "border-primary bg-light" : "")" style="font-size: 0.75rem; cursor: pointer;"
+                                          @onclick="() => ToggleInstitutionDetails(institutionId, institution)" title="Kliknij, aby zobaczyć szczegóły uczelni">
+                                        <i class="bi bi-building me-1 text-primary"></i> @institutionName
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Sekcja szczegółów wybranej instytucji -->
+                    @if (_selectedInstitutionId.HasValue)
+                    {
+                        <div class="mb-4">
+                            <hr class="text-muted" />
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-primary fw-bold mb-0">Uczelnia / Instytucja</h6>
+                                <button class="btn-close btn-sm" @onclick="CloseInstitutionDetails"></button>
+                            </div>
+
+                            @if (_selectedInstitution != null)
+                            {
+                                <RadonInstitutionDetailsView Institution="_selectedInstitution" />
+                            }
+                            else
+                            {
+                                <div class="text-center py-2">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                    <span class="text-muted small ms-2">Ładowanie szczegółów uczelni...</span>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <!-- Sekcja ról w projekcie (tylko odczyt) -->
+                    <div class="mb-4">
+                        <h6 class="text-primary fw-bold mb-2">Role w projekcie</h6>
+
+                        @if (!string.IsNullOrEmpty(roleErrorMessage))
+                        {
+                            <div class="alert alert-danger py-1 px-2 small mb-2">@roleErrorMessage</div>
+                        }
+
+                        @if (isLoadingRoles)
+                        {
+                            <div class="d-flex align-items-center text-muted py-2">
+                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                <span>Ładowanie ról...</span>
+                            </div>
+                        }
+                        else if (projectRoles.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var role in projectRoles)
+                                {
+                                    <PublicProjectRoleItemComponent Role="role" Institutions="_institutionsList" />
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted small fst-italic mb-0">Brak zdefiniowanych ról dla tego projektu.</p>
+                        }
+                    </div>
+
+                    <!-- Stopka szczegółów -->
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top text-muted small">
+                        <span>Utworzono: @Project.CreatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                        <code>ID: @Project.ProjectId</code>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public ProjectDto Project { get; set; } = default!;
+    [Parameter] public bool IsSelected { get; set; }
+
+    [Parameter] public EventCallback<Guid> OnToggleDetails { get; set; }
+    [Parameter] public EventCallback OnCloseDetails { get; set; }
+
+    private bool isLoadingRoles = false;
+    private bool rolesLoaded = false;
+    private bool institutionsLoaded = false;
+    private Guid? lastLoadedProjectId;
+    private string? _lastInstitutionIdsHash;
+
+    private List<ProjectRoleDto> projectRoles = new();
+    private List<Institution> _institutionsList = new();
+    private Dictionary<Guid, Institution> _institutionDictionary = new();
+
+    private Guid? _selectedInstitutionId;
+    private Institution? _selectedInstitution;
+    private string? roleErrorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var currentInstitutionIdsHash = Project.EductionInstitutionIds != null
+            ? string.Join(",", Project.EductionInstitutionIds.OrderBy(id => id))
+            : string.Empty;
+
+        if (lastLoadedProjectId != Project.ProjectId)
+        {
+            rolesLoaded = false;
+            projectRoles.Clear();
+            _selectedInstitutionId = null;
+            _selectedInstitution = null;
+            lastLoadedProjectId = Project.ProjectId;
+        }
+
+        if (lastLoadedProjectId != Project.ProjectId || _lastInstitutionIdsHash != currentInstitutionIdsHash)
+        {
+            institutionsLoaded = false;
+            _lastInstitutionIdsHash = currentInstitutionIdsHash;
+            _institutionsList.Clear();
+            _institutionDictionary.Clear();
+        }
+
+        if (IsSelected)
+        {
+            if (!rolesLoaded)
+            {
+                await LoadProjectRolesAsync();
+            }
+            if (!institutionsLoaded)
+            {
+                await LoadInstitutionsAsync();
+            }
+        }
+    }
+
+    private async Task ToggleInstitutionDetails(Guid institutionId, Institution? institution)
+    {
+        if (_selectedInstitutionId == institutionId)
+        {
+            CloseInstitutionDetails();
+        }
+        else
+        {
+            _selectedInstitutionId = institutionId;
+            _selectedInstitution = institution;
+        }
+    }
+
+    private void CloseInstitutionDetails()
+    {
+        _selectedInstitutionId = null;
+        _selectedInstitution = null;
+    }
+
+    private async Task LoadProjectRolesAsync()
+    {
+        isLoadingRoles = true;
+        roleErrorMessage = null;
+        try
+        {
+            var url = $"api/projects/projectRoles/all?ProjectIds={Project.ProjectId}";
+            var client = await ClientFactory.CreateClientAsync();
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<ProjectRoleQueryResult.Success>();
+                if (result?.Response?.Items != null)
+                {
+                    projectRoles = result.Response.Items.ToList();
+                }
+                else
+                {
+                    projectRoles = new();
+                }
+            }
+        }
+        catch (Exception)
+        {
+            roleErrorMessage = "Nie udało się pobrać ról projektu.";
+        }
+        finally
+        {
+            isLoadingRoles = false;
+            rolesLoaded = true;
+        }
+    }
+
+    private async Task LoadInstitutionsAsync()
+    {
+        if (Project.EductionInstitutionIds == null || !Project.EductionInstitutionIds.Any())
+        {
+            institutionsLoaded = true;
+            return;
+        }
+
+        try
+        {
+            var institutionIdsSet = Project.EductionInstitutionIds.ToHashSet();
+            var response = await InstitutionService.GetAsync(new RADON.Models.Institutions.QueryParameters
+            {
+                InstitutionUuids = institutionIdsSet,
+                Pagination = new RADON.Models.Shared.QueryParametersPagination
+                {
+                    Page = 1,
+                    ItemsPerPage = institutionIdsSet.Count
+                },
+                Order = RADON.Models.Shared.Order.Ascending,
+                OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+            });
+
+            if (response?.Items != null)
+            {
+                _institutionsList = response.Items.ToList();
+
+                _institutionDictionary = response.Items.ToDictionary(i =>
+                {
+                    var prop = i.GetType().GetProperty("InstitutionUuid") ?? i.GetType().GetProperty("Id") ?? i.GetType().GetProperty("Uuid");
+                    if (prop != null && prop.GetValue(i) is Guid g) return g;
+                    return i.InstitutionUuid;
+                });
+            }
+        }
+        catch (Exception)
+        {
+            // Obsługa błędu
+        }
+        finally
+        {
+            institutionsLoaded = true;
+            StateHasChanged();
+        }
+    }
+}

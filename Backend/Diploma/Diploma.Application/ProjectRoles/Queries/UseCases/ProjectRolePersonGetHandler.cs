@@ -31,7 +31,7 @@ public class ProjectRolePersonGetHandler(
 
         var result = await queryService.GetAsync(
             request.PersonId,
-            false,
+            true,
             null,
             request.Model,
             cancellationToken);

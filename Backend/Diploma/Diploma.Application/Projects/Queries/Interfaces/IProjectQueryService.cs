@@ -9,6 +9,7 @@ public interface IProjectQueryService
     Task<Response<ProjectDto>> GetAsync(
         PersonId? personId,
         bool? isVisible,
+        bool isPersonItems,
         ProjectQueryParameters queryParameters,
         CancellationToken cancellationToken = default);
 }

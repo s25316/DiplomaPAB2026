@@ -1,0 +1,209 @@
+﻿@page "/projects"
+@inject IBackendHttpClientFactory ClientFactory
+@using Diploma.Models.Projects
+@using Diploma.Models.Shared
+
+<div class="container py-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-kanban me-2"></i> Projekty publiczne</h5>
+        </div>
+        <div class="card-body bg-light">
+
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                    <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
+                </div>
+            }
+
+            <!-- Pasek narzędzi: Sortowanie i Liczba elementów -->
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-6 d-flex gap-2 align-items-center">
+                    <label class="form-label mb-0 text-nowrap">Sortuj:</label>
+                    <select class="form-select form-select-sm" @value="_selectedOrderBy" @onchange="OnOrderByChanged">
+                        <option value="1">Tytuł</option>
+                        <option value="2">Data utworzenia</option>
+                    </select>
+                    <select class="form-select form-select-sm" @value="_selectedOrder" @onchange="OnOrderChanged">
+                        <option value="1">Rosnąco</option>
+                        <option value="2">Malejąco</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex justify-content-md-end align-items-center mt-2 mt-md-0 gap-2">
+                    <label class="form-label mb-0 text-nowrap">Na stronie:</label>
+                    <select class="form-select form-select-sm w-auto" @value="_itemsPerPage" @onchange="OnItemsPerPageChanged">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (_isLoading)
+            {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted mt-2">Ładowanie projektów...</p>
+                </div>
+            }
+            else if (_projects == null || !_projects.Any())
+            {
+                <div class="text-center text-muted py-4">
+                    <p class="mb-0">Brak publicznych projektów spełniających kryteria.</p>
+                </div>
+            }
+            else
+            {
+                <div class="row g-3">
+                    @foreach (var project in _projects)
+                    {
+                        <div class="col-12">
+                            <PublicProjectCardComponent Project="project"
+                                                        IsSelected="(_selectedProjectId == project.ProjectId)"
+                                                        OnToggleDetails="ToggleDetails"
+                                                        OnCloseDetails="CloseDetails" />
+                        </div>
+                    }
+                </div>
+
+                <!-- Paginacja -->
+                @if (_totalPages > 1)
+                {
+                    <nav class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="text-muted small">Strona @_currentPage z @_totalPages (Łącznie: @_totalCount)</span>
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item @(_currentPage == 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage - 1)">Poprzednia</button>
+                            </li>
+                            @for (int i = 1; i <= _totalPages; i++)
+                            {
+                                var pageNumber = i;
+                                <li class="page-item @(pageNumber == _currentPage ? "active" : "")">
+                                    <button class="page-link" @onclick="() => ChangePage(pageNumber)">@pageNumber</button>
+                                </li>
+                            }
+                            <li class="page-item @(_currentPage == _totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="() => ChangePage(_currentPage + 1)">Następna</button>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<ProjectDto> _projects = new();
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    private Guid? _selectedProjectId = null;
+
+    private int _selectedOrderBy = 2;
+    private int _selectedOrder = 2;
+    private int _currentPage = 1;
+    private int _itemsPerPage = 5;
+    private int _totalCount = 0;
+    private int _totalPages = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProjectsAsync();
+    }
+
+    private void ToggleDetails(Guid projectId)
+    {
+        if (_selectedProjectId == projectId)
+        {
+            CloseDetails();
+        }
+        else
+        {
+            _selectedProjectId = projectId;
+        }
+    }
+
+    private void CloseDetails()
+    {
+        _selectedProjectId = null;
+    }
+
+    private async Task LoadProjectsAsync()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            // Zapytanie publiczne bez autoryzacji
+            var url = $"api/projects/all?OrderBy={_selectedOrderBy}&Order={_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
+            var client = await ClientFactory.CreateClientAsync();
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<Response<ProjectDto>>();
+                if (result != null)
+                {
+                    _projects = result.Items?.ToList() ?? new();
+                    _totalCount = result.Pagination.TotalCount;
+                    _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
+                    if (_totalPages == 0) _totalPages = 1;
+                }
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać listy projektów.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task OnOrderByChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            _selectedOrderBy = parsed;
+            _currentPage = 1;
+            await LoadProjectsAsync();
+        }
+    }
+
+    private async Task OnOrderChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            _selectedOrder = parsed;
+            _currentPage = 1;
+            await LoadProjectsAsync();
+        }
+    }
+
+    private async Task OnItemsPerPageChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var parsed))
+        {
+            _itemsPerPage = parsed;
+            _currentPage = 1;
+            await LoadProjectsAsync();
+        }
+    }
+
+    private async Task ChangePage(int page)
+    {
+        if (page < 1 || page > _totalPages || page == _currentPage) return;
+        _currentPage = page;
+        await LoadProjectsAsync();
+    }
+}

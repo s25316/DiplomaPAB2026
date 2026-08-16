@@ -16,15 +16,18 @@ public class ProjectQueryService(
     public async Task<Response<ProjectDto>> GetAsync(
         PersonId? personId,
         bool? isVisible,
+        bool isPersonItems,
         ProjectQueryParameters queryParameters,
         CancellationToken cancellationToken = default)
     {
         builder
             .WithProjectIds(queryParameters.ProjectIds)
-            .WithManagerPersonId(personId)
             .WithIsVisible(isVisible)
             .WithDisciplines(queryParameters.Disciplines)
             .WithInstitutions(queryParameters.Institutions);
+
+        if (isPersonItems)
+            builder.WithManagerPersonId(personId);
 
         var baseQuery = builder.Build();
         var totalCount = await baseQuery.CountAsync(cancellationToken);
@@ -61,12 +64,22 @@ public class ProjectQueryService(
                     d.EducationInstitutionId,
                 })
                 .ToList(),
+
             IsAvailableRecruitment = context
                 .ProjectRoles
                 .Include(d => d.LastProjectRoleData)
                 .Where(d => d.ProjectId == i.ProjectId)
                 .Where(d => d.RemovedAt == null)
                 .Any(d => d.LastProjectRoleData != null && d.LastProjectRoleData.IsAvailableRecruitment),
+
+            IsRecruted = context
+                .Recruitments
+                .Any(d =>
+                    personId != null &&
+                    d.PersonId == personId.Value &&
+                    d.RecruitmentProjectRoles.Any(r => r.ProjectRole.ProjectId == i.ProjectId)
+                ),
+
         }).ToListAsync(cancellationToken);
 
         var items = databaseItems.Select(i => new ProjectDto
@@ -77,16 +90,23 @@ public class ProjectQueryService(
             Description = i.Item.LastProjectData?.Description ?? string.Empty,
             IsVisible = i.Item.LastProjectData?.IsVisible ?? false,
             IsAvailableRecruitment = i.IsAvailableRecruitment,
-            Disciplines = i.Disciplines
-            .Select(d => new Models.Dictionaries.DictionaryItem<string>
-            {
-                Code = d.EducationDiscipline.Code,
-                Name = d.EducationDiscipline.Name,
-            }).ToHashSet().ToList(),
-            EductionInstitutionIds = i.Institutions
+
+            Disciplines = i
+                .Disciplines
+                .Select(d => new Models.Dictionaries.DictionaryItem<string>
+                {
+                    Code = d.EducationDiscipline.Code,
+                    Name = d.EducationDiscipline.Name,
+                }).ToHashSet()
+                .ToList(),
+
+            EductionInstitutionIds = i
+                .Institutions
                 .Select(d => d.EducationInstitutionId)
                 .ToHashSet()
                 .ToList(),
+
+            IsRecruted = i.IsRecruted,
         }).ToList();
 
         return new Response<ProjectDto>
