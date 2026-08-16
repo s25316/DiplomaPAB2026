@@ -5,7 +5,7 @@
 
 <div class="list-group-item py-3">
     <div class="d-flex justify-content-between align-items-start">
-        <div class="flex-grow-1">
+        <div class="flex-grow-1 me-3">
             <!-- Nagłówek roli i statusy -->
             <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
                 <h6 class="mb-0 fw-bold text-dark">@Role.Title</h6>
@@ -28,105 +28,106 @@
             <p class="mb-2 small text-muted" style="white-space: pre-line;">
                 @(!string.IsNullOrWhiteSpace(Role.Description) ? Role.Description : "Brak opisu roli.")
             </p>
-
-            @if (!string.IsNullOrEmpty(disciplineError))
-            {
-                <div class="alert alert-danger py-1 px-2 small mb-2">@disciplineError</div>
-            }
-
-            <!-- Sekcja Dyscyplin -->
-            <div class="mb-3 p-2 bg-light rounded border">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="small fw-bold text-secondary"><i class="bi bi-book me-1"></i>Dyscypliny:</span>
-                    <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddDiscipline">
-                        <i class="bi bi-plus-lg me-1"></i>@(isAddingDiscipline ? "Anuluj" : "Dodaj dyscyplinę")
-                    </button>
-                </div>
-
-                <!-- Formularz dodawania dyscypliny -->
-                @if (isAddingDiscipline)
-                {
-                    <div class="card card-body bg-white p-2 mb-2 shadow-sm border-0">
-                        @if (isLoadingAvailable)
-                        {
-                            <div class="d-flex align-items-center">
-                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
-                            </div>
-                        }
-                        else if (availableDisciplines.Any())
-                        {
-                            <div class="input-group input-group-sm">
-                                <select class="form-select" @bind="selectedDisciplineCode">
-                                    <option value="">-- Wybierz dyscyplinę --</option>
-                                    @foreach (var d in GetUnassignedDisciplines())
-                                    {
-                                        <option value="@d.Code">@d.Name (@d.Code)</option>
-                                    }
-                                </select>
-                                <button class="btn btn-success" type="button" @onclick="SaveDisciplineAsync" disabled="@(string.IsNullOrEmpty(selectedDisciplineCode) || isSubmitting)">
-                                    @if (isSubmitting)
-                                    {
-                                        <span class="spinner-border spinner-border-sm me-1"></span>
-                                    }
-                                    Zapisz
-                                </button>
-                            </div>
-                        }
-                        else
-                        {
-                            <span class="small text-muted fst-italic">Brak dostępnych dyscyplin w systemie lub wszystkie są już przypisane.</span>
-                        }
-                    </div>
-                }
-
-                <!-- Lista przypisanych dyscyplin -->
-                <div class="d-flex flex-wrap gap-1 align-items-center">
-                    @if (Role.Disciplines != null && Role.Disciplines.Any())
-                    {
-                        @foreach (var discipline in Role.Disciplines)
-                        {
-                            <span class="badge bg-white text-primary border d-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
-                                @discipline.Discipline?.Name
-                                <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => DeleteDisciplineAsync(discipline.ProjectRoleDisciplineId, discipline.Discipline.Code)"></button>
-                            </span>
-                        }
-                    }
-                    else
-                    {
-                        <span class="text-muted small fst-italic">Brak przypisanych dyscyplin</span>
-                    }
-                </div>
-            </div>
-
-            <!-- Sekcja Instytucji edukacyjnych -->
-            <div class="mb-2 d-flex flex-wrap gap-1 align-items-center">
-                <span class="small fw-bold text-secondary me-1"><i class="bi bi-mortarboard me-1"></i>Instytucje:</span>
-                @if (Role.EductionInstitutionIds != null && Role.EductionInstitutionIds.Any())
-                {
-                    @foreach (var institution in Role.EductionInstitutionIds)
-                    {
-                        <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.7rem;" title="ID: @institution.EductionInstitutionId">
-                            @institution.EductionInstitutionId.ToString().Substring(0, 8)...
-                        </span>
-                    }
-                }
-                else
-                {
-                    <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
-                }
-            </div>
-
-            <!-- Data utworzenia -->
-            <div class="text-muted small mt-2" style="font-size: 0.75rem;">
-                <i class="bi bi-clock me-1"></i>Utworzono: @Role.CreatedAt.ToString("yyyy-MM-dd HH:mm")
-            </div>
         </div>
 
         <!-- Przyciski akcji roli -->
-        <div class="btn-group btn-group-sm ms-2 flex-shrink-0">
+        <div class="btn-group btn-group-sm flex-shrink-0">
             <button class="btn btn-warning text-dark" @onclick="() => OnEdit.InvokeAsync(Role)">Edytuj</button>
             <button class="btn btn-danger" @onclick="() => OnDelete.InvokeAsync(Role.ProjectRoleId)">Usuń</button>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(disciplineError))
+    {
+        <div class="alert alert-danger py-1 px-2 small mt-2 mb-2">@disciplineError</div>
+    }
+
+    <!-- Sekcja Dyscyplin - na pełnej szerokości -->
+    <div class="mt-3 p-2 bg-light rounded border w-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold text-secondary"><i class="bi bi-book me-1"></i>Dyscypliny:</span>
+            <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddDiscipline">
+                <i class="bi bi-plus-lg me-1"></i>@(isAddingDiscipline ? "Anuluj" : "Dodaj dyscyplinę")
+            </button>
+        </div>
+
+        <!-- Formularz dodawania dyscypliny -->
+        @if (isAddingDiscipline)
+        {
+            <div class="card card-body bg-white p-2 mb-2 shadow-sm border-0">
+                @if (isLoadingAvailable)
+                {
+                    <div class="d-flex align-items-center">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
+                    </div>
+                }
+                else if (availableDisciplines.Any())
+                {
+                    <div class="input-group input-group-sm">
+                        <select class="form-select" @bind="selectedDisciplineCode">
+                            <option value="">-- Wybierz dyscyplinę --</option>
+                            @foreach (var d in GetUnassignedDisciplines())
+                            {
+                                <option value="@d.Code">@d.Name (@d.Code)</option>
+                            }
+                        </select>
+                        <button class="btn btn-success" type="button" @onclick="SaveDisciplineAsync" disabled="@(string.IsNullOrEmpty(selectedDisciplineCode) || isSubmitting)">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                            }
+                            Zapisz
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <span class="small text-muted fst-italic">Brak dostępnych dyscyplin w systemie lub wszystkie są już przypisane.</span>
+                }
+            </div>
+        }
+
+        <!-- Lista przypisanych dyscyplin -->
+        <div class="d-flex flex-wrap gap-1 align-items-center">
+            @if (Role.Disciplines != null && Role.Disciplines.Any())
+            {
+                @foreach (var discipline in Role.Disciplines)
+                {
+                    <span class="badge bg-white text-primary border d-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
+                        @discipline.Discipline?.Name
+                        <button type="button" class="btn-close" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => DeleteDisciplineAsync(discipline.ProjectRoleDisciplineId, discipline.Discipline.Code)"></button>
+                    </span>
+                }
+            }
+            else
+            {
+                <span class="text-muted small fst-italic">Brak przypisanych dyscyplin</span>
+            }
+        </div>
+    </div>
+
+    <!-- Sekcja Instytucji edukacyjnych oraz Data utworzenia -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 pt-2 border-top">
+        <div class="d-flex flex-wrap gap-1 align-items-center">
+            <span class="small fw-bold text-secondary me-1"><i class="bi bi-mortarboard me-1"></i>Instytucje:</span>
+            @if (Role.EductionInstitutionIds != null && Role.EductionInstitutionIds.Any())
+            {
+                @foreach (var institution in Role.EductionInstitutionIds)
+                {
+                    <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.7rem;" title="ID: @institution.EductionInstitutionId">
+                        @institution.EductionInstitutionId.ToString().Substring(0, 8)...
+                    </span>
+                }
+            }
+            else
+            {
+                <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
+            }
+        </div>
+
+        <div class="text-muted small" style="font-size: 0.75rem;">
+            <i class="bi bi-clock me-1"></i>Utworzono: @Role.CreatedAt.ToString("yyyy-MM-dd HH:mm")
         </div>
     </div>
 </div>
