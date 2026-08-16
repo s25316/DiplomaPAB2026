@@ -28,6 +28,8 @@ using Diploma.Domain.Persons.Events.Lifecycle;
 using Diploma.Domain.Persons.Events.Profile;
 using Diploma.Domain.PersonUris.Aggregates;
 using Diploma.Domain.ProjectManagers.Aggregates;
+using Diploma.Domain.ProjectRoleDisciplines.Aggregates;
+using Diploma.Domain.ProjectRoleEducationInstitutions.Aggregates;
 using Diploma.Domain.ProjectRoles.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
 using Diploma.Infrastructure.Companies.Repositories;
@@ -57,6 +59,8 @@ using Diploma.Infrastructure.Persons.Profile.EventPublishers;
 using Diploma.Infrastructure.PersonUris.QueryServices;
 using Diploma.Infrastructure.PersonUris.Repositories;
 using Diploma.Infrastructure.ProjectManagers.Repositories;
+using Diploma.Infrastructure.ProjectRoleDisciplines.Repositories;
+using Diploma.Infrastructure.ProjectRoleEducationInstitutions.Repositories;
 using Diploma.Infrastructure.ProjectRoles.QueryServices;
 using Diploma.Infrastructure.ProjectRoles.Repositories;
 using Diploma.Infrastructure.Projects.QueryServices;
@@ -129,6 +133,8 @@ public static class Configuration
         services.AddTransient<ProjectManagerQueryBuilder>();
         services.AddTransient<ProjectRoleQueryBuilder>();
         services.AddTransient<ProjectQueryBuilder>();
+        services.AddTransient<ProjectRoleEducationDisciplineQueryBuilder>();
+        services.AddTransient<ProjectRoleEducationInstitutionQueryBuilder>();
 
         // APPLICATION SERVICES
 
@@ -197,6 +203,8 @@ public static class Configuration
         services.AddTransient<IProjectRepository, ProjectRepository>();
         services.AddTransient<IProjectManagerRepository, ProjectManagerRepository>();
         services.AddTransient<IProjectRoleRepository, ProjectRoleRepository>();
+        services.AddTransient<IProjectRoleDisciplineRepository, ProjectRoleDisciplineRepository>();
+        services.AddTransient<IProjectRoleEducationInstitutionRepository, ProjectRoleEducationInstitutionRepository>();
 
         services.AddTransient<IProjectQueryService, ProjectQueryService>();
         services.AddTransient<IProjectRoleQueryService, ProjectRoleQueryService>();
