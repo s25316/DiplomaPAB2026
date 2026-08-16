@@ -42,7 +42,7 @@ public class ProjectRoleEducationInstitutionDeleteHandler(
         if (!person.HasActive)
             return new ProjectRoleEducationInstitutionDeleteResult.Failure.Forbidden();
 
-        var projectRoleEducationInstitutionResult = await repository.GetAsync(request.ProjectRoleEducationInstitutionId, cancellationToken);
+        var projectRoleEducationInstitutionResult = await repository.GetAsync((ProjectRoleEducationInstitutionId)request.ProjectRoleEducationInstitutionId, cancellationToken);
 
         if (!projectRoleEducationInstitutionResult.HasValue)
             return new ProjectRoleEducationInstitutionDeleteResult.Failure.NotFound();

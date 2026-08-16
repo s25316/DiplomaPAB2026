@@ -64,6 +64,9 @@ public class ProjectRoleDisciplineCreateHandler(
         if (projectRoleResult.Value.ProjectId.Value != request.ProjectId)
             return new ProjectRoleDisciplineCreateResult.Failure.NotFound();
 
+        var projectRole = projectRoleResult.Value;
+        ArgumentNullException.ThrowIfNull(projectRole.Id);
+
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
             projectRoleResult.Value.ProjectId,
@@ -78,9 +81,16 @@ public class ProjectRoleDisciplineCreateHandler(
         if (countRoles == 0)
             return new ProjectRoleDisciplineCreateResult.Failure.Forbidden();
 
-        var totalCount = await repository.TotalCountAsync(request.ProjectRoleId, cancellationToken);
+        var all = await repository.GetAsync(projectRole.Id, cancellationToken);
+        var isExist = all
+            .Select(i => i.DisciplineCode)
+            .ToHashSet()
+            .Contains(request.Model.DisciplineCode);
 
-        if (totalCount >= MAX_COUNT)
+        if (isExist)
+            return new ProjectRoleDisciplineCreateResult.Success();
+
+        if (all.Count() >= MAX_COUNT)
             return new ProjectRoleDisciplineCreateResult.Failure.OverMaxLimit(MAX_COUNT);
 
         var projectRoleDiscipline = DomainProjectRoleDiscipline.Create(

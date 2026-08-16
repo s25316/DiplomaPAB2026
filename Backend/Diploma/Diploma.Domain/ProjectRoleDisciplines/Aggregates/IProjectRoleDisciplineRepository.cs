@@ -7,6 +7,7 @@ namespace Diploma.Domain.ProjectRoleDisciplines.Aggregates;
 public interface IProjectRoleDisciplineRepository
 {
     Task<OptionalResult<ProjectRoleDiscipline>> GetAsync(ProjectRoleDisciplineId id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ProjectRoleDiscipline>> GetAsync(ProjectRoleId id, CancellationToken cancellationToken = default);
     Task<int> TotalCountAsync(ProjectRoleId id, CancellationToken cancellationToken = default);
     Task CreateAsync(
         PersonId personId,

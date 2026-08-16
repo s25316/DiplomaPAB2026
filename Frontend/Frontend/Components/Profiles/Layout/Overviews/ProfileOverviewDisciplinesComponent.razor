@@ -22,25 +22,12 @@
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 150px;">Kod</th>
-                            <th>Nazwa dyscypliny</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var discipline in _paginatedDisciplines)
-                        {
-                            <tr>
-                                <td><code>@discipline.Code</code></td>
-                                <td>@discipline.Name</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            @foreach (var discipline in _disciplines.OrderBy(i => i.Name))
+            {
+                <span class="badge bg-white text-primary border py-1 px-2" style="font-size: 0.75rem;">
+                    @discipline.Name
+                </span>
+            }
 
             <!-- Paginacja -->
             @if (_totalPages > 1)

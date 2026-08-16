@@ -33,6 +33,19 @@ public class ProjectRoleEducationInstitutionRepository(
         return OptionalResult.Success(Map(databaseItem));
     }
 
+    public async Task<IEnumerable<ProjectRoleEducationInstitution>> GetAsync(
+        ProjectRoleId id,
+        CancellationToken cancellationToken = default)
+    {
+        var query = builder
+            .WithProjectRoleId(id)
+            .Build();
+
+        var databaseItems = await query.ToListAsync(cancellationToken);
+
+        return databaseItems.Select(Map);
+    }
+
     public async Task<int> TotalCountAsync(
         ProjectRoleId id,
         CancellationToken cancellationToken = default)
@@ -105,5 +118,6 @@ public class ProjectRoleEducationInstitutionRepository(
         .WithProjectRoleId(item.ProjectRoleId)
         .WithProjectId(item.ProjectRole.ProjectId)
         .WithCreatedAt(item.AddProjectEvent.CreatedAt)
+        .WithEducationInstitutionId(item.EducationInstitutionId)
         .Build();
 }

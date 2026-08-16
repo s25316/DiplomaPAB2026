@@ -7,6 +7,7 @@ namespace Diploma.Domain.ProjectRoleEducationInstitutions.Aggregates;
 public interface IProjectRoleEducationInstitutionRepository
 {
     Task<OptionalResult<ProjectRoleEducationInstitution>> GetAsync(ProjectRoleEducationInstitutionId id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<ProjectRoleEducationInstitution>> GetAsync(ProjectRoleId id, CancellationToken cancellationToken = default);
     Task<int> TotalCountAsync(ProjectRoleId id, CancellationToken cancellationToken = default);
     Task CreateAsync(
         PersonId personId,

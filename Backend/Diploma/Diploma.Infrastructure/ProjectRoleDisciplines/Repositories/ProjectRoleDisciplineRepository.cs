@@ -33,6 +33,16 @@ public class ProjectRoleDisciplineRepository(
         return OptionalResult.Success(Map(databaseItem));
     }
 
+    public async Task<IEnumerable<ProjectRoleDiscipline>> GetAsync(ProjectRoleId id, CancellationToken cancellationToken = default)
+    {
+        var query = builder
+            .WithProjectRoleId(id)
+            .Build();
+
+        var databaseItems = await query.ToListAsync(cancellationToken);
+        return databaseItems.Select(Map);
+    }
+
     public async Task<int> TotalCountAsync(
         ProjectRoleId id,
         CancellationToken cancellationToken = default)

@@ -2,6 +2,7 @@
 @using Diploma.Models.ProjectRoles
 @using Diploma.Models.Shared
 @using RADON.Models.Dictionaries.Responses
+@using RADON.Models.Institutions.Responses
 
 <div class="list-group-item py-3">
     <div class="d-flex justify-content-between align-items-start">
@@ -37,9 +38,9 @@
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(disciplineError))
+    @if (!string.IsNullOrEmpty(actionError))
     {
-        <div class="alert alert-danger py-1 px-2 small mt-2 mb-2">@disciplineError</div>
+        <div class="alert alert-danger py-1 px-2 small mt-2 mb-2">@actionError</div>
     }
 
     <!-- Sekcja Dyscyplin - na pełnej szerokości -->
@@ -55,7 +56,7 @@
         @if (isAddingDiscipline)
         {
             <div class="card card-body bg-white p-2 mb-2 shadow-sm border-0">
-                @if (isLoadingAvailable)
+                @if (isLoadingAvailableDisciplines)
                 {
                     <div class="d-flex align-items-center">
                         <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
@@ -72,8 +73,8 @@
                                 <option value="@d.Code">@d.Name (@d.Code)</option>
                             }
                         </select>
-                        <button class="btn btn-success" type="button" @onclick="SaveDisciplineAsync" disabled="@(string.IsNullOrEmpty(selectedDisciplineCode) || isSubmitting)">
-                            @if (isSubmitting)
+                        <button class="btn btn-success" type="button" @onclick="SaveDisciplineAsync" disabled="@(string.IsNullOrEmpty(selectedDisciplineCode) || isSubmittingDiscipline)">
+                            @if (isSubmittingDiscipline)
                             {
                                 <span class="spinner-border spinner-border-sm me-1"></span>
                             }
@@ -107,16 +108,50 @@
         </div>
     </div>
 
-    <!-- Sekcja Instytucji edukacyjnych oraz Data utworzenia -->
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 pt-2 border-top">
+    <!-- Sekcja Instytucji edukacyjnych -->
+    <div class="mt-3 p-2 bg-light rounded border w-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold text-secondary"><i class="bi bi-mortarboard me-1"></i>Instytucje edukacyjne:</span>
+            <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddInstitution">
+                <i class="bi bi-plus-lg me-1"></i>@(isAddingInstitution ? "Anuluj" : "Dodaj instytucję")
+            </button>
+        </div>
+
+        <!-- Formularz/Wyszukiwarka dodawania instytucji (używająca RadonInstitutionsComponent) -->
+        @if (isAddingInstitution)
+        {
+            <div class="card card-body bg-white p-3 mb-2 shadow-sm border-0">
+                <h6 class="text-primary small fw-bold mb-2">Wybierz instytucję z bazy RADON:</h6>
+                <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionSelected" />
+
+                @if (_selectedInstitution != null)
+                {
+                    <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded mt-2 border">
+                        <div>
+                            <span class="small fw-bold text-dark d-block">@_selectedInstitution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">UUID: @_selectedInstitution.InstitutionUuid</span>
+                        </div>
+                        <button class="btn btn-success btn-sm" @onclick="SaveInstitutionAsync" disabled="@isSubmittingInstitution">
+                            @if (isSubmittingInstitution)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1"></span>
+                            }
+                            Przypisz instytucję
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Lista przypisanych instytucji -->
         <div class="d-flex flex-wrap gap-1 align-items-center">
-            <span class="small fw-bold text-secondary me-1"><i class="bi bi-mortarboard me-1"></i>Instytucje:</span>
             @if (Role.EductionInstitutionIds != null && Role.EductionInstitutionIds.Any())
             {
                 @foreach (var institution in Role.EductionInstitutionIds)
                 {
-                    <span class="badge bg-light text-dark border font-monospace" style="font-size: 0.7rem;" title="ID: @institution.EductionInstitutionId">
-                        @institution.EductionInstitutionId.ToString().Substring(0, 8)...
+                    <span class="badge bg-white text-dark border d-flex align-items-center gap-1 py-1 px-2 font-monospace" style="font-size: 0.7rem;" title="ID: @institution.EductionInstitutionId">
+                        @institution.EductionInstitutionId
+                        <button type="button" class="btn-close" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => DeleteInstitutionAsync(institution.ProjectRoleEductionInstitutionId)"></button>
                     </span>
                 }
             }
@@ -125,7 +160,10 @@
                 <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
             }
         </div>
+    </div>
 
+    <!-- Data utworzenia -->
+    <div class="d-flex justify-content-end align-items-center mt-2 pt-2 border-top">
         <div class="text-muted small" style="font-size: 0.75rem;">
             <i class="bi bi-clock me-1"></i>Utworzono: @Role.CreatedAt.ToString("yyyy-MM-dd HH:mm")
         </div>
@@ -140,29 +178,36 @@
 
     [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
 
+    private string? actionError;
+
+    // --- Dyscypliny ---
     private bool isAddingDiscipline = false;
-    private bool isLoadingAvailable = false;
-    private bool isSubmitting = false;
-    private string? disciplineError;
+    private bool isLoadingAvailableDisciplines = false;
+    private bool isSubmittingDiscipline = false;
     private string? selectedDisciplineCode;
     private List<DictionaryItem> availableDisciplines = new();
 
-    private async Task ToggleAddDiscipline()
+    // --- Instytucje ---
+    private bool isAddingInstitution = false;
+    private bool isSubmittingInstitution = false;
+    private Institution? _selectedInstitution;
+
+    private void ToggleAddDiscipline()
     {
         isAddingDiscipline = !isAddingDiscipline;
-        disciplineError = null;
+        actionError = null;
         selectedDisciplineCode = null;
 
         if (isAddingDiscipline && !availableDisciplines.Any())
         {
-            await LoadAvailableDisciplinesAsync();
+            _ = LoadAvailableDisciplinesAsync();
         }
     }
 
     private async Task LoadAvailableDisciplinesAsync()
     {
-        isLoadingAvailable = true;
-        disciplineError = null;
+        isLoadingAvailableDisciplines = true;
+        actionError = null;
         try
         {
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
@@ -172,19 +217,16 @@
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<List<DictionaryItem>>();
-                if (result != null)
-                {
-                    availableDisciplines = result;
-                }
+                if (result != null) availableDisciplines = result;
             }
         }
         catch
         {
-            disciplineError = "Nie udało się pobrać listy dostępnych dyscyplin.";
+            actionError = "Nie udało się pobrać listy dostępnych dyscyplin.";
         }
         finally
         {
-            isLoadingAvailable = false;
+            isLoadingAvailableDisciplines = false;
         }
     }
 
@@ -198,8 +240,8 @@
     {
         if (string.IsNullOrEmpty(selectedDisciplineCode)) return;
 
-        isSubmitting = true;
-        disciplineError = null;
+        isSubmittingDiscipline = true;
+        actionError = null;
 
         try
         {
@@ -218,22 +260,22 @@
             else
             {
                 var error = await response.Content.ReadAsStringAsync();
-                disciplineError = !string.IsNullOrWhiteSpace(error) ? error : "Nie udało się dodać dyscypliny.";
+                actionError = !string.IsNullOrWhiteSpace(error) ? error : "Nie udało się dodać dyscypliny.";
             }
         }
         catch
         {
-            disciplineError = "Błąd połączenia z serwerem.";
+            actionError = "Błąd połączenia z serwerem.";
         }
         finally
         {
-            isSubmitting = false;
+            isSubmittingDiscipline = false;
         }
     }
 
     private async Task DeleteDisciplineAsync(Guid projectRoleDisciplineId, string disciplineCode)
     {
-        disciplineError = null;
+        actionError = null;
         try
         {
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
@@ -252,12 +294,92 @@
             }
             else
             {
-                disciplineError = "Nie udało się usunąć dyscypliny.";
+                actionError = "Nie udało się usunąć dyscypliny.";
             }
         }
         catch
         {
-            disciplineError = "Błąd połączenia z serwerem.";
+            actionError = "Błąd połączenia z serwerem.";
+        }
+    }
+
+    // --- Logika Instytucji ---
+    private void ToggleAddInstitution()
+    {
+        isAddingInstitution = !isAddingInstitution;
+        actionError = null;
+        _selectedInstitution = null;
+    }
+
+    private void HandleInstitutionSelected(Institution institution)
+    {
+        _selectedInstitution = institution;
+    }
+
+    private async Task SaveInstitutionAsync()
+    {
+        if (_selectedInstitution == null) return;
+
+        isSubmittingInstitution = true;
+        actionError = null;
+
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            // Tworzymy payload zgodny z obiektem ProjectRoleEducationInstitutionCreateRequest
+            var requestBody = new
+            {
+                EductioninstitutionId = _selectedInstitution.InstitutionUuid
+            };
+
+            var response = await client.PostAsJsonAsync($"api/projects/{Role.ProjectId}/projectRoles/{Role.ProjectRoleId}/institutions", requestBody);
+
+            if (response.IsSuccessStatusCode)
+            {
+                isAddingInstitution = false;
+                _selectedInstitution = null;
+                await OnRoleUpdated.InvokeAsync(Role);
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                actionError = !string.IsNullOrWhiteSpace(error) ? error : "Nie udało się dodać instytucji.";
+            }
+        }
+        catch
+        {
+            actionError = "Błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            isSubmittingInstitution = false;
+        }
+    }
+
+    private async Task DeleteInstitutionAsync(Guid projectRoleEducationInstitutionId)
+    {
+        actionError = null;
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var response = await client.DeleteAsync($"api/projects/projectRoles/institutions/{projectRoleEducationInstitutionId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                await OnRoleUpdated.InvokeAsync(Role);
+            }
+            else
+            {
+                actionError = "Nie udało się usunąć instytucji.";
+            }
+        }
+        catch
+        {
+            actionError = "Błąd połączenia z serwerem.";
         }
     }
 }

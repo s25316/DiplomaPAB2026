@@ -2,7 +2,7 @@
 
 namespace Diploma.Models.ProjectRoleEducationInstitutions;
 
-public abstract record ProjectRoleEducationInstitutionCreateRequest
+public sealed record ProjectRoleEducationInstitutionCreateRequest
 {
     [Required]
     public required Guid EductioninstitutionId { get; init; }

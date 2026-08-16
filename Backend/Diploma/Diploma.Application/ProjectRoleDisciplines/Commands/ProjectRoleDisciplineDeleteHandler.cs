@@ -39,7 +39,7 @@ public class ProjectRoleDisciplineDeleteHandler(
 
         var person = personResult.Value;
 
-        var projectRoleDisciplineResult = await repository.GetAsync(request.ProjectRoleDisciplineId, cancellationToken);
+        var projectRoleDisciplineResult = await repository.GetAsync((ProjectRoleDisciplineId)request.ProjectRoleDisciplineId, cancellationToken);
 
         if (!projectRoleDisciplineResult.HasValue)
             return new ProjectRoleDisciplineDeleteResult.Failure.NotFound();

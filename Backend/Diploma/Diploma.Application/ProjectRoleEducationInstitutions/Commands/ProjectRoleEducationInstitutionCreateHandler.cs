@@ -64,6 +64,9 @@ public class ProjectRoleEducationInstitutionCreateHandler(
         if (projectRoleResult.Value.ProjectId.Value != request.ProjectId)
             return new ProjectRoleEducationInstitutionCreateResult.Failure.NotFound();
 
+        var projectRole = projectRoleResult.Value;
+        ArgumentNullException.ThrowIfNull(projectRole.Id);
+
         var personRoles = await managerRepository.GetAsync(
             request.PersonId,
             projectRoleResult.Value.ProjectId,
@@ -78,9 +81,16 @@ public class ProjectRoleEducationInstitutionCreateHandler(
         if (countRoles == 0)
             return new ProjectRoleEducationInstitutionCreateResult.Failure.Forbidden();
 
-        var totalCount = await repository.TotalCountAsync(request.ProjectRoleId, cancellationToken);
+        var all = await repository.GetAsync(projectRole.Id, cancellationToken);
+        var isExist = all
+            .Select(i => i.EducationInstitutionId.Value)
+            .ToHashSet()
+            .Contains(request.Model.EductioninstitutionId);
 
-        if (totalCount >= MAX_COUNT)
+        if (isExist)
+            return new ProjectRoleEducationInstitutionCreateResult.Success();
+
+        if (all.Count() >= MAX_COUNT)
             return new ProjectRoleEducationInstitutionCreateResult.Failure.OverMaxLimit(MAX_COUNT);
 
         var pprojectRoleEducationInstitution = DomainProjectRoleEducationInstitution.Create(
