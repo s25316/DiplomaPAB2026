@@ -55,7 +55,7 @@
                         <div class="d-flex flex-wrap gap-1 align-items-center">
                             @if (Project.Disciplines != null && Project.Disciplines.Any())
                             {
-                                @foreach (var discipline in Project.Disciplines)
+                                @foreach (var discipline in Project.Disciplines.OrderBy(i => i.Name))
                                 {
                                     <span class="badge bg-white text-primary border py-1 px-2" style="font-size: 0.75rem;">
                                         @discipline.Name

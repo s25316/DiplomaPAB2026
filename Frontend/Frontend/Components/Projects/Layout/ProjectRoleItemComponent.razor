@@ -92,7 +92,7 @@
         <div class="d-flex flex-wrap gap-1 align-items-center">
             @if (Role.Disciplines != null && Role.Disciplines.Any())
             {
-                @foreach (var discipline in Role.Disciplines)
+                @foreach (var discipline in Role.Disciplines.OrderBy(i => i.Discipline.Name))
                 {
                     <span class="badge bg-white text-primary border d-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
                         @discipline.Discipline?.Name

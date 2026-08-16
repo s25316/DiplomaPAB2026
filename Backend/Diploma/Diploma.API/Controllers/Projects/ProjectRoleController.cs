@@ -208,7 +208,6 @@ public class ProjectRoleController(IMediator mediator) : ControllerBase
     [HttpDelete("projectRoles/institutions/{projectRoleEducationInstitutionId:guid}")]
     public async Task<IActionResult> DeleteInstitutionAsync(
         Guid projectRoleEducationInstitutionId,
-        ProjectRoleDisciplineCreateRequest body,
         CancellationToken cancellationToken)
     {
         if (!User.TryGetNameIdentifier(out var personId))
