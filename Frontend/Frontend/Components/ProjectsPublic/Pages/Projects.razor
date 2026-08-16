@@ -2,6 +2,8 @@
 @inject IBackendHttpClientFactory ClientFactory
 @using Diploma.Models.Projects
 @using Diploma.Models.Shared
+@using RADON.Models.Dictionaries.Responses
+@using RADON.Models.Institutions.Responses
 
 <div class="container py-4">
     <div class="card shadow-sm mb-4">
@@ -17,6 +19,103 @@
                     <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
                 </div>
             }
+
+            <!-- Pasek filtrów -->
+            <div class="card bg-white border-0 shadow-sm p-3 mb-3">
+                <div class="row g-3">
+
+                    <!-- Filtrowanie po wielu Dyscyplinach -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold text-secondary">
+                            <i class="bi bi-book me-1"></i> Dyscypliny:
+                        </label>
+                        @if (_isLoadingDisciplines)
+                        {
+                            <div class="d-flex align-items-center py-1">
+                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="border rounded p-2 bg-light" style="max-height: 140px; overflow-y: auto;">
+                                @if (_availableDisciplines.Any())
+                                {
+                                    @foreach (var disc in _availableDisciplines)
+                                    {
+                                        var isChecked = _selectedDisciplineCodes.Contains(disc.Code);
+                                        <div class="form-check form-check-sm mb-1">
+                                            <input class="form-check-input" type="checkbox" id="disc_@disc.Code"
+                                                   checked="@isChecked"
+                                                   @onchange="(e) => OnDisciplineCheckboxChanged(disc.Code, e.Value)" />
+                                            <label class="form-check-label small" for="disc_@disc.Code">
+                                                @disc.Name <span class="text-muted">(@disc.Code)</span>
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="small text-muted fst-italic">Brak dostępnych dyscyplin.</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Filtrowanie po wielu Instytucjach (z RadonInstitutionsComponent) -->
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label small fw-bold text-secondary mb-0">
+                                <i class="bi bi-building me-1"></i> Instytucje edukacyjne:
+                            </label>
+                            <button class="btn btn-outline-primary btn-sm py-0 px-2" style="font-size: 0.75rem;" @onclick="ToggleAddInstitutionFilter">
+                                <i class="bi bi-plus-lg me-1"></i>@(_isAddingInstitutionFilter ? "Zamknij" : "Wybierz instytucję")
+                            </button>
+                        </div>
+
+                        <!-- Panel wyboru instytucji -->
+                        @if (_isAddingInstitutionFilter)
+                        {
+                            <div class="card card-body bg-white p-2 mb-2 shadow-sm border">
+                                <span class="small text-muted mb-2">Wyszukaj i wybierz uczelnię z bazy RADON:</span>
+                                <RadonInstitutionsComponent OnInstitutionSelected="HandleInstitutionFilterSelected" />
+                            </div>
+                        }
+
+                        <!-- Wybrane instytucje (Tagi) -->
+                        <div class="border rounded p-2 bg-light d-flex flex-wrap gap-1 align-items-center" style="min-height: 50px; max-height: 100px; overflow-y: auto;">
+                            @if (_selectedInstitutionIds.Any())
+                            {
+                                @foreach (var instId in _selectedInstitutionIds)
+                                {
+                                    var name = _institutionNames.TryGetValue(instId, out var n) ? n : instId.ToString().Substring(0, 8) + "...";
+                                    <span class="badge bg-white text-dark border d-inline-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
+                                        <i class="bi bi-building text-primary"></i> @name
+                                        <button type="button" class="btn-close" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => RemoveInstitutionFilter(instId)"></button>
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted small fst-italic">Brak wybranych instytucji (filtrowanie po wszystkich).</span>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Przyciski akcji filtrów -->
+                <div class="row mt-3">
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                        <button class="btn btn-primary btn-sm px-4" @onclick="ApplyFilters">
+                            <i class="bi bi-search me-1"></i> Filtruj
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="ResetFilters">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Resetuj filtry
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- Pasek narzędzi: Sortowanie i Liczba elementów -->
             <div class="row mb-3 align-items-center">
@@ -103,6 +202,17 @@
 
     private Guid? _selectedProjectId = null;
 
+    // --- Filtry: Dyscypliny ---
+    private List<DictionaryItem> _availableDisciplines = new();
+    private bool _isLoadingDisciplines = false;
+    private HashSet<string> _selectedDisciplineCodes = new();
+
+    // --- Filtry: Instytucje ---
+    private bool _isAddingInstitutionFilter = false;
+    private HashSet<Guid> _selectedInstitutionIds = new();
+    private Dictionary<Guid, string> _institutionNames = new();
+
+    // --- Parametry paginacji i sortowania ---
     private int _selectedOrderBy = 2;
     private int _selectedOrder = 2;
     private int _currentPage = 1;
@@ -112,7 +222,34 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadAvailableDisciplinesAsync();
         await LoadProjectsAsync();
+    }
+
+    private async Task LoadAvailableDisciplinesAsync()
+    {
+        _isLoadingDisciplines = true;
+        try
+        {
+            var client = await ClientFactory.CreateClientAsync();
+            var response = await client.GetAsync("api/radon/shared/disciplines");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<List<DictionaryItem>>();
+                if (result != null)
+                {
+                    _availableDisciplines = result;
+                }
+            }
+        }
+        catch
+        {
+            // Ignoruj błąd ładowania słownika w tle
+        }
+        finally
+        {
+            _isLoadingDisciplines = false;
+        }
     }
 
     private void ToggleDetails(Guid projectId)
@@ -132,6 +269,42 @@
         _selectedProjectId = null;
     }
 
+    private void OnDisciplineCheckboxChanged(string code, object? value)
+    {
+        if (value is bool isChecked && isChecked)
+        {
+            _selectedDisciplineCodes.Add(code);
+        }
+        else
+        {
+            _selectedDisciplineCodes.Remove(code);
+        }
+    }
+
+    private void ToggleAddInstitutionFilter()
+    {
+        _isAddingInstitutionFilter = !_isAddingInstitutionFilter;
+    }
+
+    private void HandleInstitutionFilterSelected(Institution institution)
+    {
+        var id = institution.InstitutionUuid;
+        var name = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? id.ToString();
+
+        if (_selectedInstitutionIds.Add(id))
+        {
+            _institutionNames[id] = name;
+        }
+
+        _isAddingInstitutionFilter = false;
+    }
+
+    private void RemoveInstitutionFilter(Guid id)
+    {
+        _selectedInstitutionIds.Remove(id);
+        _institutionNames.Remove(id);
+    }
+
     private async Task LoadProjectsAsync()
     {
         _isLoading = true;
@@ -139,8 +312,27 @@
 
         try
         {
-            // Zapytanie publiczne bez autoryzacji
-            var url = $"api/projects/all?OrderBy={_selectedOrderBy}&Order={_selectedOrder}&Pagination.Page={_currentPage}&Pagination.ItemsPerPage={_itemsPerPage}";
+            var queryParams = new List<string>
+            {
+                $"OrderBy={_selectedOrderBy}",
+                $"Order={_selectedOrder}",
+                $"Pagination.Page={_currentPage}",
+                $"Pagination.ItemsPerPage={_itemsPerPage}"
+            };
+
+            // Dodawanie wielu dyscyplin
+            foreach (var code in _selectedDisciplineCodes)
+            {
+                queryParams.Add($"Disciplines={Uri.EscapeDataString(code)}");
+            }
+
+            // Dodawanie wielu instytucji
+            foreach (var instId in _selectedInstitutionIds)
+            {
+                queryParams.Add($"Institutions={instId}");
+            }
+
+            var url = $"api/projects/all?{string.Join("&", queryParams)}";
             var client = await ClientFactory.CreateClientAsync();
             var response = await client.GetAsync(url);
 
@@ -168,6 +360,22 @@
         {
             _isLoading = false;
         }
+    }
+
+    private async Task ApplyFilters()
+    {
+        _currentPage = 1;
+        await LoadProjectsAsync();
+    }
+
+    private async Task ResetFilters()
+    {
+        _selectedDisciplineCodes.Clear();
+        _selectedInstitutionIds.Clear();
+        _institutionNames.Clear();
+        _isAddingInstitutionFilter = false;
+        _currentPage = 1;
+        await LoadProjectsAsync();
     }
 
     private async Task OnOrderByChanged(ChangeEventArgs e)
