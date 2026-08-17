@@ -102,6 +102,7 @@ public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbCont
         modelBuilder.ApplyConfiguration<RecruitmentMessage>(new RecruitmentMessageEFConfiguration());
         modelBuilder.ApplyConfiguration<RecruitmentProjectRole>(new RecruitmentProjectRoleEFConfiguration());
         modelBuilder.ApplyConfiguration<RecruitmentStatus>(new RecruitmentStatusEFConfiguration());
+        modelBuilder.ApplyConfiguration<RecruitmentStatusAudit>(new RecruitmentStatusAuditEFConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

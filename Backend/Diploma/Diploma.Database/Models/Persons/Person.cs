@@ -24,4 +24,5 @@ public class Person
     public virtual ICollection<ProjectManager> ProjectManagers { get; set; } = [];
     public virtual ICollection<Recruitment> Recruitments { get; set; } = [];
     public virtual ICollection<RecruitmentMessage> RecruitmentMessages { get; set; } = [];
+    public virtual ICollection<RecruitmentStatusAudit> RecruitmentStatusAudits { get; set; } = [];
 }

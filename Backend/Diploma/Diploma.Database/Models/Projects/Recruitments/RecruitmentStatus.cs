@@ -6,5 +6,5 @@ public class RecruitmentStatus
     public string Name { get; set; } = null!;
 
 
-    public virtual ICollection<Recruitment> Recruitments { get; set; } = [];
+    public virtual ICollection<RecruitmentStatusAudit> RecruitmentStatusAudits { get; set; } = [];
 }

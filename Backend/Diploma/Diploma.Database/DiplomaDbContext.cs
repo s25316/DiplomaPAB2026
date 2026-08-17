@@ -64,4 +64,5 @@ public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*option
     public DbSet<RecruitmentMessage> RecruitmentMessages { get; set; }
     public DbSet<RecruitmentProjectRole> RecruitmentProjectRoles { get; set; }
     public DbSet<RecruitmentStatus> RecruitmentStatuses { get; set; }
+    public DbSet<RecruitmentStatusAudit> RecruitmentStatusAudits { get; set; }
 }

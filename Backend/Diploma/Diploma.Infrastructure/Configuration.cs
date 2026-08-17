@@ -32,6 +32,7 @@ using Diploma.Domain.ProjectRoleDisciplines.Aggregates;
 using Diploma.Domain.ProjectRoleEducationInstitutions.Aggregates;
 using Diploma.Domain.ProjectRoles.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
+using Diploma.Domain.Recruitments.Aggregates;
 using Diploma.Infrastructure.Companies.Repositories;
 using Diploma.Infrastructure.Companies.Services;
 using Diploma.Infrastructure.Configurations;
@@ -67,6 +68,7 @@ using Diploma.Infrastructure.Projects.QueryServices;
 using Diploma.Infrastructure.Projects.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.QueryBuilders.Projects;
+using Diploma.Infrastructure.Recruitments.Repositories;
 using Diploma.Infrastructure.Services.Database;
 using Diploma.Infrastructure.Services.Generators;
 using Diploma.Infrastructure.Services.Repositories;
@@ -135,6 +137,7 @@ public static class Configuration
         services.AddTransient<ProjectQueryBuilder>();
         services.AddTransient<ProjectRoleEducationDisciplineQueryBuilder>();
         services.AddTransient<ProjectRoleEducationInstitutionQueryBuilder>();
+        services.AddTransient<RecruitmentQueryBuilder>();
 
         // APPLICATION SERVICES
 
@@ -208,6 +211,9 @@ public static class Configuration
 
         services.AddTransient<IProjectQueryService, ProjectQueryService>();
         services.AddTransient<IProjectRoleQueryService, ProjectRoleQueryService>();
+
+        // RECRUITMENTS
+        services.AddTransient<IRecruitmentRepository, RecruitmentRepository>();
 
         return services;
     }

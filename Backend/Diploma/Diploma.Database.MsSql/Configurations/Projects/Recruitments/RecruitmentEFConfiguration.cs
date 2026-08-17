@@ -1,4 +1,5 @@
 ﻿using Diploma.Database.Models.Persons;
+using Diploma.Database.Models.Projects;
 using Diploma.Database.Models.Projects.Recruitments;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -22,16 +23,10 @@ public class RecruitmentEFConfiguration : IEntityTypeConfiguration<Recruitment>
            .HasConstraintName($"{nameof(Recruitment)}_{nameof(Person)}_FK")
            .OnDelete(DeleteBehavior.Restrict);
         builder
-           .HasOne(k => k.Root)
-           .WithMany(k => k.History)
-           .HasForeignKey(k => k.RootId)
-           .HasConstraintName($"{nameof(Recruitment)}_{nameof(Recruitment)}_ROOT_FK")
+           .HasOne(k => k.Project)
+           .WithMany(k => k.Recruitments)
+           .HasForeignKey(k => k.ProjectId)
+           .HasConstraintName($"{nameof(Recruitment)}_{nameof(Project)}_FK")
            .OnDelete(DeleteBehavior.Restrict);
-        builder
-            .HasOne(k => k.Next)
-            .WithOne(k => k.Previous)
-            .HasForeignKey<Recruitment>(k => k.NextId)
-            .HasConstraintName($"{nameof(Recruitment)}_{nameof(Recruitment)}_NEXT_FK")
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

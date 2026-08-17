@@ -77,7 +77,7 @@ public class ProjectQueryService(
                 .Any(d =>
                     personId != null &&
                     d.PersonId == personId.Value &&
-                    d.RecruitmentProjectRoles.Any(r => r.ProjectRole.ProjectId == i.ProjectId)
+                    d.ProjectId == i.ProjectId
                 ),
 
         }).ToListAsync(cancellationToken);

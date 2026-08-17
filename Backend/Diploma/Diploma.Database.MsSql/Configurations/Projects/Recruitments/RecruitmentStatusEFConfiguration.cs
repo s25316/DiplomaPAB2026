@@ -18,14 +18,6 @@ public class RecruitmentStatusEFConfiguration : IEntityTypeConfiguration<Recruit
             .Property(p => p.RecruitmentStatusId)
             .ValueGeneratedNever();
 
-
-        builder
-            .HasMany(p => p.Recruitments)
-            .WithOne(k => k.RecruitmentStatus)
-            .HasForeignKey(k => k.RecruitmentStatusId)
-            .HasConstraintName($"{nameof(RecruitmentStatus)}_{nameof(Recruitment)}_FK")
-            .OnDelete(DeleteBehavior.Restrict);
-
         var data = SharedRecruitmentStatus.All.Select(i => new RecruitmentStatus
         {
             RecruitmentStatusId = i.Id,

@@ -71,11 +71,12 @@ public class ProjectRoleQueryService(
                 .ToList(),
 
             IsRecruted = context
-                .Recruitments
+                .RecruitmentProjectRoles
+                .Include(i => i.Recruitment)
                 .Any(d =>
                     personId != null &&
-                    d.PersonId == personId.Value &&
-                    d.RecruitmentProjectRoles.Any(r => r.ProjectRole.ProjectId == i.ProjectId)
+                    d.Recruitment.PersonId == personId.Value &&
+                    d.ProjectRoleId == i.ProjectRoleId
                 ),
 
         }).ToListAsync(cancellationToken);
