@@ -1,4 +1,6 @@
-﻿using Diploma.Application.Interfaces.Database;
+﻿using Azure.Storage.Blobs;
+using Diploma.Application.Interfaces.Blobs;
+using Diploma.Application.Interfaces.Database;
 using Diploma.Application.Interfaces.Generators;
 using Diploma.Application.Interfaces.Repositories;
 using Diploma.Application.Interfaces.Security;
@@ -12,6 +14,7 @@ using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
 using Diploma.Application.PersonUris.Queries.Interfaces;
 using Diploma.Application.ProjectRoles.Queries.Interfaces;
 using Diploma.Application.Projects.Queries.Interfaces;
+using Diploma.Application.RecruitmentMessages.Commands.Repositories;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
@@ -68,7 +71,9 @@ using Diploma.Infrastructure.Projects.QueryServices;
 using Diploma.Infrastructure.Projects.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.QueryBuilders.Projects;
+using Diploma.Infrastructure.RecruitmentMessages.Repositories;
 using Diploma.Infrastructure.Recruitments.Repositories;
+using Diploma.Infrastructure.Services.Blobs;
 using Diploma.Infrastructure.Services.Database;
 using Diploma.Infrastructure.Services.Generators;
 using Diploma.Infrastructure.Services.Repositories;
@@ -92,6 +97,7 @@ public static class Configuration
     private const string SECTION_EMAIL = "Email";
     private const string SECTION_FRONTEND = "Frontend";
     private const string SECTION_JWT = "Jwt";
+    private const string SECTION_AZURE = "Azure";
 
     public static IServiceCollection AddInfrastructureConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
@@ -114,6 +120,7 @@ public static class Configuration
         services.Configure<EmailConfiguration>(configuration.GetSection(SECTION_EMAIL));
         services.Configure<FrontendHostConfiguration>(configuration.GetSection(SECTION_FRONTEND));
         services.Configure<JwtConfiguration>(configuration.GetSection(SECTION_JWT));
+        services.Configure<AzureConfiguration>(configuration.GetSection(SECTION_AZURE));
 
 
 
@@ -138,8 +145,18 @@ public static class Configuration
         services.AddTransient<ProjectRoleEducationDisciplineQueryBuilder>();
         services.AddTransient<ProjectRoleEducationInstitutionQueryBuilder>();
         services.AddTransient<RecruitmentQueryBuilder>();
+        services.AddTransient<RecruitmentMessageQueryBuilder>();
 
         // APPLICATION SERVICES
+
+        // Blobs
+        services.AddSingleton<BlobServiceClient>(p =>
+        {
+            var options = p.GetRequiredService<IOptions<AzureConfiguration>>();
+            var configuration = options.Value;
+            return new BlobServiceClient(configuration.BlobConnectionString);
+        });
+        services.AddScoped<IBlobStorage, BlobStorage>();
 
         // Database
         services.AddScoped<IUnitOfWorkFactory, UnitOfWorkFactory>();
@@ -214,6 +231,7 @@ public static class Configuration
 
         // RECRUITMENTS
         services.AddTransient<IRecruitmentRepository, RecruitmentRepository>();
+        services.AddTransient<IRecruitmentMessageRepository, RecruitmentMessageRepository>();
 
         return services;
     }

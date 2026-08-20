@@ -2,12 +2,14 @@
 using Diploma.Database.Models.Projects.Recruitments;
 using Diploma.Domain.Base.Results;
 using Diploma.Domain.Persons.Aggregates;
+using Diploma.Domain.ProjectRoles.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
 using Diploma.Domain.Recruitments.Aggregates;
 using Diploma.Infrastructure.QueryBuilders.Projects;
 using Microsoft.EntityFrameworkCore;
 using DatabaseRecruitment = Diploma.Database.Models.Projects.Recruitments.Recruitment;
 using Recruitment = Diploma.Domain.Recruitments.Aggregates.Recruitment;
+using SharedRecruitmentStatus = Diploma.Shared.RecruitmentStatuses.RecruitmentStatus;
 
 namespace Diploma.Infrastructure.Recruitments.Repositories;
 
@@ -16,18 +18,41 @@ public class RecruitmentRepository(
     RecruitmentQueryBuilder builder
     ) : IRecruitmentRepository
 {
-    public Task<OptionalResult<Recruitment>> GetAsync(
+    public async Task<OptionalResult<Recruitment>> GetAsync(
         RecruitmentId id,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var query = builder
+            .WithRecruitmentId(id)
+            .Build();
+
+        var databaseResult = await query
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (databaseResult is null)
+            return OptionalResult<Recruitment>.NotFound();
+
+        return OptionalResult.Success(Map(databaseResult));
     }
+
 
     public async Task<OptionalResult<Recruitment>> GetAsync(
         PersonId personId,
-        ProjectId projectId, CancellationToken cancellationToken = default)
+        ProjectId projectId,
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var query = builder
+            .WithPersonId(personId)
+            .WithProjectId(projectId)
+            .Build();
+
+        var databaseResult = await query
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (databaseResult is null)
+            return OptionalResult<Recruitment>.NotFound();
+
+        return OptionalResult.Success(Map(databaseResult));
     }
 
     public async Task CreateAsync(
@@ -97,4 +122,13 @@ public class RecruitmentRepository(
         await context.SaveChangesAsync(cancellationToken);
         return ExistingResult.Exist;
     }
+
+    private static Recruitment Map(DatabaseRecruitment item) => new Recruitment.Builder()
+        .WithId(item.RecruitmentId)
+        .WithProjectId(item.ProjectId)
+        .WithPersonId(item.PersonId)
+        .WithCreatedAt(item.CreatedAt)
+        .WithRecruitmentStatus(SharedRecruitmentStatus.FromId(item.LastRecruitmentStatusAudit!.RecruitmentStatusId))
+        .WithProjectRoleIds(item.RecruitmentProjectRoles.Select(i => new ProjectRoleId { Value = i.ProjectRoleId }))
+        .Build();
 }

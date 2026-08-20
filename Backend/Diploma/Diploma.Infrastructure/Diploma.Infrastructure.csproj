@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" />
     </ItemGroup>
@@ -20,6 +21,11 @@
     <ItemGroup>
         <ProjectReference Include="..\Diploma.Application\Diploma.Application.csproj" />
         <ProjectReference Include="..\Diploma.Database.MsSql\Diploma.Database.MsSql.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="RecruitmentMessages\QueryServices\" />
+      <Folder Include="Recruitments\QueryServices\" />
     </ItemGroup>
 
 </Project>

@@ -11,6 +11,7 @@ public class ProjectQueryParameters : BaseQueryParameters
         CreatedAt = 2,
     }
 
+    public required bool? IsRecruitmentActive { get; init; }
     public required IList<Guid> ProjectIds { get; init; } = [];
     public required IList<string> Disciplines { get; init; } = [];
     public required IList<Guid> Institutions { get; init; } = [];

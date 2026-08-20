@@ -24,7 +24,8 @@ public class ProjectQueryService(
             .WithProjectIds(queryParameters.ProjectIds)
             .WithIsVisible(isVisible)
             .WithDisciplines(queryParameters.Disciplines)
-            .WithInstitutions(queryParameters.Institutions);
+            .WithInstitutions(queryParameters.Institutions)
+            .WithIsRecruitmentActive(queryParameters.IsRecruitmentActive);
 
         if (isPersonItems)
             builder.WithManagerPersonId(personId);

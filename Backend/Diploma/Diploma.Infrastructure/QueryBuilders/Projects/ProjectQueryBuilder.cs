@@ -74,6 +74,24 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
         return this;
     }
 
+    public ProjectQueryBuilder WithIsRecruitmentActive(bool? value)
+    {
+        if (value is not null)
+            return this;
+
+        With(query => query.Where(i => context
+            .ProjectRoleEducationDisciplines
+            .AsNoTracking()
+            .Include(d => d.ProjectRole)
+            .ThenInclude(d => d.LastProjectRoleData)
+            .Where(d =>
+                d.ProjectRole.LastProjectRoleData != null &&
+                d.ProjectRole.LastProjectRoleData.IsAvailableRecruitment == value
+            ).Any(d => d.ProjectRole.ProjectId == i.ProjectId)
+        ));
+        return this;
+    }
+
     public ProjectQueryBuilder WithInstitutions(IList<Guid> items)
     {
         if (!items.Any())

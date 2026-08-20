@@ -13,6 +13,7 @@ public class RecruitmentQueryBuilder(DiplomaDbContext context) : BaseQueryBuilde
     .Recruitments
     .AsNoTracking()
     .Include(i => i.LastRecruitmentStatusAudit)
+    .Include(i => i.RecruitmentProjectRoles)
     )
 {
     public RecruitmentQueryBuilder WithProjectId(ProjectId item)

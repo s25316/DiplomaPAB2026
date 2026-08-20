@@ -1,9 +1,12 @@
-﻿namespace Diploma.Models.Recruitments;
+﻿using Microsoft.AspNetCore.Http;
 
-internal class RecruitmentCreate
+namespace Diploma.Models.Recruitments;
+
+public sealed class RecruitmentCreateRequest
 {
-    public required int StatusId { get; init; }
+    public required IEnumerable<Guid> ProjectRoleIds { get; set; }
     public required string Message { get; init; }
+    public required IFormFile File { get; init; }
 }
 
 public abstract record RecruitmentCreateResult
@@ -13,6 +16,9 @@ public abstract record RecruitmentCreateResult
     {
         public sealed record ProfileIsEmpty : Failure;
         public sealed record NotFound : Failure;
-        public sealed record Conflict : Failure;
+        public sealed record IsExistRecruitment : Failure;
+        public sealed record NotSameProject : Failure;
+        public sealed record EmptyProjectRoles : Failure;
+        public sealed record NotAvailableRecruitment : Failure;
     };
 }

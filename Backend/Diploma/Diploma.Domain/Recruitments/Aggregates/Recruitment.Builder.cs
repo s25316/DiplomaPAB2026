@@ -40,7 +40,7 @@ public partial class Recruitment
             return this;
         }
 
-        public Builder With(IEnumerable<ProjectRoleId> items)
+        public Builder WithProjectRoleIds(IEnumerable<ProjectRoleId> items)
         {
             With(i =>
             {
