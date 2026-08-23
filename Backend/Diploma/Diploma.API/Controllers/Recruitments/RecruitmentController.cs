@@ -3,11 +3,13 @@ using Diploma.Application.RecruitmentMessages.Commands.UseCases;
 using Diploma.Application.RecruitmentMessages.Queries.UseCases;
 using Diploma.Application.Recruitments.Commands.UseCases;
 using Diploma.Application.Recruitments.Queries.UseCases;
+using Diploma.Models.Dictionaries;
 using Diploma.Models.RecruitmentMessages;
 using Diploma.Models.Recruitments;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharedRecruitmentStatus = Diploma.Shared.RecruitmentStatuses.RecruitmentStatus;
 
 namespace Diploma.API.Controllers.Recruitments;
 
@@ -15,6 +17,17 @@ namespace Diploma.API.Controllers.Recruitments;
 [ApiController]
 public class RecruitmentController(IMediator mediator) : ControllerBase
 {
+    [HttpGet("statuses")]
+    public IActionResult GetStatuses()
+    {
+        var items = SharedRecruitmentStatus.All.Select(i => new DictionaryItem<int>
+        {
+            Code = i.Id,
+            Name = i.Name,
+        });
+        return Ok(items);
+    }
+
     [Authorize]
     [HttpGet]
     public async Task<IActionResult> CreateRecruitmentCreateAsync(
@@ -32,7 +45,7 @@ public class RecruitmentController(IMediator mediator) : ControllerBase
 
         return result switch
         {
-            RecruitmentQueryResult.Success => Created(),
+            RecruitmentQueryResult.Success success => Ok(success.Response),
             RecruitmentQueryResult.Failure.NotFound => NotFound(),
             RecruitmentQueryResult.Failure.ProfileInactive => Conflict(),
             _ => throw new NotImplementedException($"Unknown type of {nameof(RecruitmentQueryResult)}: {result.GetType()}"),

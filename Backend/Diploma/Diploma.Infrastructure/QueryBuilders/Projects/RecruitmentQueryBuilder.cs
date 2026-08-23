@@ -30,11 +30,14 @@ public class RecruitmentQueryBuilder(DiplomaDbContext context) : BaseQueryBuilde
         return this;
     }
 
-    public RecruitmentQueryBuilder WithStatusId(int item)
+    public RecruitmentQueryBuilder WithStatusId(int? item)
     {
+        if (item == null)
+            return this;
+
         With(query => query.Where(i =>
             i.LastRecruitmentStatusAudit != null &&
-            i.LastRecruitmentStatusAudit.RecruitmentStatusId == item
+            i.LastRecruitmentStatusAudit.RecruitmentStatusId == item.Value
         ));
         return this;
     }

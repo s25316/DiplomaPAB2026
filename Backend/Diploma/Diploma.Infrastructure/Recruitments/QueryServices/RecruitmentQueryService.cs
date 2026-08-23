@@ -115,7 +115,6 @@ public class RecruitmentQueryService(
         IList<Guid> ids,
         CancellationToken cancellationToken = default)
     {
-
         var projectsResult = await projectQueryService.GetAsync(
             null,
             null,
@@ -123,7 +122,7 @@ public class RecruitmentQueryService(
             new Models.Projects.ProjectQueryParameters
             {
                 ProjectIds = ids,
-                IsRecruitmentActive = false,
+                IsRecruitmentActive = null,
                 Disciplines = [],
                 Institutions = [],
                 Order = Order.Descending,

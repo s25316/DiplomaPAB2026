@@ -1,5 +1,6 @@
 ﻿using Diploma.Models.Dictionaries;
 using Diploma.Models.Shared;
+using System.ComponentModel.DataAnnotations;
 using static Diploma.Models.ProjectRoles.ProjectRoleDto;
 
 namespace Diploma.Models.Recruitments;
@@ -11,7 +12,8 @@ public sealed class RecruitmentQueryParameters : BaseQueryParameters
         CreatedAt = 2,
     }
 
-    public required int StatusId { get; set; }
+    [Range(1, 3)]
+    public required int? StatusId { get; set; }
 
     public required RecruitmentOrderBy OrderBy { get; init; }
     public required Order Order { get; init; }
