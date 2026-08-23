@@ -13,8 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Diploma.Database;
 
-// DbContextOptions
-public class DiplomaDbContext(/*DbContextOptions options*/) : DbContext(/*options*/)
+public class DiplomaDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Error> Errors { get; set; }
     public DbSet<EmailMessage> EmailMessages { get; set; }

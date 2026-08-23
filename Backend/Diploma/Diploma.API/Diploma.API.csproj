@@ -36,5 +36,20 @@
     <ProjectReference Include="..\..\Base\Base.Models\Base.Models.csproj" />
     <ProjectReference Include="..\Diploma.Infrastructure\Diploma.Infrastructure.csproj" />
   </ItemGroup>
+	
+  <ItemGroup>
+    <Compile Update="ApiErrorDescription.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ApiErrorDescription.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <EmbeddedResource Update="ApiErrorDescription.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApiErrorDescription.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

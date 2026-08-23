@@ -45,14 +45,8 @@ dotnet ef database update `
 
 // Add-Migration First -Project Diploma.Database.MsSql -Context DiplomaMsSqlDbContext
 // Update-Database -Project Diploma.Database.MsSql -Context DiplomaMsSqlDbContext
-public class DiplomaMsSqlDbContext(/*DbContextOptions options*/) : DiplomaDbContext(/*options*/)
+public class DiplomaMsSqlDbContext(DbContextOptions options) : DiplomaDbContext(options)
 {
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("Data Source=localhost,1436;Initial Catalog=Diploma;User ID=sa;Password=YourStrong!Passw0rd;Trust Server Certificate=True");
-        base.OnConfiguring(optionsBuilder);
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration<Error>(new ErrorEFConfiguration());

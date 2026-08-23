@@ -15,8 +15,6 @@
 
 	<ItemGroup>
 	  <Folder Include="ProjectManagers\Queries\" />
-	  <Folder Include="RecruitmentMessages\Queries\UseCases\" />
-	  <Folder Include="Recruitments\Queries\UseCases\" />
 	</ItemGroup>
 	
 </Project>

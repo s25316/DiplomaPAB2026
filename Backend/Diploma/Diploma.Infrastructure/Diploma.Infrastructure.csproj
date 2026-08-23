@@ -23,9 +23,4 @@
         <ProjectReference Include="..\Diploma.Database.MsSql\Diploma.Database.MsSql.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="RecruitmentMessages\QueryServices\" />
-      <Folder Include="Recruitments\QueryServices\" />
-    </ItemGroup>
-
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Base.Models.ValueObjects.Regony;
 using Diploma.API.Configurators;
 using Diploma.API.Controllers.Services;
+using Diploma.API.ExceptionHandlers;
 using Diploma.API.Extensions;
 using Diploma.API.GraphQL;
 using Diploma.Application;
@@ -30,6 +31,7 @@ public class Program
         builder.Services.AddHttpClient();
         builder.Services.AddMemoryCache();
         builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
         builder.Services.AddInfrastructureConfiguration(builder.Configuration);

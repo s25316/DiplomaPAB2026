@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Diploma.Application.Interfaces;
 using Diploma.Application.Interfaces.Blobs;
 using Diploma.Application.Interfaces.Database;
 using Diploma.Application.Interfaces.Generators;
@@ -11,10 +12,13 @@ using Diploma.Application.Persons.Commands.Authentication.MessageGenerators;
 using Diploma.Application.Persons.Commands.Authentication.Projections.RefreshTokens;
 using Diploma.Application.Persons.Commands.Interfaces;
 using Diploma.Application.Persons.Commands.Lifecycle.MessageGenerators;
+using Diploma.Application.Persons.Queries.Profile.Interfaces;
 using Diploma.Application.PersonUris.Queries.Interfaces;
 using Diploma.Application.ProjectRoles.Queries.Interfaces;
 using Diploma.Application.Projects.Queries.Interfaces;
 using Diploma.Application.RecruitmentMessages.Commands.Repositories;
+using Diploma.Application.RecruitmentMessages.Queries.Interfaces;
+using Diploma.Application.Recruitments.Queries.Interfaces;
 using Diploma.Database;
 using Diploma.Database.MsSql;
 using Diploma.Domain.Base.Events;
@@ -60,6 +64,7 @@ using Diploma.Infrastructure.Persons.Lifecycle.EventPublishers;
 using Diploma.Infrastructure.Persons.Lifecycle.LinkGenerators;
 using Diploma.Infrastructure.Persons.Lifecycle.MessageGenerators;
 using Diploma.Infrastructure.Persons.Profile.EventPublishers;
+using Diploma.Infrastructure.Persons.QueryServices;
 using Diploma.Infrastructure.PersonUris.QueryServices;
 using Diploma.Infrastructure.PersonUris.Repositories;
 using Diploma.Infrastructure.ProjectManagers.Repositories;
@@ -71,8 +76,11 @@ using Diploma.Infrastructure.Projects.QueryServices;
 using Diploma.Infrastructure.Projects.Repositories;
 using Diploma.Infrastructure.QueryBuilders.Persons;
 using Diploma.Infrastructure.QueryBuilders.Projects;
+using Diploma.Infrastructure.RecruitmentMessages.QueryServices;
 using Diploma.Infrastructure.RecruitmentMessages.Repositories;
+using Diploma.Infrastructure.Recruitments.QueryServices;
 using Diploma.Infrastructure.Recruitments.Repositories;
+using Diploma.Infrastructure.Services;
 using Diploma.Infrastructure.Services.Blobs;
 using Diploma.Infrastructure.Services.Database;
 using Diploma.Infrastructure.Services.Generators;
@@ -81,6 +89,7 @@ using Diploma.Infrastructure.Services.Security;
 using Diploma.Infrastructure.Services.Smtp;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -123,13 +132,11 @@ public static class Configuration
         services.Configure<AzureConfiguration>(configuration.GetSection(SECTION_AZURE));
 
 
-
-        services.AddDbContext<DiplomaDbContext, DiplomaMsSqlDbContext>();
-        /*services.AddDbContext<DiplomaDbContext, DiplomaMsSqlDbContext>((p, c) =>
+        services.AddDbContext<DiplomaDbContext, DiplomaMsSqlDbContext>((p, c) =>
         {
             var connectionString = p.GetRequiredService<IOptions<DatabaseConfiguration>>().Value.ConnectionString;
             c.UseSqlServer(connectionString);
-        });*/
+        });
 
         // JOBS
         services.AddQuartz();
@@ -146,8 +153,12 @@ public static class Configuration
         services.AddTransient<ProjectRoleEducationInstitutionQueryBuilder>();
         services.AddTransient<RecruitmentQueryBuilder>();
         services.AddTransient<RecruitmentMessageQueryBuilder>();
+        services.AddTransient<PersonEventQueryBuilder>();
 
         // APPLICATION SERVICES
+
+        // Errors
+        services.AddTransient<IErrorLogger, ErrorLogger>();
 
         // Blobs
         services.AddSingleton<BlobServiceClient>(p =>
@@ -215,6 +226,7 @@ public static class Configuration
 
         services.AddTransient<IPersonEmploymentRepository, PersonEmploymentRepository>();
         services.AddTransient<IPersonEmploymentQueryService, PersonEmploymentQueryService>();
+        services.AddTransient<IPersonEventQueryService, PersonEventQueryService>();
 
         services.AddPersonEventPublishers();
         services.AddPersonMessageGenerators();
@@ -232,6 +244,9 @@ public static class Configuration
         // RECRUITMENTS
         services.AddTransient<IRecruitmentRepository, RecruitmentRepository>();
         services.AddTransient<IRecruitmentMessageRepository, RecruitmentMessageRepository>();
+
+        services.AddTransient<IRecruitmentQueryService, RecruitmentQueryService>();
+        services.AddTransient<IRecruitmentMessageQueryService, RecruitmentMessageQueryService>();
 
         return services;
     }

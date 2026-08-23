@@ -1,11 +1,11 @@
 ﻿using Base.Exceptions;
-using GUS.REGON.Application.Interfaces;
+using Diploma.Application.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using static Base.Exceptions.ResourceException;
 
-namespace GUS.REGON.API.ExceptionHandlers;
+namespace Diploma.API.ExceptionHandlers;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {

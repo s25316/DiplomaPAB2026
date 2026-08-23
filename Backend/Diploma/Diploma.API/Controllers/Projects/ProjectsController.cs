@@ -2,7 +2,9 @@
 using Diploma.Application.Interfaces.Security;
 using Diploma.Application.Projects.Commands.UseCases;
 using Diploma.Application.Projects.Queries.UseCases;
+using Diploma.Application.Recruitments.Queries.UseCases;
 using Diploma.Models.Projects;
+using Diploma.Models.Recruitments;
 using HotChocolate.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -139,6 +141,33 @@ public class ProjectsController(
             ProjectDeleteResult.Failure.NotFound => NotFound(),
             ProjectDeleteResult.Failure.Forbidden => Forbid(),
             _ => throw new NotImplementedException($"Unknown type of {nameof(ProjectDeleteResult)}: {result.GetType()}"),
+        };
+    }
+
+
+    [Authorize]
+    [HttpGet("{projectId:guid}/messages")]
+    public async Task<IActionResult> CreateRecruitmentCreateAsync(
+        Guid projectId,
+        [FromQuery] RecruitmentQueryParameters queryParameters,
+        CancellationToken cancellationToken)
+    {
+        if (!User.TryGetNameIdentifier(out var personId))
+            return Unauthorized();
+
+        var result = await mediator.Send(new RecruitmentProjectGetHandler.Request
+        {
+            PersonId = personId.Value,
+            ProjectId = projectId,
+            Model = queryParameters,
+        }, cancellationToken);
+
+        return result switch
+        {
+            RecruitmentQueryResult.Success => Created(),
+            RecruitmentQueryResult.Failure.NotFound => NotFound(),
+            RecruitmentQueryResult.Failure.ProfileInactive => Conflict(),
+            _ => throw new NotImplementedException($"Unknown type of {nameof(RecruitmentQueryResult)}: {result.GetType()}"),
         };
     }
 }

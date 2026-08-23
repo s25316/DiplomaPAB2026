@@ -4,6 +4,7 @@ using Diploma.Domain.Persons.Aggregates;
 using Diploma.Domain.Projects.Aggregates;
 using Diploma.Domain.Recruitments.Aggregates;
 using Diploma.Infrastructure.QueryBuilders.Base;
+using Diploma.Models.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Diploma.Infrastructure.QueryBuilders.Projects;
@@ -36,6 +37,14 @@ public class RecruitmentMessageQueryBuilder(DiplomaDbContext context) : BaseQuer
     public RecruitmentMessageQueryBuilder WithProjectId(ProjectId item)
     {
         With(query => query.Where(i => i.Recruitment.ProjectId == item.Value));
+        return this;
+    }
+
+
+    public RecruitmentMessageQueryBuilder WithOrderBy(QueryParametersPagination pagination)
+    {
+        With(query => query.OrderBy(i => i.CreatedAt));
+        Paginate(pagination);
         return this;
     }
 }
