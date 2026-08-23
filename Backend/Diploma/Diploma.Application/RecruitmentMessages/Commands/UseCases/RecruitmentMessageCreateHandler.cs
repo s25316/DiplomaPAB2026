@@ -58,7 +58,7 @@ public class RecruitmentMessageCreateHandler(
         ArgumentNullException.ThrowIfNull(recruitment.Id);
         var messageId = await recruitmentMessageRepository.CreateAsync(new RecruitmentMessageInput
         {
-            PersonId = recruitment.PersonId,
+            PersonId = request.PersonId,
             RecruitmentId = recruitment.Id,
             Message = request.Model.Message,
             File = request.Model.File?.FileName,

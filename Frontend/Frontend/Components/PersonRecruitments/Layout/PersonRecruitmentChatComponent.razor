@@ -52,7 +52,6 @@
                                 </button>
                             </div>
                         }
-
                         @if (_messages == null || !_messages.Any())
                         {
                             <div class="text-center text-muted my-4">
@@ -61,30 +60,36 @@
                         }
                         else
                         {
-
                             <div class="d-flex flex-column gap-3">
                                 @foreach (var msg in _messages)
                                 {
-                                    <div class="p-3 bg-white border rounded shadow-sm w-75 align-self-start">
-                                        <p class="mb-2 text-dark small" style="white-space: pre-wrap;">@msg.Message</p>
+                                    // Sprawdzamy czy wiadomość jest Twoja
+                                    bool isMyMessage = msg.PersonId == _currentPersonId;
 
-                                        @if (!string.IsNullOrEmpty(msg.File))
-                                        {
-                                            <div class="mb-2">
-                                                <button class="btn btn-link btn-sm p-0 text-decoration-none small" @onclick="() => DownloadFileAsync(msg.RecruitmentMessageId)">
-                                                    <i class="bi bi-paperclip me-1"></i> Pobierz załącznik: @msg.File
-                                                </button>
+                                    // TWOJE PO PRAWEJ (ms-auto, niebieskie), INNE PO LEWEJ (me-auto, białe)
+                                    <div class="d-flex w-100">
+                                        <div class="p-3 border rounded shadow-sm @(isMyMessage ? "ms-auto bg-primary text-white" : "me-auto bg-white text-dark")" style="max-width: 75%; min-width: 40%;">
+
+                                            <p class="mb-2 small" style="white-space: pre-wrap;">@msg.Message</p>
+
+                                            @if (!string.IsNullOrEmpty(msg.File))
+                                            {
+                                                <div class="mb-2">
+                                                    <button class="btn btn-link btn-sm p-0 text-decoration-none small @(isMyMessage ? "text-light" : "")" @onclick="() => DownloadFileAsync(msg.RecruitmentMessageId)">
+                                                        <i class="bi bi-paperclip me-1"></i> Pobierz załącznik: @msg.File
+                                                    </button>
+                                                </div>
+                                            }
+
+                                            <!-- Stopka wiadomości -->
+                                            <div class="d-flex justify-content-between align-items-center @(isMyMessage ? "text-white-50 border-light-subtle" : "text-muted border-top") border-top pt-2 mt-2" style="font-size: 0.75rem;">
+                                                <span class="fw-semibold @(isMyMessage ? "text-light" : "text-secondary")">
+                                                    <i class="bi bi-person-fill me-1"></i> @GetSenderName(msg.PersonId)
+                                                </span>
+                                                <span>
+                                                    @msg.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                                </span>
                                             </div>
-                                        }
-
-                                        <!-- Stopka wiadomości: Kto wysłał (lewa) + Data (prawa) -->
-                                        <div class="d-flex justify-content-between align-items-center text-muted border-top pt-2 mt-2" style="font-size: 0.75rem;">
-                                            <span class="fw-semibold text-secondary">
-                                                <i class="bi bi-person-fill me-1"></i> @GetSenderName(msg.PersonId)
-                                            </span>
-                                            <span>
-                                                @msg.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
-                                            </span>
                                         </div>
                                     </div>
                                 }
@@ -138,6 +143,9 @@
 }
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthStateTask { get; set; }
+
     [Parameter] public bool IsOpen { get; set; }
     [Parameter] public RecruitmentDto? Recruitment { get; set; }
     [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
@@ -162,7 +170,25 @@
     private Guid? _previousRecruitmentId;
     private bool _shouldScrollToBottom = false;
 
-    private const long MaxFileSize = 10 * 1024 * 1024;
+    private const long MaxFileSize = 25 * 1024 * 1024;
+
+    private Guid _currentPersonId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _currentPersonId = await GetCurrentPersonIdAsync();
+    }
+
+    private async Task<Guid> GetCurrentPersonIdAsync()
+    {
+        if (AuthStateTask == null) return Guid.Empty;
+
+        var authState = await AuthStateTask;
+        var user = authState?.GetPersonId() ?? throw new Exception();
+
+        return user;
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -216,7 +242,6 @@
                 {
                     var fetchedItems = result.Items?.OrderBy(m => m.CreatedAt).ToList() ?? new();
 
-                    // Pobierz tożsamości dla nowo załadowanych wiadomości
                     await FetchMissingIdentitiesAsync(client, fetchedItems);
 
                     _messages = fetchedItems;
@@ -265,7 +290,6 @@
                 {
                     var olderItems = result.Items?.OrderBy(m => m.CreatedAt).ToList() ?? new();
 
-                    // Pobierz tożsamości dla starszych wiadomości
                     await FetchMissingIdentitiesAsync(client, olderItems);
 
                     if (olderItems.Any())
@@ -359,7 +383,7 @@
         _selectedFile = e.File;
         if (_selectedFile.Size > MaxFileSize)
         {
-            _errorMessage = "Wybrany plik jest za duży. Maksymalny rozmiar to 10 MB.";
+            _errorMessage = "Wybrany plik jest za duży. Maksymalny rozmiar to 25 MB.";
             _selectedFile = null;
         }
         else
