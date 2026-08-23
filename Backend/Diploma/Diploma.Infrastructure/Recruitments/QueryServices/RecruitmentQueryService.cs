@@ -88,6 +88,7 @@ public class RecruitmentQueryService(
             resultItems.Add(new RecruitmentDto
             {
                 RecruitmentId = databaseItem.RecruitmentId,
+                PersonId = databaseItem.PersonId,
                 Project = project,
                 ProjectRoles = projectRoles,
                 Status = new Models.Dictionaries.DictionaryItem<int>

@@ -58,6 +58,7 @@ public sealed record RecruitmentDto
     }
 
     public required Guid RecruitmentId { get; init; }
+    public required Guid PersonId { get; init; }
     public required DictionaryItem<int> Status { get; init; }
     public required ProjectRecruitmentDto? Project { get; init; }
     public required IEnumerable<ProjectRoleRecruitmentDto> ProjectRoles { get; init; }

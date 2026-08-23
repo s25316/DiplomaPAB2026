@@ -108,43 +108,56 @@
                                                 </button>
                                             </div>
                                         </div>
-
-                                        <!-- Rozwijana sekcja z wybranymi rolami -->
+                                        <!-- Rozwijana sekcja z profilem i rolami -->
                                         @if (isExpanded)
                                         {
                                             <div @onclick:stopPropagation="true">
                                                 <hr class="my-3 text-muted" />
-                                                <div class="bg-light p-3 rounded border">
-                                                    <h6 class="text-primary fw-bold mb-2 small text-uppercase">Wybrane role w tym zgłoszeniu:</h6>
 
-                                                    @if (recruitment.ProjectRoles != null && recruitment.ProjectRoles.Any())
-                                                    {
-                                                        <div class="list-group">
-                                                            @foreach (var role in recruitment.ProjectRoles)
-                                                            {
-                                                                <div class="list-group-item bg-white p-2 mb-2 border rounded shadow-sm">
-                                                                    <div class="fw-bold text-dark small"><i class="bi bi-person-badge me-1 text-secondary"></i> @role.Title</div>
-                                                                    <div class="text-muted small mb-1">@role.Description</div>
+                                                <div class="d-flex flex-column gap-3">
+                                                    <!-- Sekcja ról -->
+                                                    <div class="bg-light p-3 rounded border">
+                                                        <h6 class="text-primary fw-bold mb-2 small text-uppercase">Wybrane role w tym zgłoszeniu:</h6>
 
-                                                                    @if (role.Disciplines != null && role.Disciplines.Any())
-                                                                    {
-                                                                        <div class="d-flex flex-wrap gap-1 mt-1">
-                                                                            @foreach (var disc in role.Disciplines)
-                                                                            {
-                                                                                <span class="badge bg-light text-secondary border" style="font-size: 0.7rem;">
-                                                                                    @disc.Discipline.Name
-                                                                                </span>
-                                                                            }
-                                                                        </div>
-                                                                    }
-                                                                </div>
-                                                            }
+                                                        @if (recruitment.ProjectRoles != null && recruitment.ProjectRoles.Any())
+                                                        {
+                                                            <div class="list-group">
+                                                                @foreach (var role in recruitment.ProjectRoles)
+                                                                {
+                                                                    <div class="list-group-item bg-white p-2 mb-2 border rounded shadow-sm">
+                                                                        <div class="fw-bold text-dark small"><i class="bi bi-person-badge me-1 text-secondary"></i> @role.Title</div>
+                                                                        <div class="text-muted small mb-1">@role.Description</div>
+
+                                                                        @if (role.Disciplines != null && role.Disciplines.Any())
+                                                                        {
+                                                                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                                                                @foreach (var disc in role.Disciplines)
+                                                                                {
+                                                                                    <span class="badge bg-light text-secondary border" style="font-size: 0.7rem;">
+                                                                                        @disc.Discipline.Name
+                                                                                    </span>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted small fst-italic">Brak powiązanych ról dla tego zgłoszenia.</span>
+                                                        }
+                                                    </div>
+
+                                                    <!-- Sekcja profilu użytkownika / kandydata -->
+                                                    <div class="bg-light p-3 rounded border">
+                                                        <h6 class="text-primary fw-bold mb-2 small text-uppercase">
+                                                            <i class="bi bi-person-circle me-1"></i> Profil kandydata:
+                                                        </h6>
+                                                        <div class="bg-white p-3 rounded border shadow-sm">
+                                                            <ProfileOverviewComponent PersonId="@recruitment.PersonId" />
                                                         </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="text-muted small fst-italic">Brak powiązanych ról dla tego zgłoszenia.</span>
-                                                    }
+                                                    </div>
                                                 </div>
                                             </div>
                                         }
