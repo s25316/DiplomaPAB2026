@@ -191,14 +191,6 @@
                     <DataAnnotationsValidator />
                     <div class="modal-body">
 
-                        @if (!string.IsNullOrEmpty(_errorMessage))
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
-                                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
-                            </div>
-                        }
-
                         <ValidationSummary class="text-danger mb-3" />
 
                         @if (!_isEditing)
@@ -247,6 +239,15 @@
                                 <label class="form-label">Numer REGON pracodawcy</label>
                                 <InputText class="form-control" @bind-Value="_currentModel.Regon" disabled />
                                 <div class="form-text">Zmiana numeru REGON w trybie edycji jest zablokowana.</div>
+                            </div>
+                        }
+
+                        
+                        @if (!string.IsNullOrEmpty(_errorMessage))
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                                <button type="button" class="btn-close" @onclick="() => _errorMessage = null"></button>
                             </div>
                         }
 

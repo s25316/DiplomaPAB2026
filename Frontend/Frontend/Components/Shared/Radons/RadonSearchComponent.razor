@@ -50,7 +50,7 @@
         </div>
     }
 
-    <!-- KROK 3: Formularz Semestrów i Roków (używamy lokalnego modelu z 'set') -->
+    <!-- KROK 3: Formularz Semestrów i Roków -->
     @if (_selectedCourse != null)
     {
         <div class="card border-success shadow mb-4">
@@ -61,6 +61,14 @@
                 <EditForm Model="_formModel" OnValidSubmit="HandleSubmit">
                     <DataAnnotationsValidator />
                     <ValidationSummary class="alert alert-danger" />
+
+                    <!-- DODANY KOMUNIKAT BŁĘDU TUTAJ (na dole formularza) -->
+                    @if (!string.IsNullOrEmpty(_errorMessage))
+                    {
+                        <div class="alert alert-danger mt-3 mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@_errorMessage
+                        </div>
+                    }
 
                     <h6 class="text-primary font-weight-bold">Dane początkowe (Start)</h6>
                     <div class="row g-3 mb-3">
@@ -201,7 +209,6 @@
 
     private async Task HandleSubmit()
     {
-        // Tworzymy oryginalny kontrakt z 'init' do wysyłki do API
         var apiRequest = new PersonEducationCreateRequest
         {
             EducationCourseId = _formModel.EducationCourseId,
@@ -229,7 +236,7 @@
             var response = await client.PostAsJsonAsync("api/person/profile/educations", apiRequest);
             if (response.IsSuccessStatusCode)
             {
-                // Powiadamiamy komponent nadrzędny o sukcesie
+                _errorMessage = null; // Czyszczenie błędu przy sukcesie
                 await OnEducationCreated.InvokeAsync();
             }
             else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
