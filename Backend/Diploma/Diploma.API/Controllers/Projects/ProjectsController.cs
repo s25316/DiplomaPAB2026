@@ -146,7 +146,7 @@ public class ProjectsController(
 
 
     [Authorize]
-    [HttpGet("{projectId:guid}/messages")]
+    [HttpGet("{projectId:guid}/recruitment")]
     public async Task<IActionResult> CreateRecruitmentCreateAsync(
         Guid projectId,
         [FromQuery] RecruitmentQueryParameters queryParameters,
@@ -164,7 +164,7 @@ public class ProjectsController(
 
         return result switch
         {
-            RecruitmentQueryResult.Success => Created(),
+            RecruitmentQueryResult.Success success => Ok(success.Response),
             RecruitmentQueryResult.Failure.NotFound => NotFound(),
             RecruitmentQueryResult.Failure.ProfileInactive => Conflict(),
             _ => throw new NotImplementedException($"Unknown type of {nameof(RecruitmentQueryResult)}: {result.GetType()}"),

@@ -32,9 +32,9 @@
         </div>
 
         <!-- Przyciski akcji roli -->
-        <div class="btn-group btn-group-sm flex-shrink-0">
-            <button class="btn btn-warning text-dark" @onclick="() => OnEdit.InvokeAsync(Role)">Edytuj</button>
-            <button class="btn btn-danger" @onclick="() => OnDelete.InvokeAsync(Role.ProjectRoleId)">Usuń</button>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <button class="btn btn-warning btn-sm me-1 text-dark" @onclick="() => OnEdit.InvokeAsync(Role)">Edytuj</button>
+            <button class="btn btn-danger btn-sm" @onclick="() => OnDelete.InvokeAsync(Role.ProjectRoleId)">Usuń</button>
         </div>
     </div>
 

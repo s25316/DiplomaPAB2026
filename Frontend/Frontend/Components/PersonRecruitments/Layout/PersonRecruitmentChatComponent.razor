@@ -1,4 +1,5 @@
-﻿@using Diploma.Models.RecruitmentMessages
+﻿@using Diploma.Models.Persons.Profile
+@using Diploma.Models.RecruitmentMessages
 @using Diploma.Models.Recruitments
 @using Diploma.Models.Shared
 @inject IJSRuntime JSRuntime
@@ -60,23 +61,30 @@
                         }
                         else
                         {
+
                             <div class="d-flex flex-column gap-3">
                                 @foreach (var msg in _messages)
                                 {
                                     <div class="p-3 bg-white border rounded shadow-sm w-75 align-self-start">
-                                        <p class="mb-1 text-dark small" style="white-space: pre-wrap;">@msg.Message</p>
+                                        <p class="mb-2 text-dark small" style="white-space: pre-wrap;">@msg.Message</p>
 
                                         @if (!string.IsNullOrEmpty(msg.File))
                                         {
-                                            <div class="mb-1">
+                                            <div class="mb-2">
                                                 <button class="btn btn-link btn-sm p-0 text-decoration-none small" @onclick="() => DownloadFileAsync(msg.RecruitmentMessageId)">
                                                     <i class="bi bi-paperclip me-1"></i> Pobierz załącznik: @msg.File
                                                 </button>
                                             </div>
                                         }
 
-                                        <div class="text-muted text-end" style="font-size: 0.7rem;">
-                                            @msg.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                        <!-- Stopka wiadomości: Kto wysłał (lewa) + Data (prawa) -->
+                                        <div class="d-flex justify-content-between align-items-center text-muted border-top pt-2 mt-2" style="font-size: 0.75rem;">
+                                            <span class="fw-semibold text-secondary">
+                                                <i class="bi bi-person-fill me-1"></i> @GetSenderName(msg.PersonId)
+                                            </span>
+                                            <span>
+                                                @msg.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                            </span>
                                         </div>
                                     </div>
                                 }
@@ -140,6 +148,7 @@
     private ElementReference _messagesEndRef;
 
     private List<RecruitmentMessageDto> _messages = new();
+    private Dictionary<Guid, PersonIdentityDataDto?> _personIdentityDictionary = [];
     private bool _isLoading = false;
     private bool _isLoadingMore = false;
     private bool _isSending = false;
@@ -164,12 +173,14 @@
             _newMessageText = string.Empty;
             _currentPage = 1;
             _messages.Clear();
+            _personIdentityDictionary.Clear();
             await LoadMessagesAsync();
         }
         else if (!IsOpen)
         {
             _previousRecruitmentId = null;
             _messages.Clear();
+            _personIdentityDictionary.Clear();
             _selectedFile = null;
         }
     }
@@ -204,6 +215,10 @@
                 if (result != null)
                 {
                     var fetchedItems = result.Items?.OrderBy(m => m.CreatedAt).ToList() ?? new();
+
+                    // Pobierz tożsamości dla nowo załadowanych wiadomości
+                    await FetchMissingIdentitiesAsync(client, fetchedItems);
+
                     _messages = fetchedItems;
                     _hasMoreMessages = fetchedItems.Count >= PageSize;
 
@@ -245,9 +260,13 @@
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<Response<RecruitmentMessageDto>>();
+
                 if (result != null)
                 {
                     var olderItems = result.Items?.OrderBy(m => m.CreatedAt).ToList() ?? new();
+
+                    // Pobierz tożsamości dla starszych wiadomości
+                    await FetchMissingIdentitiesAsync(client, olderItems);
 
                     if (olderItems.Any())
                     {
@@ -274,19 +293,60 @@
         }
     }
 
+    private async Task FetchMissingIdentitiesAsync(HttpClient client, List<RecruitmentMessageDto> messages)
+    {
+        var loadedPersonIds = messages.Select(i => i.PersonId).ToHashSet();
+        var existingPersonIds = _personIdentityDictionary.Keys.ToHashSet();
+        var newPersonIds = loadedPersonIds.Except(existingPersonIds).ToHashSet();
+
+        foreach (var personId in newPersonIds)
+        {
+            try
+            {
+                var identityResponse = await client.GetAsync($"api/persons/{personId}/identity");
+
+                if (identityResponse.IsSuccessStatusCode)
+                {
+                    var identityDto = await identityResponse.Content.ReadFromJsonAsync<PersonIdentityDataDto>();
+                    _personIdentityDictionary[personId] = identityDto;
+                }
+                else
+                {
+                    _personIdentityDictionary[personId] = null;
+                }
+            }
+            catch
+            {
+                _personIdentityDictionary[personId] = null;
+            }
+        }
+    }
+
+    private string GetSenderName(Guid personId)
+    {
+        if (_personIdentityDictionary.TryGetValue(personId, out var identity) && identity != null)
+        {
+            var name = !string.IsNullOrWhiteSpace(identity.Name) ? identity.Name : "";
+            var surname = !string.IsNullOrWhiteSpace(identity.Surname) ? identity.Surname : "";
+
+            var fullName = $"{name} {surname}".Trim();
+            return string.IsNullOrEmpty(fullName) ? "Nieznany użytkownik" : fullName;
+        }
+
+        return "Ładowanie danych...";
+    }
+
     private async Task ScrollToBottomAsync()
     {
         try
         {
-            // Poczekaj chwilę, aż Bootstrap skończy animację pokazywania modala
             await Task.Delay(150);
-
             await JSRuntime.InvokeVoidAsync("eval", @"
-            const container = document.querySelector('.modal-body');
-            if (container) {
-                container.scrollTop = container.scrollHeight;
-            }
-        ");
+                const container = document.querySelector('.modal-body');
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            ");
         }
         catch
         {

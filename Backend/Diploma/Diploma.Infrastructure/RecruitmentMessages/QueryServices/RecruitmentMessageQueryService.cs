@@ -35,6 +35,7 @@ public class RecruitmentMessageQueryService(
                 RecruitmentMessageId = i.RecruitmentMessageId,
                 Message = i.Message,
                 File = i.File,
+                PersonId = i.PersonId,
                 CreatedAt = i.CreatedAt,
             }).ToList(),
             Pagination = new ResponsePagination

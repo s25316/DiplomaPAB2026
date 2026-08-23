@@ -5,13 +5,14 @@
 
 @inject IRadonInstitutionService InstitutionService
 @inject IBackendHttpClientFactory ClientFactory
+@inject IJSRuntime JSRuntime
 
 <div class="card shadow-sm @(IsSelected ? "border-primary" : "border-0")">
     <div class="card-body">
         <div class="row align-items-center">
 
             <!-- Główny układ: Tytuł, statusy -->
-            <div class="col-md-8" style="cursor: pointer;" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
+            <div class="col-md-7" style="cursor: pointer;" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
                 <h5 class="text-dark mb-1">
                     <i class="bi bi-folder2-open me-1 text-secondary"></i> <strong>@Project.Title</strong>
                 </h5>
@@ -24,9 +25,12 @@
                     </span>
                 </div>
             </div>
-
+            
             <!-- Przyciski akcji projektu -->
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <button class="btn btn-secondary btn-sm me-1 text-white" @onclick="OpenRecruitmentsInNewTab" title="Otwórz rekrutacje w nowej karcie">
+                    <i class="bi bi-box-arrow-up-right me-1"></i> Rekrutacje
+                </button>
                 <button class="btn btn-info btn-sm me-1 text-white" @onclick="() => OnToggleDetails.InvokeAsync(Project.ProjectId)">
                     @(IsSelected ? "Ukryj" : "Szczegóły")
                 </button>
@@ -202,6 +206,7 @@
     [Parameter] public EventCallback<ProjectDto> OnEdit { get; set; }
     [Parameter] public EventCallback<Guid> OnDelete { get; set; }
     [Parameter] public EventCallback<ProjectDto> OnProjectUpdated { get; set; }
+    [Parameter] public EventCallback OnOpenRecruitments { get; set; }
 
     private bool isLoadingRoles = false;
     private bool rolesLoaded = false;
@@ -258,6 +263,19 @@
             {
                 await LoadInstitutionsAsync();
             }
+        }
+    }
+
+    private async Task OpenRecruitmentsInNewTab()
+    {
+        if (OnOpenRecruitments.HasDelegate)
+        {
+            await OnOpenRecruitments.InvokeAsync();
+        }
+        else
+        {
+            var url = $"/project/{Project.ProjectId}/recruitments";
+            await JSRuntime.InvokeVoidAsync("open", url, "_blank");
         }
     }
 

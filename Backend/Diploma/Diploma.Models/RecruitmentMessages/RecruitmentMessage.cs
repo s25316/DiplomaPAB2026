@@ -18,6 +18,7 @@ public abstract record RecruitmentMessageQueryResult
 public class RecruitmentMessageDto
 {
     public required Guid RecruitmentMessageId { get; init; }
+    public required Guid PersonId { get; init; }
     public required string Message { get; init; }
     public required string? File { get; init; }
     public required DateTimeOffset CreatedAt { get; init; }
