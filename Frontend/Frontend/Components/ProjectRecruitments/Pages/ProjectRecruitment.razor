@@ -83,7 +83,6 @@
                                             <div class="col-md-7">
                                                 <h5 class="text-dark mb-1">
                                                     <i class="bi bi-person-lines-fill me-1 text-secondary"></i>
-                                                    <!-- Wyświetlenie imienia i nazwiska kandydata pobranego z Twojej metody -->
                                                     <strong>@GetPersonDta(recruitment.PersonId)</strong>
                                                 </h5>
                                                 <p class="text-muted small mb-1">
@@ -102,8 +101,23 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Akcje: Komunikacja oraz Szczegóły -->
-                                            <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 align-items-center">
+                                            <!-- Akcje: Zmiana statusu, Komunikacja oraz Szczegóły -->
+                                            <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex flex-wrap justify-content-md-end gap-2 align-items-center">
+                                                <!-- Szybka zmiana statusu -->
+                                                <div class="d-flex align-items-center gap-1" @onclick:stopPropagation="true">
+                                                    <select class="form-select form-select-sm w-auto" @onchange="(e) => OnStatusChangeRequested(recruitment.RecruitmentId, e)">
+                                                        @if (_statuses != null)
+                                                        {
+                                                            @foreach (var status in _statuses)
+                                                            {
+                                                                <option value="@status.Code" selected="@(status.Code == recruitment.Status.Code)">
+                                                                    @status.Name
+                                                                </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+
                                                 <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => OpenChat(recruitment)">
                                                     <i class="bi bi-chat-dots me-1"></i> Komunikacja
                                                 </button>
@@ -113,6 +127,7 @@
                                                 </button>
                                             </div>
                                         </div>
+
                                         <!-- Rozwijana sekcja z profilem i rolami -->
                                         @if (isExpanded)
                                         {
@@ -317,7 +332,6 @@
         }
     }
 
-
     private string GetPersonDta(Guid personId)
     {
         if (_personIdentityDictionary.TryGetValue(personId, out var identity) && identity != null)
@@ -332,7 +346,6 @@
         return "Ładowanie danych...";
     }
 
-    
     private async Task FetchMissingIdentitiesAsync(HttpClient client, List<RecruitmentDto> recruitments)
     {
         var loadedPersonIds = recruitments.Select(i => i.PersonId).ToHashSet();
@@ -359,6 +372,49 @@
             {
                 _personIdentityDictionary[personId] = null;
             }
+        }
+    }
+
+    private async Task UpdateRecruitmentStatusAsync(Guid recruitmentId, int newStatusId)
+    {
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var body = new { StatusId = newStatusId };
+            var response = await client.PutAsJsonAsync($"api/recruitments/{recruitmentId}", body);
+
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadRecruitmentsAsync();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                _errorMessage = "Nie znaleziono rekrutacji do aktualizacji.";
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+            {
+                _errorMessage = "Brak uprawnień do zmiany statusu tej rekrutacji.";
+            }
+            else
+            {
+                _errorMessage = "Nie udało się zaktualizować statusu rekrutacji.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem podczas aktualizacji.";
+        }
+    }
+
+    private async Task OnStatusChangeRequested(Guid recruitmentId, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var newStatusId))
+        {
+            await UpdateRecruitmentStatusAsync(recruitmentId, newStatusId);
         }
     }
 
