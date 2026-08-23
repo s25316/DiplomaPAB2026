@@ -30,7 +30,7 @@ public class PersonEventController(IMediator mediator) : ControllerBase
         {
             PersonEventQueryResult.Success success => Ok(success.Response),
             PersonEventQueryResult.Failure.NotFound => NotFound(),
-            PersonEventQueryResult.Failure.ProfileInactive => Conflict(),
+            PersonEventQueryResult.Failure.ProfileInactive => Forbid(),
             _ => throw new NotImplementedException($"Unknown type of {nameof(PersonEventQueryResult)}: {result.GetType()}"),
         };
     }

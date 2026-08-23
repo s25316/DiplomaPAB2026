@@ -52,6 +52,12 @@
                             </button>
 
                             <button type="button"
+                                    class="list-group-item list-group-item-action @(_activeTab == ProfileTab.Events ? "active" : "")"
+                                    @onclick="() => _activeTab = ProfileTab.Events">
+                                <i class="bi bi-link-45deg me-2"></i> Zdarzenia profilu
+                            </button>
+
+                            <button type="button"
                                     class="list-group-item list-group-item-action text-danger @(_activeTab == ProfileTab.DangerZone ? "active bg-danger text-white" : "")"
                                     @onclick="() => _activeTab = ProfileTab.DangerZone">
                                 <i class="bi bi-exclamation-triangle me-2"></i> Usuń konto
@@ -84,6 +90,9 @@
                             case ProfileTab.Links:
                                 <ProfileLinksComponent />
                                 break;
+                            case ProfileTab.Events:
+                                <ProfileEventsComponent />
+                                break;
                             case ProfileTab.DangerZone:
                                 <ProfileDeleteAccountComponent />
                                 break;
@@ -111,7 +120,8 @@
         Experience,
         Education,
         Links,
-        DangerZone
+        DangerZone,
+        Events
     }
 
     private ProfileTab _activeTab = ProfileTab.Overview;

@@ -20,4 +20,5 @@ public sealed class PersonEventDto
     public required Guid PersonEventId { get; init; }
     public required int Code { get; init; }
     public required string Name { get; init; }
+    public required DateTimeOffset CreatedAt { get; init; }
 }

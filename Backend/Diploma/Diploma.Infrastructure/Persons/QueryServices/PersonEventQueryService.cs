@@ -35,6 +35,7 @@ public class PersonEventQueryService(
                 PersonEventId = i.PersonEventId,
                 Code = SharedPersonEvent.FromId(i.PersonEventTypeId).Id,
                 Name = SharedPersonEvent.FromId(i.PersonEventTypeId).Name,
+                CreatedAt = i.CreatedAt,
             }).ToList(),
             Pagination = new ResponsePagination
             {
