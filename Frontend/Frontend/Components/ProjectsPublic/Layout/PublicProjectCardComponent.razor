@@ -130,8 +130,7 @@
                             }
                         </div>
                     }
-
-                    <!-- Sekcja ról w projekcie (tylko odczyt) -->
+                    <!-- Sekcja ról w projekcie -->
                     <div class="mb-4">
                         <h6 class="text-primary fw-bold mb-2">Role w projekcie</h6>
 
@@ -152,7 +151,27 @@
                             <div class="list-group">
                                 @foreach (var role in projectRoles)
                                 {
-                                    <PublicProjectRoleItemComponent Role="role" Institutions="_institutionsList" />
+                                    <div class="list-group-item p-2 mb-2 border rounded shadow-sm">
+                                        <!-- Wyświetlenie komponentu roli -->
+                                        <PublicProjectRoleItemComponent Role="role" Institutions="_institutionsList" />
+
+                                        <!-- Opcja wyboru roli do rekrutacji (widoczna gdy formularz rekrutacji jest otwarty) -->
+                                        @if (role.IsAvailableRecruitment && _isRecruitmentFormOpen)
+                                        {
+                                            var isSelectedRole = _selectedProjectRoleIds.Contains(role.ProjectRoleId);
+                                            <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center bg-light p-2 rounded">
+                                                <span class="small text-muted">
+                                                    <i class="bi bi-info-circle me-1"></i> Aplikuj na tę konkretną rolę
+                                                </span>
+                                                <button type="button"
+                                                        class="btn btn-sm @(isSelectedRole ? "btn-success" : "btn-outline-success")"
+                                                        @onclick="() => ToggleRoleSelection(role.ProjectRoleId)">
+                                                    <i class="bi @(isSelectedRole ? "bi-check-circle-fill" : "bi-plus-circle") me-1"></i>
+                                                    @(isSelectedRole ? "Wybrano do aplikacji" : "Wybierz tę rolę")
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
                                 }
                             </div>
                         }
@@ -161,6 +180,67 @@
                             <p class="text-muted small fst-italic mb-0">Brak zdefiniowanych ról dla tego projektu.</p>
                         }
                     </div>
+
+                    <AuthorizeView>
+                    <!-- Sekcja rekrutacji do projektu -->
+                        @if (Project.IsAvailableRecruitment && Project.IsRecruted.HasValue && !Project.IsRecruted.Value)
+                    {
+                        <div class="mb-4 pt-3 border-top">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="text-success fw-bold mb-0"><i class="bi bi-person-plus me-1"></i> Rekrutacja</h6>
+                                <button class="btn btn-outline-success btn-sm" @onclick="ToggleRecruitmentForm">
+                                    <i class="bi @(_isRecruitmentFormOpen ? "bi-chevron-up" : "bi-chevron-down") me-1"></i>
+                                    @(_isRecruitmentFormOpen ? "Zamknij formularz" : "Aplikuj do projektu")
+                                </button>
+                            </div>
+
+                            @if (_isRecruitmentFormOpen)
+                            {
+                                <div class="card card-body bg-light border-success mt-2 shadow-sm">
+                                    @if (!string.IsNullOrEmpty(_recruitmentErrorMessage))
+                                    {
+                                        <div class="alert alert-danger py-1 px-2 small mb-2">@_recruitmentErrorMessage</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(_recruitmentSuccessMessage))
+                                    {
+                                        <div class="alert alert-success py-1 px-2 small mb-2">@_recruitmentSuccessMessage</div>
+                                    }
+
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold text-secondary">Wybierz role, na które aplikujesz:</label>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            @if (!projectRoles.Any())
+                                            {
+                                                <span class="text-muted small fst-italic">Brak ról dostępnych do wyboru.</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold text-secondary">Wiadomość / List motywacyjny:</label>
+                                        <textarea class="form-control form-control-sm" rows="3" @bind="_recruitmentMessage" placeholder="Napisz kilka słów do rekrutera..."></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-secondary">Załącznik (np. CV w formacie PDF):</label>
+                                        <InputFile class="form-control form-control-sm" OnChange="OnFileSelected" />
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button class="btn btn-outline-secondary btn-sm" @onclick="ToggleRecruitmentForm">Anuluj</button>
+                                        <button class="btn btn-success btn-sm px-3" @onclick="SubmitRecruitmentAsync" disabled="@_isSubmittingRecruitment">
+                                            @if (_isSubmittingRecruitment)
+                                            {
+                                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                            }
+                                            Wyślij zgłoszenie
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        }
+                    </AuthorizeView>
 
                     <!-- Stopka szczegółów -->
                     <div class="d-flex justify-content-between align-items-center pt-2 border-top text-muted small">
@@ -194,6 +274,15 @@
     private Institution? _selectedInstitution;
     private string? roleErrorMessage;
 
+    // --- Stan formularza rekrutacji ---
+    private bool _isRecruitmentFormOpen = false;
+    private string _recruitmentMessage = string.Empty;
+    private IBrowserFile? _recruitmentFile;
+    private List<Guid> _selectedProjectRoleIds = new();
+    private bool _isSubmittingRecruitment = false;
+    private string? _recruitmentErrorMessage;
+    private string? _recruitmentSuccessMessage;
+
     protected override async Task OnParametersSetAsync()
     {
         var currentInstitutionIdsHash = Project.EductionInstitutionIds != null
@@ -206,6 +295,12 @@
             projectRoles.Clear();
             _selectedInstitutionId = null;
             _selectedInstitution = null;
+            _isRecruitmentFormOpen = false;
+            _selectedProjectRoleIds.Clear();
+            _recruitmentFile = null;
+            _recruitmentMessage = string.Empty;
+            _recruitmentErrorMessage = null;
+            _recruitmentSuccessMessage = null;
             lastLoadedProjectId = Project.ProjectId;
         }
 
@@ -230,7 +325,7 @@
         }
     }
 
-    private async Task ToggleInstitutionDetails(Guid institutionId, Institution? institution)
+    private void ToggleInstitutionDetails(Guid institutionId, Institution? institution)
     {
         if (_selectedInstitutionId == institutionId)
         {
@@ -247,6 +342,100 @@
     {
         _selectedInstitutionId = null;
         _selectedInstitution = null;
+    }
+
+    // --- Metody obsługi rekrutacji ---
+    private void ToggleRecruitmentForm()
+    {
+        _isRecruitmentFormOpen = !_isRecruitmentFormOpen;
+        _recruitmentErrorMessage = null;
+        _recruitmentSuccessMessage = null;
+    }
+
+    private void ToggleRoleSelection(Guid roleId)
+    {
+        if (_selectedProjectRoleIds.Contains(roleId))
+        {
+            _selectedProjectRoleIds.Remove(roleId);
+        }
+        else
+        {
+            _selectedProjectRoleIds.Add(roleId);
+        }
+    }
+
+    private void OnFileSelected(InputFileChangeEventArgs e)
+    {
+        _recruitmentFile = e.File;
+    }
+
+    private async Task SubmitRecruitmentAsync()
+    {
+        if (!_selectedProjectRoleIds.Any())
+        {
+            _recruitmentErrorMessage = "Wybierz przynajmniej jedną rolę projektową.";
+            return;
+        }
+
+        if (_recruitmentFile == null)
+        {
+            _recruitmentErrorMessage = "Musisz dodać plik załącznika (np. CV).";
+            return;
+        }
+
+        _isSubmittingRecruitment = true;
+        _recruitmentErrorMessage = null;
+        _recruitmentSuccessMessage = null;
+
+        var client = await ClientFactory.CreateAuthorizedClientAsync();
+
+
+        try
+        {
+            using var content = new MultipartFormDataContent();
+
+            foreach (var roleId in _selectedProjectRoleIds)
+            {
+                content.Add(new StringContent(roleId.ToString()), "ProjectRoleIds");
+            }
+
+            content.Add(new StringContent(_recruitmentMessage ?? string.Empty), "Message");
+
+            const long maxFileSize = 25 * 1024 * 1024; // 10MB limit
+            using var stream = _recruitmentFile.OpenReadStream(maxFileSize);
+            var fileContent = new StreamContent(stream);
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(_recruitmentFile.ContentType);
+
+            content.Add(fileContent, "File", _recruitmentFile.Name);
+
+            var response = await client.PostAsync("api/recruitments", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                _recruitmentSuccessMessage = "Twoje zgłoszenie zostało wysłane pomyślnie!";
+                _selectedProjectRoleIds.Clear();
+                _recruitmentFile = null;
+                _recruitmentMessage = string.Empty;
+            }
+            else
+            {
+                _recruitmentErrorMessage = response.StatusCode switch
+                {
+                    System.Net.HttpStatusCode.Unauthorized => "Musisz być zalogowany, aby wysłać zgłoszenie.",
+                    System.Net.HttpStatusCode.Conflict => "Zgłoszenie do tego projektu już istnieje.",
+                    System.Net.HttpStatusCode.BadRequest => "Błędne dane w formularzu rekrutacyjnym.",
+                    _ => "Wystąpił błąd podczas wysyłania zgłoszenia."
+                };
+            }
+        }
+        catch (Exception)
+        {
+            _recruitmentErrorMessage = "Wystąpił błąd połączenia z serwerem.";
+        }
+        finally
+        {
+            _isSubmittingRecruitment = false;
+        }
     }
 
     private async Task LoadProjectRolesAsync()

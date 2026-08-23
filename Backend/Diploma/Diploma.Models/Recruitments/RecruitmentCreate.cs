@@ -4,7 +4,7 @@ namespace Diploma.Models.Recruitments;
 
 public sealed class RecruitmentCreateRequest
 {
-    public required IEnumerable<Guid> ProjectRoleIds { get; set; }
+    public required IList<Guid> ProjectRoleIds { get; set; }
     public required string Message { get; init; }
     public required IFormFile File { get; init; }
 }
