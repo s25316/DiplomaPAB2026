@@ -1,6 +1,7 @@
 ﻿@page "/project/{projectId:guid}/recruitments"
 @inject IJSRuntime JSRuntime
 @using Diploma.Models.Dictionaries
+@using Diploma.Models.Persons.Profile
 @using Diploma.Models.Recruitments
 @using Diploma.Models.Shared
 
@@ -82,8 +83,12 @@
                                             <div class="col-md-7">
                                                 <h5 class="text-dark mb-1">
                                                     <i class="bi bi-person-lines-fill me-1 text-secondary"></i>
-                                                    <strong>@(recruitment.Project?.Title ?? "Zgłoszenie rekrutacyjne")</strong>
+                                                    <!-- Wyświetlenie imienia i nazwiska kandydata pobranego z Twojej metody -->
+                                                    <strong>@GetPersonDta(recruitment.PersonId)</strong>
                                                 </h5>
+                                                <p class="text-muted small mb-1">
+                                                    <span>Projekt: <strong>@(recruitment.Project?.Title ?? "Brak tytułu")</strong></span>
+                                                </p>
                                                 <p class="text-muted small mb-2 text-truncate">
                                                     @(recruitment.Project?.Description ?? "Brak opisu.")
                                                 </p>
@@ -210,6 +215,7 @@
     [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
 
     private List<RecruitmentDto> _recruitments = new();
+    private Dictionary<Guid, PersonIdentityDataDto?> _personIdentityDictionary = [];
     private IEnumerable<DictionaryItem<int>> _statuses = new List<DictionaryItem<int>>();
     private bool _isLoading = true;
     private string? _errorMessage;
@@ -281,6 +287,8 @@
                 if (result != null)
                 {
                     _recruitments = result.Items?.ToList() ?? new();
+                    await FetchMissingIdentitiesAsync(client, _recruitments);
+
                     _totalCount = result.Pagination.TotalCount;
                     _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
                     if (_totalPages == 0) _totalPages = 1;
@@ -306,6 +314,51 @@
         finally
         {
             _isLoading = false;
+        }
+    }
+
+
+    private string GetPersonDta(Guid personId)
+    {
+        if (_personIdentityDictionary.TryGetValue(personId, out var identity) && identity != null)
+        {
+            var name = !string.IsNullOrWhiteSpace(identity.Name) ? identity.Name : "";
+            var surname = !string.IsNullOrWhiteSpace(identity.Surname) ? identity.Surname : "";
+
+            var fullName = $"{name} {surname}".Trim();
+            return string.IsNullOrEmpty(fullName) ? "Nieznany użytkownik" : fullName;
+        }
+
+        return "Ładowanie danych...";
+    }
+
+    
+    private async Task FetchMissingIdentitiesAsync(HttpClient client, List<RecruitmentDto> recruitments)
+    {
+        var loadedPersonIds = recruitments.Select(i => i.PersonId).ToHashSet();
+        var existingPersonIds = _personIdentityDictionary.Keys.ToHashSet();
+        var newPersonIds = loadedPersonIds.Except(existingPersonIds).ToHashSet();
+
+        foreach (var personId in newPersonIds)
+        {
+            try
+            {
+                var identityResponse = await client.GetAsync($"api/persons/{personId}/identity");
+
+                if (identityResponse.IsSuccessStatusCode)
+                {
+                    var identityDto = await identityResponse.Content.ReadFromJsonAsync<PersonIdentityDataDto>();
+                    _personIdentityDictionary[personId] = identityDto;
+                }
+                else
+                {
+                    _personIdentityDictionary[personId] = null;
+                }
+            }
+            catch
+            {
+                _personIdentityDictionary[personId] = null;
+            }
         }
     }
 
