@@ -30,7 +30,22 @@
                 <div class="card bg-white border shadow-sm p-3 mb-4">
                     <div class="row g-3">
 
-                        <!-- Dyscypliny (Pionowo - pełna szerokość) -->
+                        <!-- Status rekrutacji (3 stany: Wszystkie, Aktywne, Nieaktywne) -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-secondary mb-1">
+                                <i class="bi bi-person-check me-1"></i> Status rekrutacji:
+                            </label>
+                            <select class="form-select form-select-sm" @value="_selectedIsRecruitmentActive" @onchange="OnRecruitmentActiveChanged">
+                                <option value="">Wszystkie projekty</option>
+                                <option value="true">Tylko z aktywną rekrutacją</option>
+                                <option value="false">Tylko z nieaktywną rekrutacją</option>
+                            </select>
+                        </div>
+
+                        <!-- Puste miejsce w rzędzie dla zachowania układu siatki (opcjonalnie) -->
+                        <div class="col-md-6"></div>
+
+                        <!-- Dyscypliny (Multiselect z wyszukiwarką) -->
                         <div class="col-12">
                             <label class="form-label small fw-bold text-secondary mb-1">
                                 <i class="bi bi-book me-1"></i> Dyscypliny naukowe:
@@ -44,31 +59,74 @@
                             }
                             else
                             {
-                                <div class="border rounded p-2 bg-light" style="max-height: 160px; overflow-y: auto;">
-                                    @if (_availableDisciplines.Any())
-                                    {
-                                        @foreach (var disc in _availableDisciplines)
+                                <div class="dropdown">
+                                    <div class="form-control d-flex flex-wrap gap-1 align-items-center bg-white" style="min-height: 38px; cursor: text;" @onclick="FocusDisciplineSearch">
+
+                                        @if (_selectedDisciplineCodes.Any())
                                         {
-                                            var isChecked = _selectedDisciplineCodes.Contains(disc.Code);
-                                            <div class="form-check form-check-sm mb-1">
-                                                <input class="form-check-input" type="checkbox" id="disc_@disc.Code"
-                                                       checked="@isChecked"
-                                                       @onchange="(e) => OnDisciplineCheckboxChanged(disc.Code, e.Value)" />
-                                                <label class="form-check-label small text-dark" for="disc_@disc.Code">
-                                                    @disc.Name <span class="text-muted">(@disc.Code)</span>
-                                                </label>
-                                            </div>
+                                            @foreach (var code in _selectedDisciplineCodes)
+                                            {
+                                                var discName = _availableDisciplines.FirstOrDefault(d => d.Code == code)?.Name ?? code;
+                                                <span class="badge bg-primary text-white d-inline-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
+                                                    @discName
+                                                    <button type="button" class="btn-close btn-close-white" style="font-size: 0.5rem;" aria-label="Usuń" @onclick="() => RemoveDisciplineFilter(code)" @onclick:stopPropagation="true"></button>
+                                                </span>
+                                            }
                                         }
-                                    }
-                                    else
+                                        else
+                                        {
+                                            <span class="text-muted small fst-italic">Wszystkie dyscypliny...</span>
+                                        }
+
+                                        <input type="text"
+                                               class="border-0 flex-grow-1 p-0 ms-1"
+                                               style="outline: none; background: transparent; font-size: 0.85rem; min-width: 120px;"
+                                               placeholder="@(_selectedDisciplineCodes.Any() ? "Szukaj kolejnej..." : "")"
+                                               @bind="_disciplineSearchQuery"
+                                               @bind:event="oninput"
+                                               @onfocus="() => _isDisciplineDropdownOpen = true" />
+                                    </div>
+
+                                    @if (_isDisciplineDropdownOpen)
                                     {
-                                        <span class="small text-muted fst-italic">Brak dostępnych dyscyplin.</span>
+                                        <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1050; background: transparent;" @onclick="() => _isDisciplineDropdownOpen = false"></div>
+
+                                        <div class="dropdown-menu show w-100 shadow-sm p-1" style="z-index: 1051; max-height: 180px; overflow-y: auto;">
+                                            @{
+                                                var filteredDisciplines = _availableDisciplines
+                                                    .Where(d => string.IsNullOrWhiteSpace(_disciplineSearchQuery) ||
+                                                                d.Name.Contains(_disciplineSearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                                                                d.Code.Contains(_disciplineSearchQuery, StringComparison.OrdinalIgnoreCase))
+                                                    .ToList();
+                                            }
+
+                                            @if (filteredDisciplines.Any())
+                                            {
+                                                @foreach (var disc in filteredDisciplines)
+                                                {
+                                                    var isSelected = _selectedDisciplineCodes.Contains(disc.Code);
+                                                    <div class="dropdown-item d-flex justify-content-between align-items-center py-1 px-2 rounded @(isSelected ? "bg-light fw-bold text-primary" : "")"
+                                                         style="cursor: pointer; font-size: 0.85rem;"
+                                                         @onclick="() => ToggleDisciplineSelection(disc.Code)" @onclick:stopPropagation="true">
+                                                        <span>@disc.Name <span class="text-muted small">(@disc.Code)</span></span>
+                                                        @if (isSelected)
+                                                        {
+                                                            <i class="bi bi-check2 text-primary"></i>
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="dropdown-item-text text-muted small py-1">Brak pasujących dyscyplin</div>
+                                            }
+                                        </div>
                                     }
                                 </div>
                             }
                         </div>
 
-                        <!-- Instytucje edukacyjne (Pionowo - pełna szerokość, pod dyscyplinami) -->
+                        <!-- Instytucje edukacyjne -->
                         <div class="col-12">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <label class="form-label small fw-bold text-secondary mb-0">
@@ -211,13 +269,17 @@
     private string? _errorMessage;
 
     private Guid? _selectedProjectId = null;
-
     private bool _showFilters = true;
+
+    // --- Filtry: Status rekrutacji (null, true, false) ---
+    private bool? _selectedIsRecruitmentActive = null;
 
     // --- Filtry: Dyscypliny ---
     private List<DictionaryItem> _availableDisciplines = new();
     private bool _isLoadingDisciplines = false;
     private HashSet<string> _selectedDisciplineCodes = new();
+    private string _disciplineSearchQuery = string.Empty;
+    private bool _isDisciplineDropdownOpen = false;
 
     // --- Filtry: Instytucje ---
     private bool _isAddingInstitutionFilter = false;
@@ -286,16 +348,26 @@
         _selectedProjectId = null;
     }
 
-    private void OnDisciplineCheckboxChanged(string code, object? value)
+    private void FocusDisciplineSearch()
     {
-        if (value is bool isChecked && isChecked)
-        {
-            _selectedDisciplineCodes.Add(code);
-        }
-        else
+        _isDisciplineDropdownOpen = true;
+    }
+
+    private void ToggleDisciplineSelection(string code)
+    {
+        if (_selectedDisciplineCodes.Contains(code))
         {
             _selectedDisciplineCodes.Remove(code);
         }
+        else
+        {
+            _selectedDisciplineCodes.Add(code);
+        }
+    }
+
+    private void RemoveDisciplineFilter(string code)
+    {
+        _selectedDisciplineCodes.Remove(code);
     }
 
     private void ToggleAddInstitutionFilter()
@@ -336,6 +408,13 @@
                 $"Pagination.Page={_currentPage}",
                 $"Pagination.ItemsPerPage={_itemsPerPage}"
             };
+
+            // Dodaj IsRecruitmentActive tylko jeśli ma wartość (true lub false).
+            // Jeśli jest null, pomijamy parametr lub przekazujemy w zależności od wymagania API.
+            if (_selectedIsRecruitmentActive.HasValue)
+            {
+                queryParams.Add($"IsRecruitmentActive={_selectedIsRecruitmentActive.Value.ToString().ToLower()}");
+            }
 
             foreach (var code in _selectedDisciplineCodes)
             {
@@ -385,12 +464,27 @@
 
     private async Task ResetFilters()
     {
+        _selectedIsRecruitmentActive = null;
         _selectedDisciplineCodes.Clear();
+        _disciplineSearchQuery = string.Empty;
         _selectedInstitutionIds.Clear();
         _institutionNames.Clear();
         _isAddingInstitutionFilter = false;
         _currentPage = 1;
         await LoadProjectsAsync();
+    }
+
+    private void OnRecruitmentActiveChanged(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString();
+        if (string.IsNullOrEmpty(val))
+        {
+            _selectedIsRecruitmentActive = null;
+        }
+        else if (bool.TryParse(val, out var parsed))
+        {
+            _selectedIsRecruitmentActive = parsed;
+        }
     }
 
     private async Task OnOrderByChanged(ChangeEventArgs e)

@@ -50,9 +50,9 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
         With(query => query.Where(i =>
             context.ProjectManagers
                 .Include(i => i.GrantEvent)
+                .AsNoTracking()
                 .Any(pr => pr.PersonId == item.Value
                    && pr.RevokeEventId == null
-                   && pr.GrantEvent != null
                    && pr.GrantEvent.ProjectId == i.ProjectId)
         ));
         return this;
@@ -76,19 +76,32 @@ public class ProjectQueryBuilder(DiplomaDbContext context) : BaseQueryBuilder<Da
 
     public ProjectQueryBuilder WithIsRecruitmentActive(bool? value)
     {
-        if (value is not null)
+        if (value is null)
             return this;
 
-        With(query => query.Where(i => context
-            .ProjectRoleEducationDisciplines
-            .AsNoTracking()
-            .Include(d => d.ProjectRole)
-            .ThenInclude(d => d.LastProjectRoleData)
-            .Where(d =>
-                d.ProjectRole.LastProjectRoleData != null &&
-                d.ProjectRole.LastProjectRoleData.IsAvailableRecruitment == value
-            ).Any(d => d.ProjectRole.ProjectId == i.ProjectId)
-        ));
+        if (value.Value)
+            With(query => query.Where(i => context
+                .ProjectRoleEducationDisciplines
+                .AsNoTracking()
+                .Include(d => d.ProjectRole)
+                .ThenInclude(d => d.LastProjectRoleData)
+                .Where(d =>
+                    d.ProjectRole.LastProjectRoleData != null &&
+                    d.ProjectRole.LastProjectRoleData.IsAvailableRecruitment
+                ).Any(d => d.ProjectRole.ProjectId == i.ProjectId)
+            ));
+        else
+            With(query => query.Where(i => !context
+                .ProjectRoleEducationDisciplines
+                .AsNoTracking()
+                .Include(d => d.ProjectRole)
+                .ThenInclude(d => d.LastProjectRoleData)
+                .Where(d =>
+                    d.ProjectRole.LastProjectRoleData != null &&
+                    d.ProjectRole.LastProjectRoleData.IsAvailableRecruitment
+                ).Any(d => d.ProjectRole.ProjectId == i.ProjectId)
+            ));
+
         return this;
     }
 

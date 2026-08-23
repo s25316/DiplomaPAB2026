@@ -63,23 +63,59 @@
                         <span class="small text-muted">Ładowanie słownika dyscyplin...</span>
                     </div>
                 }
+                else if (isSubmittingDiscipline)
+                {
+                    <div class="d-flex align-items-center py-1">
+                        <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                        <span class="small text-muted">Zapisywanie dyscypliny...</span>
+                    </div>
+                }
                 else if (availableDisciplines.Any())
                 {
-                    <div class="input-group input-group-sm">
-                        <select class="form-select" @bind="selectedDisciplineCode">
-                            <option value="">-- Wybierz dyscyplinę --</option>
-                            @foreach (var d in GetUnassignedDisciplines())
-                            {
-                                <option value="@d.Code">@d.Name (@d.Code)</option>
-                            }
-                        </select>
-                        <button class="btn btn-success" type="button" @onclick="SaveDisciplineAsync" disabled="@(string.IsNullOrEmpty(selectedDisciplineCode) || isSubmittingDiscipline)">
-                            @if (isSubmittingDiscipline)
-                            {
-                                <span class="spinner-border spinner-border-sm me-1"></span>
-                            }
-                            Zapisz
-                        </button>
+                    <div class="dropdown">
+                        <div class="form-control form-control-sm d-flex flex-wrap gap-1 align-items-center bg-white" style="min-height: 31px; cursor: text;" @onclick="FocusDisciplineSearch">
+                            <span class="text-muted small fst-italic">Wybierz lub szukaj dyscypliny...</span>
+
+                            <input type="text"
+                                   class="border-0 flex-grow-1 p-0 ms-1"
+                                   style="outline: none; background: transparent; font-size: 0.8rem; min-width: 100px;"
+                                   placeholder="Szukaj..."
+                                   @bind="disciplineSearchQuery"
+                                   @bind:event="oninput"
+                                   @onfocus="() => isDisciplineDropdownOpen = true" />
+                        </div>
+
+                        @if (isDisciplineDropdownOpen)
+                        {
+                            <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1050; background: transparent;" @onclick="() => isDisciplineDropdownOpen = false"></div>
+
+                            <div class="dropdown-menu show w-100 shadow-sm p-1" style="z-index: 1051; max-height: 180px; overflow-y: auto; font-size: 0.85rem;">
+                                @{
+                                    var filteredDisciplines = GetUnassignedDisciplines()
+                                        .Where(d => string.IsNullOrWhiteSpace(disciplineSearchQuery) ||
+                                                    d.Name.Contains(disciplineSearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                                                    d.Code.Contains(disciplineSearchQuery, StringComparison.OrdinalIgnoreCase))
+                                        .ToList();
+                                }
+
+                                @if (filteredDisciplines.Any())
+                                {
+                                    @foreach (var disc in filteredDisciplines)
+                                    {
+                                        <div class="dropdown-item d-flex justify-content-between align-items-center py-1 px-2 rounded"
+                                             style="cursor: pointer;"
+                                             @onclick="() => SelectAndSaveDisciplineAsync(disc.Code)" @onclick:stopPropagation="true">
+                                            <span>@disc.Name <span class="text-muted small">(@disc.Code)</span></span>
+                                            <i class="bi bi-plus text-primary"></i>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="dropdown-item-text text-muted small py-1">Brak pasujących dyscyplin</div>
+                                }
+                            </div>
+                        }
                     </div>
                 }
                 else
@@ -222,8 +258,11 @@
     private bool isAddingDiscipline = false;
     private bool isLoadingAvailableDisciplines = false;
     private bool isSubmittingDiscipline = false;
-    private string? selectedDisciplineCode;
     private List<DictionaryItem> availableDisciplines = new();
+
+    // Zmienne obsługujące wyszukiwarkę dyscyplin
+    private string disciplineSearchQuery = string.Empty;
+    private bool isDisciplineDropdownOpen = false;
 
     // --- Instytucje ---
     private bool isAddingInstitution = false;
@@ -285,12 +324,18 @@
     {
         isAddingDiscipline = !isAddingDiscipline;
         actionError = null;
-        selectedDisciplineCode = null;
+        disciplineSearchQuery = string.Empty;
+        isDisciplineDropdownOpen = false;
 
         if (isAddingDiscipline && !availableDisciplines.Any())
         {
             _ = LoadAvailableDisciplinesAsync();
         }
+    }
+
+    private void FocusDisciplineSearch()
+    {
+        isDisciplineDropdownOpen = true;
     }
 
     private async Task LoadAvailableDisciplinesAsync()
@@ -326,10 +371,11 @@
         return availableDisciplines.Where(d => !assignedCodes.Contains(d.Code));
     }
 
-    private async Task SaveDisciplineAsync()
+    private async Task SelectAndSaveDisciplineAsync(string disciplineCode)
     {
-        if (string.IsNullOrEmpty(selectedDisciplineCode)) return;
+        if (string.IsNullOrEmpty(disciplineCode)) return;
 
+        isDisciplineDropdownOpen = false;
         isSubmittingDiscipline = true;
         actionError = null;
 
@@ -338,13 +384,12 @@
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            var requestBody = new { DisciplineCode = selectedDisciplineCode };
+            var requestBody = new { DisciplineCode = disciplineCode };
             var response = await client.PostAsJsonAsync($"api/projects/{Role.ProjectId}/projectRoles/{Role.ProjectRoleId}/disciplines", requestBody);
 
             if (response.IsSuccessStatusCode)
             {
-                isAddingDiscipline = false;
-                selectedDisciplineCode = null;
+                disciplineSearchQuery = string.Empty;
                 await OnRoleUpdated.InvokeAsync(Role);
             }
             else
@@ -471,7 +516,6 @@
         }
     }
 
-    // --- Metody zarządzania widokiem szczegółów przypisanej instytucji ---
     private async Task ToggleInstitutionDetails(Guid institutionId, Institution? institution)
     {
         if (_selectedInstitutionId == institutionId)
