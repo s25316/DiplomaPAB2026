@@ -151,6 +151,7 @@
     private string _newMessageText = string.Empty;
     private IBrowserFile? _selectedFile;
     private Guid? _previousRecruitmentId;
+    private bool _shouldScrollToBottom = false;
 
     private const long MaxFileSize = 10 * 1024 * 1024;
 
@@ -170,6 +171,15 @@
             _previousRecruitmentId = null;
             _messages.Clear();
             _selectedFile = null;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_shouldScrollToBottom)
+        {
+            _shouldScrollToBottom = false;
+            await ScrollToBottomAsync();
         }
     }
 
@@ -197,10 +207,8 @@
                     _messages = fetchedItems;
                     _hasMoreMessages = fetchedItems.Count >= PageSize;
 
-                    // Po załadowaniu wiadomości przewijamy na dół (szczególnie ważne przy pierwszym wejściu)
+                    _shouldScrollToBottom = true;
                     StateHasChanged();
-                    await Task.Delay(50); // Krótkie opóźnienie na renderowanie DOM
-                    await ScrollToBottomAsync();
                 }
             }
             else
@@ -270,11 +278,19 @@
     {
         try
         {
-            await JSRuntime.InvokeVoidAsync("eval", $"arguments[0].scrollTop = arguments[0].scrollHeight;", _chatContainerRef);
+            // Poczekaj chwilę, aż Bootstrap skończy animację pokazywania modala
+            await Task.Delay(150);
+
+            await JSRuntime.InvokeVoidAsync("eval", @"
+            const container = document.querySelector('.modal-body');
+            if (container) {
+                container.scrollTop = container.scrollHeight;
+            }
+        ");
         }
         catch
         {
-            // Ignorujemy błędy, jeśli element nie jest jeszcze dostępny w DOM
+            // Ignoruj błędy
         }
     }
 
@@ -340,7 +356,8 @@
                 _newMessageText = string.Empty;
                 _selectedFile = null;
                 _currentPage = 1;
-                await LoadMessagesAsync(); // Załaduje wiadomości i automatycznie przewinie na sam dół
+                await LoadMessagesAsync();
+                _shouldScrollToBottom = true;
             }
             else
             {
