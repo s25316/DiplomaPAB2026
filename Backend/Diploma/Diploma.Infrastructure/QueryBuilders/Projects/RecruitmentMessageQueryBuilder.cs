@@ -43,7 +43,7 @@ public class RecruitmentMessageQueryBuilder(DiplomaDbContext context) : BaseQuer
 
     public RecruitmentMessageQueryBuilder WithOrderBy(QueryParametersPagination pagination)
     {
-        With(query => query.OrderBy(i => i.CreatedAt));
+        With(query => query.OrderByDescending(i => i.CreatedAt));
         Paginate(pagination);
         return this;
     }

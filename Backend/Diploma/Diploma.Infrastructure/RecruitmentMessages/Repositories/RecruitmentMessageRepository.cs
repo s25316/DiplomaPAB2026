@@ -22,11 +22,12 @@ public class RecruitmentMessageRepository(
             RecruitmentId = input.RecruitmentId,
             Message = input.Message,
             File = input.File,
+            CreatedAt = DateTimeOffset.Now,
         };
 
         await context.RecruitmentMessages.AddAsync(databaseItem, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        return databaseItem.RecruitmentId;
+        return databaseItem.RecruitmentMessageId;
     }
 
     public async Task<OptionalResult<RecruitmentMessageItem>> GetAsync(

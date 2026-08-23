@@ -1,0 +1,325 @@
+﻿@using Diploma.Models.RecruitmentMessages
+@using Diploma.Models.Recruitments
+@using Diploma.Models.Shared
+@inject IJSRuntime JSRuntime
+
+@if (IsOpen && Recruitment != null)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-chat-left-text me-2"></i> Komunikacja: @(Recruitment.Project?.Title ?? "Projekt")
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="Close"></button>
+                </div>
+
+                <div class="modal-body bg-light" style="height: 400px; overflow-y: auto;">
+                    <!-- Informacje kontekstowe o rekrutacji -->
+                    <div class="p-2 mb-3 bg-white border rounded shadow-sm">
+                        <small class="text-muted d-block"><strong>Projekt:</strong> @Recruitment.Project?.Title</small>
+                        <small class="text-muted d-block"><strong>Status zgłoszenia:</strong> @Recruitment.Status.Name</small>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(_errorMessage))
+                    {
+                        <div class="alert alert-danger py-2 small" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> @_errorMessage
+                        </div>
+                    }
+
+                    @if (_isLoading)
+                    {
+                        <div class="text-center py-4">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <span class="text-muted small ms-2">Ładowanie wiadomości...</span>
+                        </div>
+                    }
+                    else if (_messages == null || !_messages.Any())
+                    {
+                        <div class="text-center text-muted my-4">
+                            <small class="fst-italic">Brak wiadomości w tej rekrutacji. Rozpocznij konwersację poniżej.</small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex flex-column gap-3">
+                            @foreach (var msg in _messages)
+                            {
+                                <div class="p-3 bg-white border rounded shadow-sm w-75 align-self-start">
+                                    <p class="mb-1 text-dark small" style="white-space: pre-wrap;">@msg.Message</p>
+
+                                    @if (!string.IsNullOrEmpty(msg.File))
+                                    {
+                                        <div class="mb-1">
+                                            <button class="btn btn-link btn-sm p-0 text-decoration-none small" @onclick="() => DownloadFileAsync(msg.RecruitmentMessageId)">
+                                                <i class="bi bi-paperclip me-1"></i> Pobierz załącznik: @msg.File
+                                            </button>
+                                        </div>
+                                    }
+
+                                    <div class="text-muted text-end" style="font-size: 0.7rem;">
+                                        @msg.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer bg-white flex-column align-items-stretch">
+                    <!-- Podgląd wybranego pliku -->
+                    @if (_selectedFile != null)
+                    {
+                        <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded mb-2 border small">
+                            <span class="text-truncate me-2">
+                                <i class="bi bi-file-earmark-text text-primary me-1"></i>
+                                <strong>@_selectedFile.Name</strong> (@GetFormattedFileSize(_selectedFile.Size))
+                            </span>
+                            <button type="button" class="btn-close btn-sm flex-shrink-0" @onclick="RemoveSelectedFile" title="Usuń plik"></button>
+                        </div>
+                    }
+
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-sm" placeholder="Napisz wiadomość (wymagane)..." @bind="_newMessageText" @bind:event="oninput" @onkeydown="HandleKeyDown" disabled="@_isSending" />
+
+                        <!-- Przycisk wyboru pliku z czytelną ikoną i napisem -->
+                        <label class="btn btn-outline-secondary btn-sm d-flex align-items-center px-2 mb-0 @(_isSending ? "disabled" : "")" style="cursor: pointer;" title="Dodaj plik do wiadomości">
+                            <i class="bi bi-paperclip fs-6 me-1"></i>
+                            <span class="small">Plik</span>
+                            <InputFile OnChange="HandleFileSelected" class="d-none" />
+                        </label>
+
+                        <!-- Przycisk Wyślij zablokowany, jeśli pole tekstowe jest puste -->
+                        <button class="btn btn-primary btn-sm px-3" type="button" @onclick="SendMessage" disabled="@(_isSending || string.IsNullOrWhiteSpace(_newMessageText))">
+                            @if (_isSending)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-send me-1"></i>
+                            }
+                            Wyślij
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public RecruitmentDto? Recruitment { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+    [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+
+    private List<RecruitmentMessageDto> _messages = new();
+    private bool _isLoading = false;
+    private bool _isSending = false;
+    private string? _errorMessage;
+    private string _newMessageText = string.Empty;
+    private IBrowserFile? _selectedFile;
+    private Guid? _previousRecruitmentId;
+
+    // Maksymalny rozmiar pliku np. 10 MB
+    private const long MaxFileSize = 10 * 1024 * 1024;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsOpen && Recruitment != null && _previousRecruitmentId != Recruitment.RecruitmentId)
+        {
+            _previousRecruitmentId = Recruitment.RecruitmentId;
+            _selectedFile = null;
+            _newMessageText = string.Empty;
+            await LoadMessagesAsync();
+        }
+        else if (!IsOpen)
+        {
+            _previousRecruitmentId = null;
+            _messages.Clear();
+            _selectedFile = null;
+        }
+    }
+
+    private async Task LoadMessagesAsync()
+    {
+        if (Recruitment == null) return;
+
+        _isLoading = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var url = $"api/recruitments/{Recruitment.RecruitmentId}/messages?Pagination.Page=1&Pagination.ItemsPerPage=50";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<Response<RecruitmentMessageDto>>();
+                if (result != null)
+                {
+                    _messages = result.Items?.OrderBy(m => m.CreatedAt).ToList() ?? new();
+                }
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać historii wiadomości.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd połączenia z serwerem podczas pobierania wiadomości.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        _selectedFile = e.File;
+        if (_selectedFile.Size > MaxFileSize)
+        {
+            _errorMessage = "Wybrany plik jest za duży. Maksymalny rozmiar to 25 MB.";
+            _selectedFile = null;
+        }
+        else
+        {
+            _errorMessage = null;
+        }
+    }
+
+    private void RemoveSelectedFile()
+    {
+        _selectedFile = null;
+    }
+
+    private string GetFormattedFileSize(long bytes)
+    {
+        string[] suffixes = { "B", "KB", "MB", "GB" };
+        int counter = 0;
+        decimal number = bytes;
+        while (Math.Round(number / 1024) >= 1)
+        {
+            number /= 1024;
+            counter++;
+        }
+        return $"{number:n1} {suffixes[counter]}";
+    }
+
+    private async Task SendMessage()
+    {
+        // Sprawdzenie wymogu tekstu oraz blokada w trakcie wysyłania
+        if (string.IsNullOrWhiteSpace(_newMessageText) || Recruitment == null || _isSending) return;
+
+        _isSending = true;
+        _errorMessage = null;
+
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            using var content = new MultipartFormDataContent();
+
+            // Dodanie pola tekstowego wiadomości
+            content.Add(new StringContent(_newMessageText), "Message");
+
+            // Dodanie pliku, jeśli został wybrany
+            if (_selectedFile != null)
+            {
+                var stream = _selectedFile.OpenReadStream(MaxFileSize);
+                var fileContent = new StreamContent(stream);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(_selectedFile.ContentType);
+                content.Add(fileContent, "File", _selectedFile.Name);
+            }
+
+            var response = await client.PostAsync($"api/recruitments/{Recruitment.RecruitmentId}/messages", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Czyszczenie formularza i ponowne załadowanie wiadomości
+                _newMessageText = string.Empty;
+                _selectedFile = null;
+                await LoadMessagesAsync();
+            }
+            else
+            {
+                _errorMessage = "Nie udało się wysłać wiadomości.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd podczas wysyłania wiadomości.";
+        }
+        finally
+        {
+            _isSending = false;
+        }
+    }
+
+    private async Task DownloadFileAsync(Guid recruitmentMessageId)
+    {
+        try
+        {
+            using var client = await ClientFactory.CreateAuthorizedClientAsync();
+            if (client is null) return;
+
+            var response = await client.GetAsync($"api/recruitments/messages/{recruitmentMessageId}/file");
+            if (response.IsSuccessStatusCode)
+            {
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                var fileName = response.Content.Headers.ContentDisposition?.FileName?.Trim('"') ?? "zalacznik";
+                var contentType = response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream";
+
+                var base64Data = Convert.ToBase64String(bytes);
+                var dataUrl = $"data:{contentType};base64,{base64Data}";
+
+                var jsCode = $@"
+                    (function() {{
+                        const link = document.createElement('a');
+                        link.href = '{dataUrl}';
+                        link.download = '{fileName}';
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }})();
+                ";
+
+                await JSRuntime.InvokeVoidAsync("eval", jsCode);
+            }
+            else
+            {
+                _errorMessage = "Nie udało się pobrać pliku z serwera.";
+            }
+        }
+        catch (Exception)
+        {
+            _errorMessage = "Wystąpił błąd podczas pobierania załącznika.";
+        }
+    }
+
+    private async Task Close()
+    {
+        _newMessageText = string.Empty;
+        _errorMessage = null;
+        _selectedFile = null;
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(IsOpen);
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !_isSending && !string.IsNullOrWhiteSpace(_newMessageText))
+        {
+            await SendMessage();
+        }
+    }
+}
