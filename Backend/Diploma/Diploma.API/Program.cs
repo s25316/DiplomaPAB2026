@@ -1,14 +1,11 @@
-﻿using Base.Models.ValueObjects.Regony;
-using Diploma.API.Configurators;
+﻿using Diploma.API.Configurators;
 using Diploma.API.Controllers.Services;
 using Diploma.API.ExceptionHandlers;
 using Diploma.API.Extensions;
-using Diploma.API.GraphQL;
 using Diploma.Application;
 using Diploma.Domain;
 using Diploma.Infrastructure;
 using Diploma.Infrastructure.Configurations;
-using HotChocolate.Types;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
@@ -59,11 +56,6 @@ public class Program
                 .AllowAnyHeader());
         });
 
-        builder.Services
-            .AddGraphQLServer()
-            .AddQueryType(d => d.Name(OperationTypeNames.Query))
-            .AddTypeExtension<ServerQuery>()
-            .BindRuntimeType<Regon, RegonScalar>();
 
         builder.Services.AddOpenApi(options =>
         {
@@ -98,7 +90,6 @@ public class Program
 
         app.UseCors();
 
-        app.MapGraphQL();
         foreach (var prefix in configurator.GraphQlPathPrefixes)
         {
             app.MapNitroApp(prefix, relativeRequestPath: prefix);
