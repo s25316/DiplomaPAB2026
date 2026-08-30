@@ -14,9 +14,4 @@
 		<ProjectReference Include="..\GUS.REGON\GUS.REGON.csproj" />
 	</ItemGroup>
 
-	
-	<ItemGroup>
-	  <Folder Include="Interfaces\" />
-	</ItemGroup>
-
 </Project>

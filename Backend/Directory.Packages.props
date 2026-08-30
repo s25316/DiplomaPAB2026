@@ -52,7 +52,5 @@
     <PackageVersion Include="AppAny.HotChocolate.FluentValidation" Version="0.12.0" />
     <!--For Controllers-->
     <PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Mvc" Version="2.0.0" />
-    <!--For MinimalApi-->
-    <PackageVersion Include="SharpGrip.FluentValidation.AutoValidation.Endpoints" Version="2.0.0" />
   </ItemGroup>
 </Project>
