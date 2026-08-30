@@ -20,7 +20,7 @@ public class ProjectRoleQueryService(
         ProjectRoleQueryParameters queryParameters,
         CancellationToken cancellationToken = default)
     {
-        builder
+        var baseBuilder = builder
             .WithProjectRoleIds(queryParameters.ProjectRoleIds)
             .WithProjectIds(queryParameters.ProjectIds)
 
@@ -29,12 +29,12 @@ public class ProjectRoleQueryService(
             .WithInstitutions(queryParameters.Institutions);
 
         if (isPersonItems)
-            builder.WithManagerPersonId(personId);
+            baseBuilder.WithManagerPersonId(personId);
 
-        var baseQuery = builder.Build();
+        var baseQuery = baseBuilder.Build();
         var totalCount = await baseQuery.CountAsync(cancellationToken);
 
-        var query = builder
+        var query = baseBuilder
             .WithOrderBy(queryParameters.Order, queryParameters.OrderBy, queryParameters.Pagination)
             .Build();
 
