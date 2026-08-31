@@ -60,7 +60,8 @@
                             else
                             {
                                 <div class="dropdown">
-                                    <div class="form-control d-flex flex-wrap gap-1 align-items-center bg-white" style="min-height: 38px; cursor: text;" @onclick="FocusDisciplineSearch">
+                                    <!-- Pole wybranej listy tagów -->
+                                    <div class="form-control d-flex flex-wrap gap-1 align-items-center bg-white" style="min-height: 38px; cursor: text;" @onclick="FocusDisciplineSearch" @onclick:stopPropagation="true">
 
                                         @if (_selectedDisciplineCodes.Any())
                                         {
@@ -87,11 +88,13 @@
                                                @onfocus="() => _isDisciplineDropdownOpen = true" />
                                     </div>
 
+                                    <!-- Rozwijane menu z opcjami -->
                                     @if (_isDisciplineDropdownOpen)
                                     {
+                                        <!-- Przezroczyste tło do wykrywania kliknięcia na zewnątrz -->
                                         <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1050; background: transparent;" @onclick="() => _isDisciplineDropdownOpen = false"></div>
 
-                                        <div class="dropdown-menu show w-100 shadow-sm p-1" style="z-index: 1051; max-height: 180px; overflow-y: auto;">
+                                        <div class="dropdown-menu show w-100 shadow-sm p-1" style="z-index: 1051; max-height: 180px; overflow-y: auto;" @onclick:stopPropagation="true">
                                             @{
                                                 var filteredDisciplines = _availableDisciplines
                                                     .Where(d => string.IsNullOrWhiteSpace(_disciplineSearchQuery) ||
@@ -107,7 +110,7 @@
                                                     var isSelected = _selectedDisciplineCodes.Contains(disc.Code);
                                                     <div class="dropdown-item d-flex justify-content-between align-items-center py-1 px-2 rounded @(isSelected ? "bg-light fw-bold text-primary" : "")"
                                                          style="cursor: pointer; font-size: 0.85rem;"
-                                                         @onclick="() => ToggleDisciplineSelection(disc.Code)" @onclick:stopPropagation="true">
+                                                         @onclick="() => ToggleDisciplineSelection(disc.Code)">
                                                         <span>@disc.Name <span class="text-muted small">(@disc.Code)</span></span>
                                                         @if (isSelected)
                                                         {
