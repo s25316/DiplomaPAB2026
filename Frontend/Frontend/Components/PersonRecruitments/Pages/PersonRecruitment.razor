@@ -98,7 +98,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Akcje: Komunikacja oraz Szczegóły (wypełnione przyciski jak w projektach) -->
+                                            <!-- Akcje: Komunikacja oraz Szczegóły -->
                                             <div class="col-md-5 text-md-end mt-3 mt-md-0 d-flex justify-content-md-end gap-2 align-items-center">
                                                 <button class="btn btn-success btn-sm" @onclick:stopPropagation="true" @onclick="() => OpenChat(recruitment)">
                                                     <i class="bi bi-chat-dots me-1"></i> Komunikacja
@@ -139,18 +139,56 @@
                                                                         </div>
                                                                     }
 
-                                                                    <!-- Wyświetlanie instytucji dla danej roli -->
-                                                                    @if (role.EductionInstitutionIds != null && role.EductionInstitutionIds.Any())
-                                                                    {
-                                                                        <div class="d-flex flex-wrap gap-1 mt-1">
-                                                                            @foreach (var instRef in role.EductionInstitutionIds)
+                                                                    <!-- Wyświetlanie instytucji dla danej roli w nowym stylu -->
+                                                                    <div class="d-flex flex-wrap gap-1 mt-2 align-items-center">
+                                                                        @if (role.EductionInstitutionIds != null && role.EductionInstitutionIds.Any())
+                                                                        {
+                                                                            @foreach (var institutionLink in role.EductionInstitutionIds)
                                                                             {
-                                                                                if (_institutions.TryGetValue(instRef.EductionInstitutionId, out var institution))
+                                                                                var institutionId = institutionLink.EductionInstitutionId;
+                                                                                var institutionName = institutionId.ToString().Substring(0, 8) + "...";
+                                                                                Institution? institution = null;
+
+                                                                                if (_institutions.TryGetValue(institutionId, out institution))
                                                                                 {
-                                                                                    <span class="badge bg-info text-dark" style="font-size: 0.7rem;">
-                                                                                        <i class="bi bi-bank me-1"></i> @institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name
-                                                                                    </span>
+                                                                                    institutionName = institution.Names?.OrderByDescending(n => n.Date).FirstOrDefault()?.Name ?? institutionId.ToString();
                                                                                 }
+
+                                                                                var isInstSelected = _selectedRoleInstitutionIds.TryGetValue(role.ProjectRoleId, out var currentSelectedId) && currentSelectedId == institutionId;
+
+                                                                                <span class="badge bg-white text-dark border d-inline-flex align-items-center gap-1 py-1 px-2 @(isInstSelected ? "border-primary bg-light" : "")"
+                                                                                      style="font-size: 0.75rem; cursor: pointer;"
+                                                                                      title="Kliknij, aby zobaczyć szczegóły uczelni"
+                                                                                      @onclick="() => ToggleInstitutionDetails(role.ProjectRoleId, institutionId, institution)">
+                                                                                    <i class="bi bi-building me-1 text-primary"></i> @institutionName
+                                                                                </span>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="text-muted small fst-italic">Brak przypisanych instytucji</span>
+                                                                        }
+                                                                    </div>
+
+                                                                    <!-- Szczegóły instytucji wyświetlane bezpośrednio pod badge'ami w danej roli -->
+                                                                    @if (_selectedRoleInstitutionIds.TryGetValue(role.ProjectRoleId, out var activeInstId))
+                                                                    {
+                                                                        <div class="mt-3 p-3 bg-light border rounded shadow-sm">
+                                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                                <h6 class="text-primary fw-bold mb-0 small text-uppercase">Szczegóły instytucji</h6>
+                                                                                <button class="btn-close btn-sm" style="font-size: 0.5rem;" @onclick="() => CloseInstitutionDetails(role.ProjectRoleId)"></button>
+                                                                            </div>
+
+                                                                            @if (_selectedInstitutions.TryGetValue(activeInstId, out var activeInst))
+                                                                            {
+                                                                                <RadonInstitutionDetailsView Institution="activeInst" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <div class="text-center py-2">
+                                                                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                                                                    <span class="text-muted small ms-2">Ładowanie szczegółów uczelni...</span>
+                                                                                </div>
                                                                             }
                                                                         </div>
                                                                     }
@@ -197,7 +235,6 @@
             </div>
         </div>
 
-        <!-- Użycie wydzielonego komponentu modalu czatu -->
         <PersonRecruitmentChatComponent @bind-IsOpen="_isChatOpen" Recruitment="_activeChatRecruitment" />
     </Authorized>
     <NotAuthorized>
@@ -215,6 +252,11 @@
     private List<RecruitmentDto> _recruitments = new();
     private IEnumerable<DictionaryItem<int>> _statuses = new List<DictionaryItem<int>>();
     private Dictionary<Guid, Institution> _institutions = [];
+
+    // Kluczem jest ProjectRoleId danej roli w projekcie
+    private Dictionary<Guid, Guid> _selectedRoleInstitutionIds = new();
+    private Dictionary<Guid, Institution> _selectedInstitutions = new();
+
     private bool _isLoading = true;
     private string? _errorMessage;
 
@@ -256,7 +298,7 @@
         }
         catch
         {
-            // Błąd pobierania statusów nie blokuje działania strony
+            // Ignory błędów statusów
         }
     }
 
@@ -290,32 +332,35 @@
                 _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
                 if (_totalPages == 0) _totalPages = 1;
 
-                var institutionIds = result.Items?.SelectMany(i => 
-                    i.ProjectRoles.SelectMany(x => 
-                        x.EductionInstitutionIds.Select(z => 
+                var institutionIds = result.Items?.SelectMany(i =>
+                    i.ProjectRoles.SelectMany(x =>
+                        x.EductionInstitutionIds.Select(z =>
                             z.EductionInstitutionId
                         )
                     )
                 ).ToHashSet() ?? [];
 
-                var institutionsResponse = await RadonInstitutionService.GetAsync( new RADON.Models.Institutions.QueryParameters
+                if (institutionIds.Any())
                 {
-                    InstitutionUuids = institutionIds,
-                    Order = RADON.Models.Shared.Order.Ascending,
-                    OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
-                    Pagination = new RADON.Models.Shared.QueryParametersPagination
+                    var institutionsResponse = await RadonInstitutionService.GetAsync(new RADON.Models.Institutions.QueryParameters
                     {
-                      ItemsPerPage = institutionIds.Count,
-                      Page = 1,
-                    },
-                });
+                        InstitutionUuids = institutionIds,
+                        Order = RADON.Models.Shared.Order.Ascending,
+                        OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+                        Pagination = new RADON.Models.Shared.QueryParametersPagination
+                        {
+                            ItemsPerPage = institutionIds.Count,
+                            Page = 1,
+                        },
+                    });
 
-                if (institutionsResponse is null)
-                    return;
-
-                foreach (var item in institutionsResponse.Items)
-                {
-                    _institutions[item.InstitutionUuid] = item;
+                    if (institutionsResponse?.Items != null)
+                    {
+                        foreach (var item in institutionsResponse.Items)
+                        {
+                            _institutions[item.InstitutionUuid] = item;
+                        }
+                    }
                 }
             }
             else
@@ -343,6 +388,27 @@
         {
             _expandedRecruitmentIds.Add(recruitmentId);
         }
+    }
+
+    private void ToggleInstitutionDetails(Guid roleId, Guid institutionId, Institution? institution)
+    {
+        if (_selectedRoleInstitutionIds.TryGetValue(roleId, out var currentId) && currentId == institutionId)
+        {
+            CloseInstitutionDetails(roleId);
+        }
+        else
+        {
+            _selectedRoleInstitutionIds[roleId] = institutionId;
+            if (institution != null)
+            {
+                _selectedInstitutions[institutionId] = institution;
+            }
+        }
+    }
+
+    private void CloseInstitutionDetails(Guid roleId)
+    {
+        _selectedRoleInstitutionIds.Remove(roleId);
     }
 
     private void OpenChat(RecruitmentDto recruitment)
