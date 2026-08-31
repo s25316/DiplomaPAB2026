@@ -67,11 +67,18 @@
                 {
                     <div class="d-flex align-items-center py-1">
                         <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
-                        <span class="small text-muted">Zapisywanie dyscypliny...</span>
+                        <span class="small text-muted">Zapisywanie dyscyplin...</span>
                     </div>
                 }
                 else if (availableDisciplines.Any())
                 {
+                    int currentAssignedCount = Role.Disciplines?.Count ?? 0;
+                    int remainingSlots = 10 - currentAssignedCount;
+
+                    <div class="mb-2 text-muted" style="font-size: 0.75rem;">
+                        Przypisane: <strong>@currentAssignedCount</strong> / 10 (możesz wybrać jeszcze: <strong>@Math.Max(0, remainingSlots - tempSelectedDisciplineCodes.Count)</strong>)
+                    </div>
+
                     <div class="dropdown">
                         <div class="form-control form-control-sm d-flex flex-wrap gap-1 align-items-center bg-white" style="min-height: 31px; cursor: text;" @onclick="FocusDisciplineSearch">
                             <span class="text-muted small fst-italic">Wybierz lub szukaj dyscypliny...</span>
@@ -87,7 +94,7 @@
 
                         @if (isDisciplineDropdownOpen)
                         {
-                            <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1050; background: transparent;" @onclick="() => isDisciplineDropdownOpen = false"></div>
+                            <div class="position-fixed w-100 h-100 top-0 start-0" style="z-index: 1050; background: transparent;" @onclick="HandleDropdownBlurAsync"></div>
 
                             <div class="dropdown-menu show w-100 shadow-sm p-1" style="z-index: 1051; max-height: 180px; overflow-y: auto; font-size: 0.85rem;">
                                 @{
@@ -102,11 +109,15 @@
                                 {
                                     @foreach (var disc in filteredDisciplines)
                                     {
-                                        <div class="dropdown-item d-flex justify-content-between align-items-center py-1 px-2 rounded"
+                                        var isSelected = tempSelectedDisciplineCodes.Contains(disc.Code);
+                                        <div class="dropdown-item d-flex justify-content-between align-items-center py-1 px-2 rounded @(isSelected ? "bg-light text-primary fw-bold" : "")"
                                              style="cursor: pointer;"
-                                             @onclick="() => SelectAndSaveDisciplineAsync(disc.Code)" @onclick:stopPropagation="true">
+                                             @onclick="() => ToggleTempDisciplineSelection(disc.Code)" @onclick:stopPropagation="true">
                                             <span>@disc.Name <span class="text-muted small">(@disc.Code)</span></span>
-                                            <i class="bi bi-plus text-primary"></i>
+                                            @if (isSelected)
+                                            {
+                                                <i class="bi bi-check2 text-primary"></i>
+                                            }
                                         </div>
                                     }
                                 }
@@ -116,6 +127,31 @@
                                 }
                             </div>
                         }
+                    </div>
+
+                    <!-- Wizualizacja tymczasowo wybranych dyscyplin -->
+                    @if (tempSelectedDisciplineCodes.Any())
+                    {
+                        <div class="mt-2 mb-2 d-flex flex-wrap gap-1 align-items-center">
+                            <span class="text-muted small me-1">Wybrane do zapisu:</span>
+                            @foreach (var code in tempSelectedDisciplineCodes)
+                            {
+                                var discItem = availableDisciplines.FirstOrDefault(d => d.Code == code);
+                                var displayName = discItem?.Name ?? code;
+
+                                <span class="badge bg-primary text-white d-flex align-items-center gap-1 py-1 px-2" style="font-size: 0.75rem;">
+                                    @displayName
+                                    <button type="button" class="btn-close btn-close-white" style="font-size: 0.45rem;" aria-label="Usuń" @onclick="() => ToggleTempDisciplineSelection(code)" @onclick:stopPropagation="true"></button>
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    <!-- Przycisk zatwierdzający zapis dyscyplin -->
+                    <div class="mt-2 text-end">
+                        <button class="btn btn-success btn-sm px-3" @onclick="SaveSelectedDisciplinesAsync" disabled="@(!tempSelectedDisciplineCodes.Any())">
+                            Zapisz dyscypliny
+                        </button>
                     </div>
                 }
                 else
@@ -260,9 +296,10 @@
     private bool isSubmittingDiscipline = false;
     private List<DictionaryItem> availableDisciplines = new();
 
-    // Zmienne obsługujące wyszukiwarkę dyscyplin
+    // Zmienne obsługujące wyszukiwarkę dyscyplin i wielokrotny wybór
     private string disciplineSearchQuery = string.Empty;
     private bool isDisciplineDropdownOpen = false;
+    private HashSet<string> tempSelectedDisciplineCodes = new();
 
     // --- Instytucje ---
     private bool isAddingInstitution = false;
@@ -326,6 +363,7 @@
         actionError = null;
         disciplineSearchQuery = string.Empty;
         isDisciplineDropdownOpen = false;
+        tempSelectedDisciplineCodes.Clear();
 
         if (isAddingDiscipline && !availableDisciplines.Any())
         {
@@ -371,11 +409,38 @@
         return availableDisciplines.Where(d => !assignedCodes.Contains(d.Code));
     }
 
-    private async Task SelectAndSaveDisciplineAsync(string disciplineCode)
+    private void ToggleTempDisciplineSelection(string disciplineCode)
     {
         if (string.IsNullOrEmpty(disciplineCode)) return;
 
+        if (tempSelectedDisciplineCodes.Contains(disciplineCode))
+        {
+            tempSelectedDisciplineCodes.Remove(disciplineCode);
+            return;
+        }
+
+        int currentAssignedCount = Role.Disciplines?.Count ?? 0;
+        int totalSelected = currentAssignedCount + tempSelectedDisciplineCodes.Count;
+
+        if (totalSelected >= 10)
+        {
+            actionError = "Możesz przypisać maksymalnie łącznie 10 dyscyplin do tej roli.";
+            return;
+        }
+
+        actionError = null; 
+        tempSelectedDisciplineCodes.Add(disciplineCode);
+    }
+
+    private void HandleDropdownBlurAsync()
+    {
         isDisciplineDropdownOpen = false;
+    }
+
+    private async Task SaveSelectedDisciplinesAsync()
+    {
+        if (!tempSelectedDisciplineCodes.Any()) return;
+
         isSubmittingDiscipline = true;
         actionError = null;
 
@@ -384,27 +449,31 @@
             using var client = await ClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            var requestBody = new { DisciplineCode = disciplineCode };
-            var response = await client.PostAsJsonAsync($"api/projects/{Role.ProjectId}/projectRoles/{Role.ProjectRoleId}/disciplines", requestBody);
+            foreach (var code in tempSelectedDisciplineCodes)
+            {
+                var requestBody = new { DisciplineCode = code };
+                var response = await client.PostAsJsonAsync($"api/projects/{Role.ProjectId}/projectRoles/{Role.ProjectRoleId}/disciplines", requestBody);
 
-            if (response.IsSuccessStatusCode)
-            {
-                disciplineSearchQuery = string.Empty;
-                await OnRoleUpdated.InvokeAsync(Role);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    actionError = !string.IsNullOrWhiteSpace(error) ? error : $"Nie udało się dodać dyscypliny: {code}";
+                }
             }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                actionError = !string.IsNullOrWhiteSpace(error) ? error : "Nie udało się dodać dyscypliny.";
-            }
+
+            isAddingDiscipline = false;
+            isDisciplineDropdownOpen = false;
+            tempSelectedDisciplineCodes.Clear();
+            await OnRoleUpdated.InvokeAsync(Role);
         }
         catch
         {
-            actionError = "Błąd połączenia z serwerem.";
+            actionError = "Błąd połączenia z serwerem podczas zapisywania dyscyplin.";
         }
         finally
         {
             isSubmittingDiscipline = false;
+            StateHasChanged();
         }
     }
 
