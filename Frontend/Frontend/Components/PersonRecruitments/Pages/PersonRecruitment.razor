@@ -3,6 +3,7 @@
 @using Diploma.Models.Dictionaries
 @using Diploma.Models.Recruitments
 @using Diploma.Models.Shared
+@using RADON.Models.Institutions.Responses
 
 <AuthorizeView>
     <Authorized>
@@ -137,6 +138,22 @@
                                                                             }
                                                                         </div>
                                                                     }
+
+                                                                    <!-- Wyświetlanie instytucji dla danej roli -->
+                                                                    @if (role.EductionInstitutionIds != null && role.EductionInstitutionIds.Any())
+                                                                    {
+                                                                        <div class="d-flex flex-wrap gap-1 mt-1">
+                                                                            @foreach (var instRef in role.EductionInstitutionIds)
+                                                                            {
+                                                                                if (_institutions.TryGetValue(instRef.EductionInstitutionId, out var institution))
+                                                                                {
+                                                                                    <span class="badge bg-info text-dark" style="font-size: 0.7rem;">
+                                                                                        <i class="bi bi-bank me-1"></i> @institution.Names.OrderByDescending(i => i.Date).FirstOrDefault()?.Name
+                                                                                    </span>
+                                                                                }
+                                                                            }
+                                                                        </div>
+                                                                    }
                                                                 </div>
                                                             }
                                                         </div>
@@ -193,9 +210,11 @@
 
 @code {
     [Inject] private IBackendHttpClientFactory ClientFactory { get; set; } = default!;
+    [Inject] private IRadonInstitutionService RadonInstitutionService { get; set; } = default!;
 
     private List<RecruitmentDto> _recruitments = new();
     private IEnumerable<DictionaryItem<int>> _statuses = new List<DictionaryItem<int>>();
+    private Dictionary<Guid, Institution> _institutions = [];
     private bool _isLoading = true;
     private string? _errorMessage;
 
@@ -263,12 +282,40 @@
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<Response<RecruitmentDto>>();
-                if (result != null)
+                if (result == null)
+                    return;
+
+                _recruitments = result.Items?.ToList() ?? new();
+                _totalCount = result.Pagination.TotalCount;
+                _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
+                if (_totalPages == 0) _totalPages = 1;
+
+                var institutionIds = result.Items?.SelectMany(i => 
+                    i.ProjectRoles.SelectMany(x => 
+                        x.EductionInstitutionIds.Select(z => 
+                            z.EductionInstitutionId
+                        )
+                    )
+                ).ToHashSet() ?? [];
+
+                var institutionsResponse = await RadonInstitutionService.GetAsync( new RADON.Models.Institutions.QueryParameters
                 {
-                    _recruitments = result.Items?.ToList() ?? new();
-                    _totalCount = result.Pagination.TotalCount;
-                    _totalPages = (int)Math.Ceiling((double)_totalCount / _itemsPerPage);
-                    if (_totalPages == 0) _totalPages = 1;
+                    InstitutionUuids = institutionIds,
+                    Order = RADON.Models.Shared.Order.Ascending,
+                    OrderBy = RADON.Models.Institutions.QueryParameters.QueryParametersOrderBy.Name,
+                    Pagination = new RADON.Models.Shared.QueryParametersPagination
+                    {
+                      ItemsPerPage = institutionIds.Count,
+                      Page = 1,
+                    },
+                });
+
+                if (institutionsResponse is null)
+                    return;
+
+                foreach (var item in institutionsResponse.Items)
+                {
+                    _institutions[item.InstitutionUuid] = item;
                 }
             }
             else
