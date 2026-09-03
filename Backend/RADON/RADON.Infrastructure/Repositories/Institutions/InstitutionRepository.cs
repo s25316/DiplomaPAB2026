@@ -104,6 +104,66 @@ internal class InstitutionRepository(
         };
     }
 
+    public async Task<IEnumerable<ResponseInstitution>> GetAllAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var query = queryBuilder.Build();
+        var dbItems = await query.ToListAsync(cancellationToken);
+
+        return dbItems.Select(i => new ResponseInstitution
+        {
+            InstitutionUuid = i.InstitutionUuid,
+
+            Regon = i.Regon,
+            Nip = i.Nip,
+            Krs = i.Krs,
+
+            StartDate = i.StartDate,
+            LiquidationStartDate = i.LiquidationStartDate,
+            LiquidationDate = i.LiquidationDate,
+
+            Www = i.Www,
+            Email = i.Email,
+            Phone = i.Phone,
+
+            InstitutionKind = new DictionaryItem
+            {
+                Code = i.InstitutionKind.InstitutionKindCode,
+                Name = i.InstitutionKind.Name,
+            },
+
+            Names = i.NameSnapshots.Select(ns => new NameSnapshot
+            {
+                Name = ns.Name,
+                Date = ns.Date
+            }).ToList(),
+
+            Types = i.TypeSnapshots.Select(ts => new TypeSnapshot
+            {
+                Type = new DictionaryItem
+                {
+                    Code = ts.InstitutionType.InstitutionTypeCode,
+                    Name = ts.InstitutionType.Name,
+                },
+                Date = ts.Date
+            }).ToList(),
+
+            Statuses = i.StatusSnapshots.Select(ss => new StatusSnapshot
+            {
+                Status = new DictionaryItem
+                {
+                    Code = ss.InstitutionStatus.InstitutionStatusCode,
+                    Name = ss.InstitutionStatus.Name,
+                },
+                Date = ss.Date
+            }).ToList(),
+
+            LastRefresh = i.LastRefresh,
+            SourceLastRefresh = i.SourceLastRefresh,
+            DataSource = i.DataSource.Name,
+        });
+    }
+
     public async Task CreateOrUpdateAsync(
         IEnumerable<ResponseInstitution> items,
         CancellationToken cancellationToken = default)

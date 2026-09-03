@@ -54,20 +54,28 @@ public class UpdateInstitutionJob(
     {
         try
         {
-
-            var radonInstitutions = new List<InstitutionReport>();
+            var dictionary = new Dictionary<Guid, InstitutionReport>();
             int allItemsCount;
             string? token = null;
+            int lastTotalCount = 0;
 
             do
             {
                 var response = await radonService.GetInstitutionsAsync(new QueryParameters() { Token = token });
                 allItemsCount = response.Pagination.MaxCount;
-                radonInstitutions.AddRange(response.Results);
-                token = response.Pagination.Token;
-            } while (radonInstitutions.Count != allItemsCount || !string.IsNullOrWhiteSpace(token));
+                var results = response.Results;
 
-            var items = radonInstitutions.Select(i => new ResponseInstitution
+                foreach (var item in results)
+                    dictionary[item.InstitutionUuid] = item;
+
+                if (dictionary.Count == lastTotalCount)
+                    break;
+
+                lastTotalCount = dictionary.Count;
+                token = response.Pagination.Token;
+            } while (dictionary.Count != allItemsCount || !string.IsNullOrWhiteSpace(token));
+
+            var items = dictionary.Values.Select(i => new ResponseInstitution
             {
                 InstitutionUuid = i.InstitutionUuid,
 

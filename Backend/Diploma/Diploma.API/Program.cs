@@ -16,13 +16,29 @@ namespace Diploma.API;
 
 public class Program
 {
+    private const string RADON_CONFIG = "Microservices:Radon";
+    private const string REGON_CONFIG = "Microservices:Regon";
+
+
     public static void Main(string[] args)
     {
-        var configurator = new GatewayConfigurator()
-            .Add(new Uri("http://localhost:8081"), "radon", GatewayConfigurator.Type.GraphQl | GatewayConfigurator.Type.Rest)
-            .Add(new Uri("http://localhost:8082"), "regon", GatewayConfigurator.Type.GraphQl | GatewayConfigurator.Type.Rest);
-
         var builder = WebApplication.CreateBuilder(args);
+
+        var configuration = builder.Configuration;
+
+        var radon = configuration[RADON_CONFIG];
+        var regon = configuration[REGON_CONFIG];
+
+        Console.WriteLine($"RADON: {radon}");
+        Console.WriteLine($"REGON: {regon}");
+
+        ArgumentNullException.ThrowIfNullOrEmpty(radon);
+        ArgumentNullException.ThrowIfNullOrEmpty(regon);
+
+        var configurator = new GatewayConfigurator()
+            .Add(new Uri(radon), "radon", GatewayConfigurator.Type.GraphQl | GatewayConfigurator.Type.Rest)
+            .Add(new Uri(regon), "regon", GatewayConfigurator.Type.GraphQl | GatewayConfigurator.Type.Rest);
+
 
         builder.Services.AddLogging();
         builder.Services.AddHttpClient();

@@ -119,6 +119,11 @@ public static class Configuration
             var address = addresses?.FirstOrDefault();
             ArgumentNullException.ThrowIfNullOrWhiteSpace(address);
 
+            address = address
+                .Replace("[::]", "localhost")
+                .Replace("0.0.0.0", "localhost")
+                .Replace("+", "localhost");
+
             return Options.Create(new BackendHostConfiguration
             {
                 Uri = address,

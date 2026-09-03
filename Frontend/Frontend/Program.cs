@@ -9,14 +9,21 @@ namespace Frontend;
 
 public class Program
 {
+    private const string BACKEND_CONFIG = "Backend:Uri";
+
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var configuration = builder.Configuration;
+
+        var backendUri = configuration[BACKEND_CONFIG];
+
+        ArgumentNullException.ThrowIfNullOrEmpty(backendUri);
 
         // Add services to the container.
         builder.Services.AddSingleton<IOptions<BackendHostConfiguration>>(p => Options.Create(new BackendHostConfiguration
         {
-            Uri = "http://localhost:5092/",
+            Uri = backendUri,
         }));
 
         builder.Services.AddHttpClient();

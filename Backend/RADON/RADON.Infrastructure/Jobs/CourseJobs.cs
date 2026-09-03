@@ -2,6 +2,7 @@
 using RADON.Application.Interfaces;
 using RADON.Application.Interfaces.Courses;
 using RADON.Application.Interfaces.Courses.Dictionaries;
+using RADON.Application.Interfaces.Institutions;
 using RADON.Contracts.Dictionaries;
 using RADON.Infrastructure.Jobs.Base;
 using RADON.Models.Courses.Responses;
@@ -63,6 +64,7 @@ public class UpdateProfessionalTitleJob(
 [DisallowConcurrentExecution]
 public class UpdateCourseJob(
     ICourseRepository repository,
+    IInstitutionRepository institutionRepository,
     IRadonService radonService,
     IErrorLogger errorLogger) : IJob
 {
@@ -70,7 +72,9 @@ public class UpdateCourseJob(
     {
         try
         {
-
+            var institutions = await institutionRepository.GetAllAsync();
+            var institutionDictionary = institutions.ToDictionary(k => k.InstitutionUuid);
+            var ids = new HashSet<Guid>();
             string? token = null;
             int totalCount = 0;
             int actualCount = 0;
@@ -83,61 +87,76 @@ public class UpdateCourseJob(
                     ResultNumbers = 100,
                 };
                 var response = await radonService.GetCoursesAsync(queryParameters);
-                var items = response.Results.Select(i => new Course
+                var items = new List<Course>();
+                var results = response.Results;
+
+
+                foreach (var i in results)
                 {
-                    CourseUuid = i.CourseUuid,
-                    Name = i.CourseName,
+                    if (ids.Contains(i.CourseUuid))
+                        continue;
 
-                    CreationDate = i.CreationDate,
-                    TerminationInitializationDate = i.TerminationInitializationDate,
-                    LiquidationDate = i.LiquidationDate,
+                    if (!institutionDictionary.ContainsKey(i.MainInstitutionUuid))
+                        continue;
 
-                    IsTeacherTraining = i.TeacherTraining,
-                    IsPhilological = i.Philological,
-
-                    InstitutionUuid = i.MainInstitutionUuid,
-
-                    LastRefresh = i.LastRefresh,
-                    SourceLastRefresh = i.LastRefresh,
-                    DataSource = i.DataSource,
-
-                    Level = new DictionaryItem { Code = i.LevelCode, Name = i.LevelName },
-                    Profile = new DictionaryItem { Code = i.ProfileCode, Name = i.ProfileName },
-                    Isced = new DictionaryItem { Code = i.IscedCode, Name = i.IscedName },
-                    Status = new DictionaryItem { Code = i.CurrentStatusCode, Name = i.CurrentStatusName },
-
-                    Disciplines = i.Disciplines.Select(d => new Course.DisciplineData
+                    ids.Add(i.CourseUuid);
+                    items.Add(new Course
                     {
-                        Discipline = new DictionaryItem { Code = d.DisciplineCode, Name = d.DisciplineName },
-                        Percentage = d.DisciplinePercentageShare,
-                        IsLeading = d.DisciplineLeading,
-                    }).ToList(),
+                        CourseUuid = i.CourseUuid,
+                        Name = i.CourseName,
 
-                    CourseInstances = i.CourseInstances.Select(ci => new CourseInstance
-                    {
-                        CourseInstanceUuid = ci.CourseInstanceUuid,
-                        Name = ci.CourseName,
+                        CreationDate = i.CreationDate,
+                        TerminationInitializationDate = i.TerminationInitializationDate,
+                        LiquidationDate = i.LiquidationDate,
 
-                        EducationStartDate = ci.EducationStartDate,
-                        LiquidationDate = ci.LiquidationDate,
+                        IsTeacherTraining = i.TeacherTraining,
+                        IsPhilological = i.Philological,
 
-                        NumberOfSemesters = ci.NumberOfSemesters,
-                        Ects = ci.Ects,
+                        InstitutionUuid = i.MainInstitutionUuid,
 
-                        IsDual = ci.Dual,
-                        IsBridging = ci.Bridging,
-                        IsCoopWithVocational = ci.CoopWithVocational,
+                        LastRefresh = i.LastRefresh,
+                        SourceLastRefresh = i.LastRefresh,
+                        DataSource = i.DataSource,
 
-                        Form = new DictionaryItem { Code = ci.FormCode, Name = ci.FormName },
-                        ProfessionalTitle = new DictionaryItem { Code = ci.TitleCode, Name = ci.TitleName },
-                        Language = new DictionaryItem { Code = ci.LanguageCode, Name = ci.LanguageName },
-                        Status = new DictionaryItem { Code = ci.StatusCode, Name = ci.StatusName },
+                        Level = new DictionaryItem { Code = i.LevelCode, Name = i.LevelName },
+                        Profile = new DictionaryItem { Code = i.ProfileCode, Name = i.ProfileName },
+                        Isced = new DictionaryItem { Code = i.IscedCode, Name = i.IscedName },
+                        Status = new DictionaryItem { Code = i.CurrentStatusCode, Name = i.CurrentStatusName },
 
-                        PhilologicalLanguages = ci.PhilologicalLanguages
-                        .Select(l => new DictionaryItem { Code = l.LanguageCode, Name = l.LanguageName })
-                        .ToList(),
-                    }).ToList(),
-                });
+                        Disciplines = i.Disciplines.Select(d => new Course.DisciplineData
+                        {
+                            Discipline = new DictionaryItem { Code = d.DisciplineCode, Name = d.DisciplineName },
+                            Percentage = d.DisciplinePercentageShare,
+                            IsLeading = d.DisciplineLeading,
+                        }).ToList(),
+
+                        CourseInstances = i.CourseInstances.Select(ci => new CourseInstance
+                        {
+                            CourseInstanceUuid = ci.CourseInstanceUuid,
+                            Name = ci.CourseName,
+
+                            EducationStartDate = ci.EducationStartDate,
+                            LiquidationDate = ci.LiquidationDate,
+
+                            NumberOfSemesters = ci.NumberOfSemesters,
+                            Ects = ci.Ects,
+
+                            IsDual = ci.Dual,
+                            IsBridging = ci.Bridging,
+                            IsCoopWithVocational = ci.CoopWithVocational,
+
+                            Form = new DictionaryItem { Code = ci.FormCode, Name = ci.FormName },
+                            ProfessionalTitle = new DictionaryItem { Code = ci.TitleCode, Name = ci.TitleName },
+                            Language = new DictionaryItem { Code = ci.LanguageCode, Name = ci.LanguageName },
+                            Status = new DictionaryItem { Code = ci.StatusCode, Name = ci.StatusName },
+
+                            PhilologicalLanguages = ci.PhilologicalLanguages
+                            .Select(l => new DictionaryItem { Code = l.LanguageCode, Name = l.LanguageName })
+                            .ToList(),
+                        }).ToList(),
+                    });
+
+                }
 
                 await repository.CreateOrUpdateAsync(items);
 
