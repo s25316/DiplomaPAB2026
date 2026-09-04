@@ -1,4 +1,6 @@
-﻿using Diploma.Infrastructure.Configurations;
+﻿using Base.Exceptions;
+using Diploma.Application.Interfaces;
+using Diploma.Infrastructure.Configurations;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 
@@ -17,7 +19,8 @@ public interface IEducationDisciplineService
 
 public class EducationDisciplineService(
     IHttpClientFactory factory,
-    IOptions<BackendHostConfiguration> options
+    IOptions<BackendHostConfiguration> options,
+    IErrorLogger errorLogger
     ) : IEducationDisciplineService
 {
     private sealed record GraphQlResponse
@@ -43,15 +46,32 @@ public class EducationDisciplineService(
 
     public async Task<IEnumerable<EducationDiscipline>> GetAsync(CancellationToken cancellationToken = default)
     {
-        var uri = GetUri();
-        using var httpClient = factory.CreateClient();
-        var response = await httpClient.PostAsJsonAsync(uri, new { query = QUERY }, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        var prameters = new Dictionary<string, string>()
+        {
+            { "CreatedAt", DateTimeOffset.Now.ToString() }
+        };
 
-        var result = await response.Content.ReadFromJsonAsync<GraphQlResponse>(cancellationToken: cancellationToken);
-        ArgumentNullException.ThrowIfNull(result);
+        try
+        {
+            var uri = GetUri();
+            prameters.Add("Uri", uri);
 
-        return result.Data.Disciplines.Select(i => i.Value);
+            using var httpClient = factory.CreateClient();
+            var response = await httpClient.PostAsJsonAsync(uri, new { query = QUERY }, cancellationToken);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<GraphQlResponse>(cancellationToken: cancellationToken);
+            ArgumentNullException.ThrowIfNull(result);
+
+            prameters.Add("Result", result.ToString());
+            return result.Data.Disciplines.Select(i => i.Value);
+        }
+        catch (Exception ex)
+        {
+            var jobsExceptiion = new ServiceException.Jobs(ex, prameters);
+            await errorLogger.LogErrorAsync(jobsExceptiion, ex.StackTrace, cancellationToken);
+            throw;
+        }
     }
 
     private string GetUri()

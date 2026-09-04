@@ -32,6 +32,8 @@ public class Program
 
             options.AddSchemaTransformer<ResponseTypeOpenApiSchemaTransformer>();
             options.AddSchemaTransformer<EnumSchemaTransformer>();
+
+            options.AddDocumentTransformer<ServersCleanDocumentTransformer>();
         });
 
         builder.Services

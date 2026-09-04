@@ -18,7 +18,6 @@ public class EducationDisciplineJob(
     {
         var unitOfWork = await unitOfWorkFactory.CreateAsync();
 
-
         var items = await service.GetAsync();
         var inputDictionary = items
             .ToDictionary(k => k.Code);

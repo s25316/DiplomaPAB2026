@@ -267,6 +267,21 @@ public static class Configuration
             configurator.AddDictionaryJob<EducationDisciplineJob>();
             configurator.AddJob<EducationInstitutionJob>();
             configurator.AddJob<EducationCouseJobs>();
+
+            q.AddJob<PersonCleanProfileJob>(opts => opts
+                .WithIdentity(nameof(PersonCleanProfileJob))
+                .StoreDurably()
+            );
+
+            q.AddTrigger(opts => opts
+                .ForJob(nameof(PersonCleanProfileJob))
+                .WithIdentity($"{nameof(PersonCleanProfileJob)}-Trigger")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInMinutes(5)
+                    .RepeatForever()
+                )
+            );
         });
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 

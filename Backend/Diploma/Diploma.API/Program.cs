@@ -2,6 +2,7 @@
 using Diploma.API.Controllers.Services;
 using Diploma.API.ExceptionHandlers;
 using Diploma.API.Extensions;
+using Diploma.API.OpenApi;
 using Diploma.Application;
 using Diploma.Domain;
 using Diploma.Infrastructure;
@@ -61,8 +62,14 @@ public class Program
 
         builder.Services.AddControllers();
 
-        builder.Services.AddOpenApi();
-        builder.Services.AddOpenApi("gateway");
+        builder.Services.AddOpenApi(config =>
+        {
+            config.AddDocumentTransformer<ServersCleanDocumentTransformer>();
+        });
+        builder.Services.AddOpenApi("gateway", config =>
+        {
+            config.AddDocumentTransformer<ServersCleanDocumentTransformer>();
+        });
 
         builder.Services.AddCors(options =>
         {
