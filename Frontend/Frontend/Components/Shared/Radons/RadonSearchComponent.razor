@@ -233,23 +233,25 @@
             if (client is null)
                 return;
 
+            _errorMessage = null; 
             var response = await client.PostAsJsonAsync("api/person/profile/educations", apiRequest);
+
             if (response.IsSuccessStatusCode)
             {
-                _errorMessage = null; // Czyszczenie błędu przy sukcesie
                 await OnEducationCreated.InvokeAsync();
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
-            {
-                _errorMessage = "Zbyt dużo rekordów.";
-            }
-            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            {
-                _errorMessage = "Sprawdź poprawność dat w ramach wybranego kierunku lub instancji.";
             }
             else
             {
-                _errorMessage = "Błąd podczas zapisu w API.";
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(errorContent))
+                {
+                    _errorMessage = errorContent;
+                }
+                else
+                {
+                    _errorMessage = $"Wystąpił błąd podczas zapisu (kod: {response.StatusCode}).";
+                }
             }
         }
         catch (Exception ex)

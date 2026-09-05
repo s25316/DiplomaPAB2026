@@ -10,12 +10,16 @@ public class PersonEducationFormModel
     public Guid? EducationCourseInstanceId { get; set; }
 
     [Required(ErrorMessage = "Rok startu jest wymagany.")]
+    [Range(1900, 2100, ErrorMessage = "Wybierz poprawny rok startowy.")]
     public int StartYear { get; set; }
 
     [Required(ErrorMessage = "Semestr startu jest wymagany.")]
     [Range(1, int.MaxValue, ErrorMessage = "Wybierz poprawny semestr startowy.")]
     public int StartSemestrId { get; set; }
 
+    [Range(1900, 2100, ErrorMessage = "Wybierz poprawny rok końcowy.")]
     public int? EndYear { get; set; }
+
+    [Range(1, int.MaxValue, ErrorMessage = "Wybierz poprawny semestr końcowy.")]
     public int? EndSemestrId { get; set; }
 }

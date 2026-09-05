@@ -468,8 +468,8 @@
         {
             Start = new EducationSemestrRequestDto
             {
-                Year = _editFormModel.StartYear,
-                SemestrId = _editFormModel.StartSemestrId
+                Year = _editFormModel.StartYear ?? 1900,
+                SemestrId = _editFormModel.StartSemestrId ?? 1
             },
             End = _editIncludeEnd && _editFormModel.EndYear.HasValue && _editFormModel.EndSemestrId.HasValue
                 ? new EducationSemestrRequestDto
@@ -485,7 +485,7 @@
             var client = await ClientFactory.CreateAuthorizedClientAsync();
             if (client is null) return;
 
-            _errorMessage = null;
+            _editErrorMessage = null;
             var response = await client.PutAsJsonAsync($"api/person/profile/educations/{_editingEducationId.Value}", updateRequest);
 
             if (response.IsSuccessStatusCode)
@@ -496,12 +496,21 @@
             }
             else
             {
-                _editErrorMessage = "Wystąpił błąd podczas aktualizacji danych (kod: " + response.StatusCode + ")";
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                if (!string.IsNullOrWhiteSpace(errorContent))
+                {
+                    _editErrorMessage = $"Błąd: {errorContent}";
+                }
+                else
+                {
+                    _editErrorMessage = $"Wystąpił błąd podczas aktualizacji danych (kod: {response.StatusCode})";
+                }
             }
         }
         catch (Exception ex)
         {
-            _errorMessage = $"Błąd sieciowy: {ex.Message}";
+            _editErrorMessage = $"Błąd sieciowy: {ex.Message}";
         }
     }
 
