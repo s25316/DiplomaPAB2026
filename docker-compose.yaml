@@ -1,0 +1,150 @@
+#version: '3.8'
+#docker-compose up --build
+
+services:
+  azure:
+    container_name: azure
+    image: mcr.microsoft.com/azure-storage/azurite
+    restart: unless-stopped
+    ports:
+      - "10000:10000" # Blob service
+      - "10001:10001" # Queue service
+      - "10002:10002" # Table service
+    volumes:
+      - ./azurite_data:/data # Mapowanie folderu na dane
+    command: "azurite --skipApiVersionCheck --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --location /data --debug /data/debug.log"
+
+  gus_regon_mssql:
+    container_name: gus_regon_mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    ports:
+      - "1434:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"
+    volumes:
+      - gus_regon_mssql:/var/opt/mssql
+
+  radon_mssql:
+    container_name: radon_mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    ports:
+      - "1435:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"
+    volumes:
+      - radon_mssql:/var/opt/mssql
+
+  diploma_mssql:
+    container_name: diploma_mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    ports:
+      - "1436:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_PID: "Developer"
+    volumes:
+      - diploma_mssql:/var/opt/mssql
+
+  radon_api:
+    container_name: radon_api
+    restart: unless-stopped
+    image: radon_api:latest
+    build:
+      context: ./Backend # Ustawiamy kontekst na folder Backend
+      dockerfile: RADON/RADON.API/Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - radon_mssql
+    environment:
+      - TZ=Europe/Warsaw
+      - ASPNETCORE_URLS=http://+:8081
+      - Database__ConnectionString=Data Source=radon_mssql,1433;Initial Catalog=Diploma;User ID=sa;Password=YourStrong!Passw0rd;Trust Server Certificate=True
+    init: true
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+  gus_regon_api:
+    container_name: gus_regon_api
+    restart: unless-stopped
+    image: gus_regon_api:latest
+    build:
+      context: ./Backend # Ustawiamy kontekst na folder Backend
+      dockerfile: GUS.REGON/GUS.REGON.API/Dockerfile
+    ports:
+      - "8082:8082"
+    depends_on:
+      - gus_regon_mssql
+    environment:
+      - TZ=Europe/Warsaw
+      - ASPNETCORE_URLS=http://+:8082
+      - Regon__Key=key
+      - UpdateData__UpdateIntervalDays=1
+      - Database__ConnectionString=Data Source=gus_regon_mssql,1433;Initial Catalog=Diploma;User ID=sa;Password=YourStrong!Passw0rd;Trust Server Certificate=True
+    init: true
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+  diploma_api:
+    container_name: diploma_api
+    restart: unless-stopped
+    image: diploma_api:latest
+    build:
+      context: ./Backend # Ustawiamy kontekst na folder Backend
+      dockerfile: Diploma/Diploma.API/Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - diploma_mssql
+      - gus_regon_api
+      - radon_api
+    environment:
+      - TZ=Europe/Warsaw
+      - ASPNETCORE_URLS=http://+:8083
+      - Microservices__Radon=http://radon_api:8081
+      - Microservices__Regon=http://gus_regon_api:8082
+      - Database__ConnectionString=Data Source=diploma_mssql,1433;Initial Catalog=Diploma;User ID=sa;Password=YourStrong!Passw0rd;Trust Server Certificate=True
+      - Email__Key=key
+      - Email__Email=email
+      - Frontend__Uri=http://frontend:80
+      - Jwt__Issuer=Me
+      - Jwt__Audience=Me
+      - Jwt__Secret=123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789
+      - Azure__BlobConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azure:10000/devstoreaccount1;
+      - Azure__QueueConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;QueueEndpoint=http://azure:10001/devstoreaccount1;
+      - Azure__TableConnectionString=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://azure:10002/devstoreaccount1;
+    init: true
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+  frontend:
+    container_name: frontend
+    restart: unless-stopped
+    image: frontend:latest
+    build:
+      context: . 
+      dockerfile: Frontend/Frontend/Dockerfile 
+    ports:
+      - "80:80"
+    depends_on:
+      - diploma_api
+    environment:
+      - TZ=Europe/Warsaw
+      - ASPNETCORE_URLS=http://+:80
+      - Backend__Uri=http://diploma_api:8083
+    init: true
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+volumes:
+  gus_regon_mssql:
+  diploma_mssql:
+  radon_mssql:

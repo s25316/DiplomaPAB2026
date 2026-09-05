@@ -1,6 +1,0 @@
-﻿namespace GUS.TERYT.Infrastructure.Configurations;
-
-public class DatabaseConfiguration
-{
-    public required string ConnectionString { get; init; } = null!;
-}
