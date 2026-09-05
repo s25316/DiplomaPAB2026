@@ -4,10 +4,12 @@ namespace Diploma.Models.PersonEducations;
 
 public sealed record EducationSemestrRequestDto
 {
+    [Required]
     [Range(1, 2)]
     public required int SemestrId { get; init; }
 
-    [Range(1990, int.MaxValue)]
+    [Required]
+    [Range(1900, int.MaxValue, ErrorMessage = "Rok musi być w zakresie od 1900.")]
     public required int Year { get; init; }
 }
 

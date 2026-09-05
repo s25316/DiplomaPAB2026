@@ -8,7 +8,6 @@ public sealed record PersonEducationCreateRequest
     public required Guid EducationCourseId { get; init; }
     public required Guid? EducationCourseInstanceId { get; init; } = null;
 
-    [Required]
     public required EducationSemestrRequestDto Start { get; init; }
     public required EducationSemestrRequestDto? End { get; init; } = null;
 }
