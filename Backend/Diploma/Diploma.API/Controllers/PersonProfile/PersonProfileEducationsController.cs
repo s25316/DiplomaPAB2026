@@ -71,14 +71,14 @@ public class PersonProfileEducationsController(
 
         return result switch
         {
-            PersonEducationCreateResult.Success => Created(),
-            PersonEducationCreateResult.Failure.NotFound => NotFound(),
+            PersonEducationCreateResult.Success => Created(), // Ewentualnie CreatedAtAction z lokalizacją
+            PersonEducationCreateResult.Failure.NotFound => NotFound(new { message = "Nie znaleziono wskazanego zasobu." }),
             PersonEducationCreateResult.Failure.Forbidden => Forbid(),
-            PersonEducationCreateResult.Failure.OverLimit overLimit => Conflict(overLimit.MaxCount),
-            PersonEducationCreateResult.Failure.NotFoundCourse notFoundCourse => NotFound(),
-            PersonEducationCreateResult.Failure.NotFoundCourseInstance notFoundCourseInstance => NotFound(),
-            PersonEducationCreateResult.Failure.InvalidCourseDates invalidCourseDates => BadRequest(),
-            PersonEducationCreateResult.Failure.InvalidCourseInstanceDates invalidCourseInstanceDates => BadRequest(),
+            PersonEducationCreateResult.Failure.OverLimit overLimit => Conflict(new { message = $"Osiągnięto maksymalną dozwoloną liczbę wpisów ({overLimit.MaxCount}).", maxCount = overLimit.MaxCount }),
+            PersonEducationCreateResult.Failure.NotFoundCourse => NotFound(new { message = "Wybrany kurs nie istnieje." }),
+            PersonEducationCreateResult.Failure.NotFoundCourseInstance => NotFound(new { message = "Wybrana edycja kursu nie istnieje." }),
+            PersonEducationCreateResult.Failure.InvalidCourseDates => BadRequest(new { message = "Podane daty kursu są nieprawidłowe." }),
+            PersonEducationCreateResult.Failure.InvalidCourseInstanceDates => BadRequest(new { message = "Podane daty edycji kursu są nieprawidłowe." }),
             _ => throw new NotImplementedException($"Unknown type of {nameof(PersonEducationCreateResult)}: {result.GetType()}"),
         };
     }
@@ -103,14 +103,14 @@ public class PersonProfileEducationsController(
 
         return result switch
         {
-            PersonEducationUpdateResult.Success => Created(),
-            PersonEducationUpdateResult.Failure.NotFound => NotFound(),
+            PersonEducationUpdateResult.Success => Ok(),
+            PersonEducationUpdateResult.Failure.NotFound => NotFound(new { message = "Nie znaleziono wskazanego zasobu." }),
             PersonEducationUpdateResult.Failure.Forbidden => Forbid(),
-            PersonEducationUpdateResult.Failure.OverLimit overLimit => BadRequest(),
-            PersonEducationUpdateResult.Failure.NotFoundCourse notFoundCourse => NotFound(),
-            PersonEducationUpdateResult.Failure.NotFoundCourseInstance notFoundCourseInstance => NotFound(),
-            PersonEducationUpdateResult.Failure.InvalidCourseDates invalidCourseDates => BadRequest(),
-            PersonEducationUpdateResult.Failure.InvalidCourseInstanceDates invalidCourseInstanceDates => BadRequest(),
+            PersonEducationUpdateResult.Failure.OverLimit overLimit => Conflict(new { message = $"Osiągnięto maksymalną dozwoloną liczbę wpisów ({overLimit.MaxCount}).", maxCount = overLimit.MaxCount }),
+            PersonEducationUpdateResult.Failure.NotFoundCourse => NotFound(new { message = "Wybrany kurs nie istnieje." }),
+            PersonEducationUpdateResult.Failure.NotFoundCourseInstance => NotFound(new { message = "Wybrana edycja kursu nie istnieje." }),
+            PersonEducationUpdateResult.Failure.InvalidCourseDates => BadRequest(new { message = "Podane daty kursu są nieprawidłowe." }),
+            PersonEducationUpdateResult.Failure.InvalidCourseInstanceDates => BadRequest(new { message = "Podane daty edycji kursu są nieprawidłowe." }),
             _ => throw new NotImplementedException($"Unknown type of {nameof(PersonEducationCreateResult)}: {result.GetType()}"),
         };
     }

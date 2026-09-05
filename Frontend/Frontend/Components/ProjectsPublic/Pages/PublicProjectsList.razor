@@ -267,7 +267,7 @@
 </div>
 
 @code {
-    private List<ProjectDto> _projects = new();
+    private List<ProjectLocalDto> _projects = new();
     private bool _isLoading = true;
     private string? _errorMessage;
 
@@ -435,7 +435,7 @@
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<Response<ProjectDto>>();
+                var result = await response.Content.ReadFromJsonAsync<Response<ProjectLocalDto>>();
                 if (result != null)
                 {
                     _projects = result.Items?.ToList() ?? new();

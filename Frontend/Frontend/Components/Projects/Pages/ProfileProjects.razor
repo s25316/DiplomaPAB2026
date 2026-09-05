@@ -116,7 +116,8 @@
                                IsSaving="_isSaving"
                                Model="_currentModel"
                                OnClose="CloseModal"
-                               OnSubmit="SaveProjectAsync" />
+                               OnSubmit="SaveProjectAsync" 
+                               GetError="() => _errorMessage" />
     </Authorized>
     <NotAuthorized>
         <div class="container mt-5 text-center alert alert-warning">

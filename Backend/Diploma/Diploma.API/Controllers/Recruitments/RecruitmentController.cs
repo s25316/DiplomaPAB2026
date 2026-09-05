@@ -73,6 +73,7 @@ public class RecruitmentController(IMediator mediator) : ControllerBase
             RecruitmentCreateResult.Success => Created(),
             RecruitmentCreateResult.Failure.NotFound => NotFound(),
             RecruitmentCreateResult.Failure.IsExistRecruitment => Conflict(),
+            RecruitmentCreateResult.Failure.ProfileIsEmpty => BadRequest("Uzuspełnij profil przed rekrutacją."),
             RecruitmentCreateResult.Failure.NotSameProject => BadRequest("Klucz projektu nie zgadza sie z kluczmi ról."),
             RecruitmentCreateResult.Failure.EmptyProjectRoles => BadRequest("Lista ról w projecie nie moze byc pusta."),
             _ => throw new NotImplementedException($"Unknown type of {nameof(RecruitmentCreateResult)}: {result.GetType()}"),

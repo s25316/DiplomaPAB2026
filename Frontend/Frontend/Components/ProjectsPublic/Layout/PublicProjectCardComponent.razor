@@ -259,7 +259,7 @@
 </div>
 
 @code {
-    [Parameter, EditorRequired] public ProjectDto Project { get; set; } = default!;
+    [Parameter, EditorRequired] public ProjectLocalDto Project { get; set; } = default!;
     [Parameter] public bool IsSelected { get; set; }
 
     [Parameter] public EventCallback<Guid> OnToggleDetails { get; set; }
@@ -414,6 +414,7 @@
             content.Add(fileContent, "File", _recruitmentFile.Name);
 
             var response = await client.PostAsync("api/recruitments", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
 
             if (response.IsSuccessStatusCode)
             {
@@ -421,6 +422,8 @@
                 _selectedProjectRoleIds.Clear();
                 _recruitmentFile = null;
                 _recruitmentMessage = string.Empty;
+                _isRecruitmentFormOpen = false;
+                Project.IsRecruted = true;
             }
             else
             {
@@ -428,7 +431,9 @@
                 {
                     System.Net.HttpStatusCode.Unauthorized => "Musisz być zalogowany, aby wysłać zgłoszenie.",
                     System.Net.HttpStatusCode.Conflict => "Zgłoszenie do tego projektu już istnieje.",
-                    System.Net.HttpStatusCode.BadRequest => "Błędne dane w formularzu rekrutacyjnym.",
+                    System.Net.HttpStatusCode.BadRequest => !string.IsNullOrWhiteSpace(responseContent)
+                        ? responseContent
+                        :"Błędne dane w formularzu rekrutacyjnym.",
                     _ => "Wystąpił błąd podczas wysyłania zgłoszenia."
                 };
             }

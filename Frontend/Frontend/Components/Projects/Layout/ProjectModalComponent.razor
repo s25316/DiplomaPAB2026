@@ -9,6 +9,13 @@
                     <h5 class="modal-title">@(IsEditing ? "Edytuj projekt" : "Utwórz nowy projekt")</h5>
                     <button type="button" class="btn-close" @onclick="OnClose"></button>
                 </div>
+                
+                @if (GetError != null && !string.IsNullOrEmpty(GetError()))
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @GetError()
+                    </div>
+                }
 
                 <EditForm Model="Model" OnValidSubmit="OnSubmit">
                     <DataAnnotationsValidator />
@@ -61,6 +68,7 @@
 
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public EventCallback OnSubmit { get; set; }
+    [Parameter] public Func<string?>? GetError { get; set; }
 
     public class ProjectFormModel
     {

@@ -193,6 +193,15 @@
                         <DataAnnotationsValidator />
                         <div class="modal-body">
                             <ValidationSummary class="alert alert-danger" />
+                            
+                            <!-- Komunikat o błędzie edycji -->
+                            @if (!string.IsNullOrEmpty(_editErrorMessage))
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@_editErrorMessage
+                                    <button type="button" class="btn-close" @onclick="() => _editErrorMessage = null"></button>
+                                </div>
+                            }
 
                             <h6 class="text-primary fw-bold">Dane początkowe (Start)</h6>
                             <div class="row g-3 mb-3">
@@ -275,7 +284,8 @@
     private Institution? _selectedInstitution;
 
     private string? _errorMessage;
-    private string? _successMessage;
+    private string? _successMessage; 
+    private string? _editErrorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -411,7 +421,8 @@
     {
         _isEditModalOpen = true;
         _editingEducationId = edu.EducationId;
-        _successMessage = null;
+        _successMessage = null; 
+        _editErrorMessage = null;
         CloseDetails();
 
         _editIncludeEnd = edu.End != null;
@@ -485,7 +496,7 @@
             }
             else
             {
-                _errorMessage = "Wystąpił błąd podczas aktualizacji danych (kod: " + response.StatusCode + ")";
+                _editErrorMessage = "Wystąpił błąd podczas aktualizacji danych (kod: " + response.StatusCode + ")";
             }
         }
         catch (Exception ex)
